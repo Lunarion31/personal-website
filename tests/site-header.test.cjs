@@ -170,6 +170,6 @@ test("every header links to each homepage section and both main interior pages",
       assert.equal(links.find((link) => link.label === label)?.href, expected, `${page || "home"}: ${label}`);
     }
     assert.equal(links.find((link) => link.label === "About me")?.href, "/about/");
-    assert.equal(links.find((link) => link.label.replace("’", "'") === "Let's talk")?.href, "/contact/");
+    assert.equal(links.find((link) => link.label.replace("’", "'") === "Get in touch")?.href, "/contact/");
   }
 });

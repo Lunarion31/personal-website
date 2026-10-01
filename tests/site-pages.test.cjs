@@ -114,10 +114,10 @@ test("About has an editorial cover and does not reuse the homepage hero image", 
   assert.match(about, /class="about-perspective-mark"/);
   assert.ok(!about.includes('src="/assets/spark-field.webp"'));
   assert.ok(!about.includes('as="image"'));
-  assert.ok(about.includes("I\'m Lunarion, a student with a passion for programming."));
-  assert.ok(about.includes("My original site, Whale, turned a portfolio into a retro desktop."));
+  assert.ok(about.includes("I am Jamie, a student and developer"));
+  assert.ok(about.includes("My original site, Whale, presented a portfolio through a classic desktop layout."));
   assert.ok(!about.includes("security researchers"));
-  assert.ok(about.includes("Still exploring"));
+  assert.ok(about.includes("Continued development"));
   assert.match(about, /href="\/contact\/">Start a conversation/);
 });
 
@@ -192,7 +192,7 @@ test("every page identifies Lunarion in its metadata and uses the new preview im
   for (const page of pages) {
     const html = htmlFor(page);
     assert.match(html, /<title>[^<]*Lunarion/);
-    assert.match(html, /property="og:site_name" content="Lunarion"/);
+    assert.match(html, /property="og:site_name" content="Jamie | Lunarion"/);
     assert.match(html, /https:\/\/lunarion31.dev\/assets\/lunarion-share-blue.jpg/);
     assert.doesNotMatch(html, /Request a demo|Sparking your education|contact@sparkforschools.com/);
   }
