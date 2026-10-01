@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" fill="none">
+  <defs>
+    <pattern id="fine" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-28)"><path d="M0 0V7" stroke="#10233f" stroke-width=".7"/></pattern>
+    <pattern id="shade" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0L4 4" stroke="#10233f" stroke-width=".7"/></pattern>
+    <clipPath id="moon"><circle cx="397" cy="454" r="205"/></clipPath>
+  </defs>
+  <rect width="800" height="1000" fill="#9dbdff"/>
+  <g stroke="#10233f" opacity=".22">
+    <path d="M50 120H750M50 830H750M400 80V900"/>
+    <circle cx="397" cy="454" r="317" stroke-dasharray="2 9"/>
+    <circle cx="397" cy="454" r="280"/>
+    <path d="M63 454H730M397 120V790" stroke-dasharray="4 9"/>
+  </g>
+  <g stroke="#10233f" stroke-width="1.2">
+    <ellipse cx="397" cy="454" rx="367" ry="130" transform="rotate(-38 397 454)"/>
+    <ellipse cx="397" cy="454" rx="328" ry="150" transform="rotate(39 397 454)"/>
+    <circle cx="397" cy="454" r="205" fill="#edf3fc" stroke-width="2"/>
+  </g>
+  <g clip-path="url(#moon)">
+    <circle cx="397" cy="454" r="205" fill="url(#fine)"/>
+    <path d="M347 235C541 264 590 560 368 674H655V222Z" fill="#10233f"/>
+    <path d="M326 247C478 281 526 423 489 536C467 604 419 650 359 664" stroke="#9dbdff" stroke-width="2"/>
+    <g fill="#edf3fc" stroke="#10233f">
+      <ellipse cx="303" cy="350" rx="39" ry="47" transform="rotate(27 303 350)"/>
+      <ellipse cx="303" cy="350" rx="27" ry="35" transform="rotate(27 303 350)" fill="url(#shade)"/>
+      <ellipse cx="416" cy="435" rx="27" ry="32" transform="rotate(-20 416 435)"/>
+      <ellipse cx="416" cy="435" rx="17" ry="21" transform="rotate(-20 416 435)" fill="url(#shade)"/>
+      <ellipse cx="297" cy="526" rx="57" ry="36" transform="rotate(38 297 526)"/>
+      <ellipse cx="297" cy="526" rx="41" ry="24" transform="rotate(38 297 526)" fill="url(#shade)"/>
+      <ellipse cx="228" cy="433" rx="14" ry="24"/>
+      <circle cx="367" cy="571" r="18"/><circle cx="367" cy="571" r="11" fill="url(#shade)"/>
+      <circle cx="366" cy="314" r="9"/><circle cx="341" cy="438" r="12"/><circle cx="265" cy="602" r="19"/>
+    </g>
+    <g fill="#10233f"><circle cx="272" cy="419" r="4"/><circle cx="380" cy="508" r="6"/><circle cx="331" cy="601" r="3"/><circle cx="245" cy="372" r="4"/><circle cx="340" cy="396" r="3"/></g>
+  </g>
+  <path d="M116 679C213 658 341 587 472 482C590 387 683 289 701 228" stroke="#10233f" stroke-width="2"/>
+  <path d="M104 289C146 369 279 478 434 574C540 640 642 677 683 659" stroke="#10233f"/>
+  <g fill="#10233f">
+    <circle cx="660" cy="281" r="10"/><circle cx="148" cy="359" r="6"/>
+    <path d="m149 170 5 22 22 5-22 5-5 22-5-22-22-5 22-5ZM674 684l5 22 22 5-22 5-5 22-5-22-22-5 22-5ZM610 144l3 12 12 3-12 3-3 12-3-12-12-3 12-3Z"/>
+    <circle cx="214" cy="769" r="3"/><circle cx="710" cy="435" r="3"/><circle cx="553" cy="775" r="3"/>
+  </g>
+  <g stroke="#10233f"><path d="M73 720v22m-11-11h22M574 226v15m-7-7h14M126 510v15m-7-7h14"/><path d="M318 853h158M348 863h98"/></g>
+  <g fill="#10233f" font-family="monospace" font-size="11" letter-spacing="3"><text x="50" y="103">FIELD NOTES / 031</text><text x="495" y="857">STAY CURIOUS.</text></g>
+</svg>
