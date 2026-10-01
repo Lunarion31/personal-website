@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="280" viewBox="0 0 420 280" fill="none">
+    <defs>
+        <pattern id="iris" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><path d="M0 0V4" stroke="#173452" stroke-width=".65"/></pattern>
+    </defs>
+    <ellipse cx="210" cy="146" rx="121" ry="86" fill="#b7d1f5" opacity=".4" transform="rotate(-12 210 146)"/>
+    <g stroke="#173452" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M45 143C92 102 152 88 206 92C272 95 330 115 375 153C320 187 265 205 208 201C145 198 87 177 45 143Z" fill="#eef3f9" stroke-width="2"/>
+        <path d="M45 143C119 64 276 67 375 153M71 170C151 222 270 223 352 178" stroke-width="1.2"/>
+        <circle cx="210" cy="147" r="52" fill="url(#iris)" stroke-width="1.7"/>
+        <circle cx="210" cy="147" r="37" fill="#173452"/>
+        <path d="M209 119L214 140L237 148L215 153L210 176L204 155L182 147L202 142Z" fill="#eef3f9" stroke="none"/>
+        <path d="M139 113L148 116M130 126L139 129M127 140L137 143M126 155L137 157M134 170L145 169M278 124L289 121M283 141L298 138M284 155L299 155M279 170L291 174" stroke-width=".75"/>
+        <path d="M77 123L61 101M109 107L99 80M146 96L141 68M185 91L184 58M225 92L231 61M265 101L278 74M304 116L322 89M339 133L362 117" stroke-width="1.5"/>
+        <path d="M90 184L78 202M124 199L115 220M161 209L157 233M202 213V242M243 212L248 237M281 204L293 225M319 191L335 208"/>
+        <path d="M98 63L107 69M160 42L164 51M255 39L251 49M335 57L328 65" stroke="#688bb5"/>
+        <path d="M48 49L52 65L70 70L53 75L48 94L43 77L26 71L42 65Z" fill="#173452"/>
+        <path d="M359 221L363 237L380 241L363 247L358 264L354 248L337 242L353 237Z" fill="#456b9b"/>
+        <circle cx="372" cy="67" r="4" fill="#456b9b"/><circle cx="32" cy="201" r="3" fill="#456b9b"/>
+        <path d="M168 259H243M185 267H226" stroke="#688bb5"/>
+    </g>
+</svg>

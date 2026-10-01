@@ -31,12 +31,12 @@ test("all routes share navigation, local motion assets and semantic page landmar
     assert.deepEqual(tags(html, "script").map((tag) => tag.src.split("?")[0]), [
       "/site-navigation.js",
       ...(!page ? ["/home-intro.js"] : []),
-      "/script.js", "/site-sound.js", "/site.js", "/button-sparks.js", "/assets/vendor/lenis-1.3.26.min.js", "/site-motion.js",
+      "/script.js", "/site-sound.js", "/site-music.js", "/site.js", "/button-sparks.js", "/assets/vendor/lenis-1.3.26.min.js", "/site-motion.js",
     ], `${page}: common scripts execute in dependency order`);
     for (const script of tags(html, "script").filter((tag) => !["/site-navigation.js", "/home-intro.js"].includes(tag.src.split("?")[0]))) assert.ok("defer" in script);
     assert.ok(html.indexOf('/site-navigation.js') < html.indexOf('</head>'), "entry initialization precedes first paint");
     const styles = tags(html, "link").filter((tag) => tag.rel === "stylesheet").map((tag) => tag.href);
-    assert.deepEqual(styles, page ? ["/site.css?v=lunarion-blue-20260930", "/pages.css?v=lunarion-blue-20260930"] : ["/site.css?v=lunarion-blue-20260930"]);
+    assert.deepEqual(styles, [...(page ? ["/site.css?v=jamie-bodoni-v15", "/pages.css?v=jamie-bodoni-v15"] : ["/site.css?v=jamie-bodoni-v15"]), "/newspaper.css?v=jamie-journal-v18", "/music.css?v=lofi-v1"]);
     assert.ok(!html.includes("/homepage") && !html.includes('href="/styles.css"'), "no obsolete styling/motion references");
     const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
     assert.equal(ids.length, new Set(ids).size, `${page}: unique IDs`);
@@ -47,6 +47,28 @@ test("all routes share navigation, local motion assets and semantic page landmar
       assert.equal(image.alt, "");
       assert.ok(Number(image.width) > 0 && Number(image.height) > 0);
     }
+  }
+});
+
+test("every route preloads the local Bodoni display face without simulated strokes", () => {
+  for (const page of pages) {
+    const preloads = tags(htmlFor(page), "link").filter((tag) => tag.rel === "preload" && tag.as === "font");
+    assert.ok(preloads.some((tag) => tag.href === "/assets/fonts/bodoni-moda-latin-600.woff2"));
+    assert.ok(preloads.every((tag) => !tag.href.includes("instrument-serif")));
+    for (const tag of preloads) assert.ok(fs.existsSync(path.join(root, tag.href.slice(1))));
+  }
+  const css = read("site.css");
+  assert.match(css, /--display-font:\s*"Bodoni Moda"/);
+  assert.match(css, /--display-weight:\s*600/);
+  assert.match(css, /bodoni-moda-latin-600-italic\.woff2/);
+  assert.doesNotMatch(css, /ZT Bros Oskon|fonts\.cdnfonts\.com|text-stroke/);
+  assert.ok(fs.existsSync(path.join(root, "assets/fonts/Bodoni-Moda-OFL.txt")));
+});
+
+test("interior folios share the understated portfolio title", () => {
+  for (const page of pages.filter(Boolean)) {
+    assert.match(htmlFor(page), /class="folio-heading"><a href="\/">A few things<\/a>/);
+    assert.doesNotMatch(htmlFor(page), /The Jamie|<em>Journal<\/em>/);
   }
 });
 
@@ -114,10 +136,10 @@ test("About has an editorial cover and does not reuse the homepage hero image", 
   assert.match(about, /class="about-perspective-mark"/);
   assert.ok(!about.includes('src="/assets/spark-field.webp"'));
   assert.ok(!about.includes('as="image"'));
-  assert.ok(about.includes("I am Jamie, a student and developer"));
+  assert.ok(about.includes("I am Jamie, a college student studying Software Engineering with a minor in AI and machine learning."));
   assert.ok(about.includes("My original site, Whale, presented a portfolio through a classic desktop layout."));
   assert.ok(!about.includes("security researchers"));
-  assert.ok(about.includes("Continued development"));
+  assert.ok(about.includes("Looking ahead"));
   assert.match(about, /href="\/contact\/">Start a conversation/);
 });
 
@@ -136,7 +158,7 @@ test("all local page links, fragments and asset references resolve", () => {
       }
     }
   }
-  for (const stylesheet of ["site.css", "pages.css"]) {
+  for (const stylesheet of ["site.css", "pages.css", "newspaper.css", "music.css"]) {
     for (const [, value] of read(stylesheet).matchAll(/url\(["']?(\/[^"')]+)["']?\)/g)) {
       assert.ok(fs.existsSync(path.join(root, value)), `${stylesheet}: missing ${value}`);
     }
@@ -188,11 +210,11 @@ test("retired demo endpoint never sends email, even with old provider credential
   }
 });
 
-test("every page identifies Lunarion in its metadata and uses the new preview image", () => {
+test("every page identifies Jamie in its metadata and uses the preview image", () => {
   for (const page of pages) {
     const html = htmlFor(page);
-    assert.match(html, /<title>[^<]*Lunarion/);
-    assert.match(html, /property="og:site_name" content="Jamie | Lunarion"/);
+    assert.match(html, /<title>[^<]*Jamie/);
+    assert.match(html, /property="og:site_name" content="Jamie"/);
     assert.match(html, /https:\/\/lunarion31.dev\/assets\/lunarion-share-blue.jpg/);
     assert.doesNotMatch(html, /Request a demo|Sparking your education|contact@sparkforschools.com/);
   }

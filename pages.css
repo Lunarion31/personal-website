@@ -208,6 +208,28 @@
   .privacy-callout p { font-size: 13px; }
 }
 
+/* Personal profile pages use a quieter, notebook-like system rather than the
+   landing-page product layout. */
+.inner-page { background: linear-gradient(145deg, #f7faff, #e8f1ff); }
+.inner-page .site-header { background: #f7faffdb; }
+.inner-page main { max-width: 1540px; margin: auto; }
+.about-cover, .contact-section { border: 0; padding-top: clamp(88px, 12vw, 170px); }
+.about-cover { position: relative; overflow: hidden; }
+.about-cover::before { content: "J"; position: absolute; right: 3vw; bottom: -18vw; font: 52vw/.7 var(--display-font); color: #d4e4fc; pointer-events: none; }
+.about-cover-layout, .contact-layout { position: relative; z-index: 1; }
+.about-cover-meta, .contact-section .section-meta { color: #52729f; }
+.about-cover h1, .contact-info h1 { font-size: clamp(72px, 10vw, 160px); line-height: .85; }
+.about-cover-aside { border-left: 1px solid #b7cae5; padding-left: 36px; }
+.about-origin { background: #dce9ff; padding: clamp(64px, 9vw, 130px) var(--gutter); border: 0; }
+.about-principles { background: #0a1e3b; }
+.about-mission { background: #82d7fa; }
+.contact-links-panel { border: 0; border-radius: 22px; box-shadow: 0 25px 70px #10284a18; }
+.privacy-hero { background: #0b1e3a; color: #f2f7ff; border: 0; padding-top: clamp(70px, 10vw, 150px); }
+.privacy-hero .privacy-meta { border-color: #355678; }.privacy-hero .legal-stamp { border-color: #7593ba; }
+.privacy-content { max-width: none; background: #f7faff; }
+.policy-document { max-width: 760px; }.policy-document > section { border-color: #cfdaed; }
+.policy-nav a:hover, .policy-nav a[aria-current="location"] { background: #e1edff; }
+
 @media (max-width: 359px) {
   .inner-page h1 { font-size: 56px; }
   .inner-hero-art { min-height: 280px; }
@@ -234,10 +256,10 @@
 .about-perspective-mark .perspective-ray { stroke: #547dbd; stroke-width: 7; }
 .about-perspective-mark circle { fill: var(--yellow); }
 .about-aside-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; padding-top: 18px; border-top: 1px solid var(--line); }
-.about-aside-statement { font-family: var(--display-font); font-style: italic; font-size: clamp(30px, 3vw, 46px); line-height: 1.15; margin-top: 16px; max-width: 310px; }
+.about-aside-statement { font-family: var(--display-font); font-weight: var(--display-weight); font-style: italic; font-size: clamp(30px, 3vw, 46px); line-height: 1.15; margin-top: 16px; max-width: 310px; }
 .about-page .about-origin { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 8%; }
 .about-page .about-origin-label { flex-direction: column; gap: 22px; }
-.about-page .about-origin-label > span { font-size: 94px; color: #6881a3; }
+.about-page .about-origin-label > span { font-size: 94px; font-weight: var(--display-weight); color: #6881a3; }
 .about-page .about-origin-copy { padding-top: 0; }
 .about-page .about-principles { background: #dfe9f7; color: var(--ink); }
 .about-page .about-principles-head { grid-template-columns: 1.3fr 1fr; }
@@ -245,8 +267,8 @@
 .about-page .about-principles-grid { display: block; border-top-color: #b2c5df; }
 .about-page .about-principles-grid article { display: grid; grid-template-columns: 66px minmax(170px, .65fr) minmax(0, 1fr); gap: 40px; align-items: baseline; padding: 32px 0; }
 .about-page .about-principles-grid article + article { border-left: 0; border-top: 1px solid #b2c5df; padding-left: 0; }
-.about-page .about-principles-grid article > span { font-family: var(--display-font); font-size: 44px; line-height: 1; color: var(--muted); }
-.about-page .about-principles-grid h3 { font-family: var(--display-font); font-size: 39px; margin-top: 0; }
+.about-page .about-principles-grid article > span { font-family: var(--display-font); font-weight: var(--display-weight); font-size: 44px; line-height: 1; color: var(--muted); }
+.about-page .about-principles-grid h3 { font-family: var(--display-font); font-weight: var(--display-weight); font-size: 39px; margin-top: 0; }
 .about-page .about-principles-grid p { color: var(--muted); margin-top: 0; font-size: 15px; max-width: 520px; }
 .about-page .about-principles-grid article:last-child { padding-bottom: 0; }
 .about-page .about-mission { background: var(--ink); color: var(--paper); }
@@ -310,4 +332,50 @@
   .policy-document h2 { break-after: avoid; font-size: 15pt; }
   .policy-document > section { padding-top: 20px; padding-bottom: 20px; }
   .policy-document p, .policy-document li { orphans: 3; widows: 3; }
+}
+
+/* Editorial interior pages: treat each route as a spread, not an app screen. */
+.inner-page { background: #f2f7ff; }
+.inner-page .site-header { background: rgb(242 247 255 / .9); }
+.inner-page .page-section { padding-top: clamp(78px, 10vw, 150px); padding-bottom: clamp(78px, 10vw, 150px); }
+.about-cover, .contact-section { padding-top: 34px; }
+.about-cover { background: #9dbdff; }
+.about-cover::before { content: "J"; color: #b9d1f4; font-size: 63vw; bottom: -23vw; }
+.about-cover-meta { font-family: var(--label-font); border-color: #244873; }
+.about-cover h1, .contact-info h1 { font-size: clamp(64px, 7.4vw, 124px); line-height: 1.02; letter-spacing: -.045em; }
+.contact-info h1 { font-size: clamp(56px, 5.7vw, 96px); }
+.about-cover-aside { border-left: 1px solid #244873; }
+.about-aside-statement { font-style: normal; line-height: 1.08; letter-spacing: -.035em; }
+.about-page .about-origin { background: #f2f7ff; border-top: 1px solid var(--ink); }
+.about-page .about-origin-label > span { color: #315f9f; }
+.about-page .about-origin-copy h2, .about-page .about-principles-grid h3 { letter-spacing: -.035em; line-height: 1.08; }
+.about-page .about-principles-head h2 { line-height: 1.08; letter-spacing: -.035em; }
+.about-page .about-principles { background: #112a50; color: #eff6ff; }
+.about-page .about-principles-head > p, .about-page .about-principles-grid p { color: #c2d5ef; }
+.about-page .about-principles-grid { border-color: #6381a9; }
+.about-page .about-principles-grid article + article { border-color: #6381a9; }
+.about-page .about-principles-grid article > span { color: #a9ceff; }
+.about-page .about-mission { background: #c5dcff; color: var(--ink); }
+.about-page .about-mission .section-meta { border-color: #7596bf; }
+.about-page .about-mission h2 > span { color: #315f9f; }
+.about-page .about-mission > div:not(.section-meta) > p { color: var(--muted); }
+.contact-section { background: #9dbdff; }
+.contact-layout { padding-top: 0; }
+.contact-form { padding: 0; background: transparent; border: 0; }
+.form-grid { border-top: 1px solid var(--ink); }
+.form-grid label { padding-top: 17px; font-family: var(--label-font); font-size: 12px; letter-spacing: .08em; }
+.contact-form input, .contact-form select, .contact-form textarea { border: 0; border-bottom: 1px solid #426692; background: transparent; padding-left: 0; font-family: Manrope, Arial, sans-serif; }
+.contact-form .button { width: auto; padding-left: 0; padding-right: 0; background: transparent; color: var(--ink); border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; }
+.contact-form .button:hover { padding-left: 12px; background: transparent; }
+.contact-links-panel { border-radius: 0; box-shadow: none; background: #f2f7ff; }
+.privacy-hero { background: #9dbdff; color: var(--ink); }
+.privacy-hero .privacy-meta, .privacy-hero .legal-stamp { border-color: #426692; }
+.privacy-content { background: #f2f7ff; }
+.policy-document h2 { font-family: var(--display-font); font-size: clamp(32px, 3.6vw, 52px); font-weight: var(--display-weight); line-height: 1.1; letter-spacing: -.035em; }
+.policy-nav > p, .policy-nav a, .legal-stamp { font-family: var(--label-font); }
+
+@media (max-width: 850px) {
+  .about-cover h1 { font-size: clamp(48px, 12.5vw, 90px); }
+  .contact-info h1 { font-size: clamp(42px, 10.5vw, 78px); }
+  .about-cover-aside { border-left: 0; border-top: 1px solid #244873; padding: 24px 0 0; }
 }

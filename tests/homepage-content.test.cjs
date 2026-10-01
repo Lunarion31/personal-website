@@ -12,6 +12,25 @@ const section = (id) => {
   return match[0];
 };
 
+test("the newspaper front page keeps the personal identity and real section links", () => {
+  assert.match(html, /class="newspaper-masthead"/);
+  assert.match(html, /class="masthead-title"/);
+  assert.match(html, /class="newspaper-masthead" aria-label="A few things — a personal portfolio by Jamie"/);
+  assert.match(html, /class="masthead-title"><span>A few things<\/span>/);
+  assert.match(html, /class="home-intro-title"><span>A few things<\/span><\/div>/);
+  assert.match(html, /<title>A few things — Jamie<\/title>/);
+  assert.match(html, /property="og:title" content="A few things — Jamie"/);
+  assert.match(html, /name="twitter:title" content="A few things — Jamie"/);
+  assert.doesNotMatch(textOnly(html), /The Jamie Journal/);
+  assert.match(html, /<h1 id="hero-title" aria-label="Hello, I’m Jamie\."/);
+  const notes = html.match(/<aside class="front-notes"[\s\S]*?<\/aside>/)[0];
+  assert.match(notes, /aria-label="In this edition"/);
+  for (const destination of ["#work", "/about/", "/contact/"]) {
+    assert.ok(notes.includes(`href="${destination}"`));
+  }
+  assert.match(html, /src="\/assets\/lunar-orbit\.svg\?v=journal-v16"/);
+});
+
 test("expanded homepage sections have descriptive headings and shared reveal hooks", () => {
   for (const [id, hooks] of [
     ["approach", ["district-heading", "district-item"]],

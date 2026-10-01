@@ -4,7 +4,6 @@
     <pattern id="shade" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0L4 4" stroke="#10233f" stroke-width=".7"/></pattern>
     <clipPath id="moon"><circle cx="397" cy="454" r="205"/></clipPath>
   </defs>
-  <rect width="800" height="1000" fill="#9dbdff"/>
   <g stroke="#10233f" opacity=".22">
     <path d="M50 120H750M50 830H750M400 80V900"/>
     <circle cx="397" cy="454" r="317" stroke-dasharray="2 9"/>

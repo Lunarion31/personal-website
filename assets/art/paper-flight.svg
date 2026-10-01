@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380" fill="none">
+    <defs>
+        <pattern id="folds" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)"><path d="M0 0V6" stroke="#173452" stroke-width=".7"/></pattern>
+    </defs>
+    <circle cx="329" cy="162" r="122" fill="#c3d7f0" opacity=".5"/>
+    <g stroke="#173452" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M27 277C97 321 168 298 157 259C148 227 91 245 116 279C141 313 235 264 251 199" stroke="#6385ae" stroke-width="1.4" stroke-dasharray="3 8"/>
+        <g transform="rotate(-7 302 132)">
+            <path d="M152 99L492 45L345 263L303 163Z" fill="#eef3f9" stroke-width="2"/>
+            <path d="M152 99L303 163L492 45L261 128Z" fill="#b6cde9"/>
+            <path d="M303 163L345 263L492 45Z" fill="url(#folds)"/>
+            <path d="M261 128L274 223L303 163" fill="#173452"/>
+            <path d="M274 223L312 189"/>
+            <path d="M176 104L252 136M316 163L469 66M349 242L472 68" stroke-width=".7"/>
+        </g>
+        <g transform="rotate(7 349 284)">
+            <path d="M228 230L380 202L518 259L365 320Z" fill="#eef3f9" stroke-width="1.6"/>
+            <path d="M228 230L231 292L365 351L518 296L518 259L365 320Z" fill="#c4d8f0"/>
+            <path d="M231 292L352 258L518 296M228 230L365 290L518 259"/>
+            <path d="M252 250L365 297L493 270M250 258L365 305L482 278" stroke-width=".6"/>
+            <path d="M276 224L289 153L424 183L407 258" fill="#eef3f9"/>
+            <path d="M298 176L404 198M295 189L401 211M293 202L398 224M290 215L361 230" stroke="#688bb5"/>
+            <path d="M236 292L365 344L506 296"/>
+        </g>
+        <path d="M118 91L123 109L141 113L124 119L119 137L113 120L95 115L112 109Z" fill="#173452"/>
+        <path d="M533 187L536 199L549 203L537 207L532 219L529 207L517 202L529 199Z" fill="#456b9b"/>
+        <path d="M73 185V202M65 193H81M414 25V39M407 32H421" stroke="#6385ae"/>
+        <path d="M450 121L499 109M470 144L529 141M458 167L491 179" stroke="#6385ae"/>
+        <circle cx="92" cy="326" r="3" fill="#456b9b"/><circle cx="543" cy="71" r="3" fill="#456b9b"/>
+    </g>
+</svg>

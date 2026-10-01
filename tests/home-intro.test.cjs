@@ -7,20 +7,15 @@ const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "../home-intro.js"), "utf8");
 const soundSource = fs.readFileSync(path.join(__dirname, "../site-sound.js"), "utf8");
 
-test("intro has sixteen independent rays that launch outward as the backdrop fades", () => {
+test("intro plots a connected constellation before the screen folds away", () => {
     const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
     const css = fs.readFileSync(path.join(__dirname, "../site.css"), "utf8");
-    const rays = [...html.matchAll(/class="home-intro-ray" style="--ray-x: ([\d.\-]+); --ray-y: ([\d.\-]+)"/g)];
-    assert.equal(rays.length, 16);
-    const directions = new Set();
-    for (const [, x, y] of rays) {
-        assert.ok(Math.abs(Math.hypot(Number(x), Number(y)) - 1) < .001);
-        directions.add(`${x},${y}`);
-    }
-    assert.equal(directions.size, 16);
-    assert.match(css, /@keyframes spark-intro-ray[\s\S]*?145vmax/);
-    assert.match(css, /@keyframes spark-intro-backdrop\s*\{[^}]*opacity: 1;[^}]*\}[\s\S]*?opacity: 0;/);
-    assert.match(css, /\.home-intro-sun\s*\{[^}]*overflow: visible/);
+    assert.match(html, /class="home-intro-map"/);
+    assert.equal([...html.matchAll(/class="home-intro-ray"/g)].length, 4);
+    assert.ok([...html.matchAll(/<circle /g)].length >= 10);
+    assert.match(css, /@keyframes intro-plot/);
+    assert.match(css, /@keyframes spark-intro-curtain[\s\S]*?clip-path/);
+    assert.match(css, /\.home-intro-map\s*\{[^}]*overflow: visible/);
 });
 
 function harness({ reduced = false, hidden = false, hash = "", scrollY = 0,
