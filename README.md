@@ -17,17 +17,19 @@ They are lightweight, locally hosted SVGs with no external image dependencies.
 
 ## Optional background music
 
-The floating **Play lo-fi** control plays an original 50-second instrumental
-loop, independently of UI sounds. Music is off on a fresh tab; the MP3 is not
+The floating **Play lo-fi** control plays **Lofi Midnight Club** by Alex Morgan
+from Pixabay (2:17), on repeat and independently of UI sounds. Music is off on a fresh tab; the MP3 is not
 preloaded. Playback pauses when the page is hidden and fades when switched off.
 Volume and playback position are remembered in session storage for this tab.
 Between page loads it resumes from that position when the browser permits;
 if autoplay is blocked, press **Resume lo-fi**. Browsers that reserve volume
 for hardware controls use the device volume buttons instead of the slider.
 
-The included track is under `assets/audio/`; its reproducible composition is
-`scripts/render-lofi.py`. Regeneration needs NumPy and ffmpeg, but deployment
-has no new build dependencies or external music services.
+The track is self-hosted at `assets/audio/lofi-midnight-club.mp3` and only
+downloads after music is requested. Provenance and license details are in
+`assets/audio/README.md`, with a credit on the Site notes page. Deployment
+has no new build dependencies or external music services. The earlier original
+loop and its renderer are retained as unused alternatives.
 
 ## Local preview
 
