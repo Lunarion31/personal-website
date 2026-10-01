@@ -172,8 +172,44 @@ main { max-width: 1560px; margin-inline: auto; }
 .spark-home-intro .home-intro { background: var(--paper); color: var(--ink); }
 .spark-home-intro .home-intro::before { background: radial-gradient(circle at 50% 45%, #d1e0f3 0, var(--paper) 65%); }
 .home-intro-noise { background-image: radial-gradient(#315a85 1px, transparent 1px); opacity: .15; }
-.home-intro-map { stroke: #698bae; opacity: .3; }
+.home-intro-map { stroke: #698bae; opacity: .62; }
+.home-intro-map .home-intro-ray { opacity: .5; }
 .home-intro-map circle { fill: #315a85; }
+.home-intro-map .home-intro-ray[pathLength] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: intro-plot 850ms var(--plot-delay, 0ms) cubic-bezier(.2, .8, .3, 1) both;
+}
+.home-intro-node { animation: intro-star-appear 300ms var(--node-delay, 0ms) ease-out both; }
+.home-intro-map .home-intro-node-core { fill: #24476f; animation: none; }
+.home-intro-map .home-intro-node-halo {
+  fill: #729fd5;
+  stroke: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: intro-star-halo var(--sparkle-duration, 900ms) var(--sparkle-delay, 180ms) ease-in-out 2 both;
+}
+.home-intro-node-glint {
+  fill: #456b9b;
+  stroke: #edf5ff;
+  stroke-width: .65;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: intro-star-sparkle var(--sparkle-duration, 900ms) var(--sparkle-delay, 180ms) ease-in-out 2 both;
+}
+@keyframes intro-star-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes intro-star-halo {
+  0%, 100% { opacity: .05; transform: scale(.65); }
+  45% { opacity: .28; transform: scale(1.25); }
+}
+@keyframes intro-star-sparkle {
+  0%, 100% { opacity: .05; transform: scale(.25) rotate(-12deg); }
+  45% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-intro-map .home-intro-ray[pathLength], .home-intro-node,
+  .home-intro-map .home-intro-node-halo, .home-intro-node-glint { animation: none; }
+}
 .home-intro-title { font-size: clamp(66px, 10vw, 154px); }
 .home-intro-title > span:last-child { color: #456b9b; margin-left: .2em; }
 .home-intro-title > span:only-child { color: var(--ink); font-style: normal; margin-left: 0; animation-delay: 0ms; }

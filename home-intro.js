@@ -17,6 +17,79 @@
   let headerTimeout = null;
   let soundStarted = false;
   let introContext = null;
+  const randomizeConstellation = () => {
+    const map = document.querySelector(".home-intro-map");
+    if (!map) return;
+    // Jitter separated cells while leaving space around the introduction's title.
+    const cells = [
+      [100, 140], [270, 95], [445, 145], [660, 85], [795, 170],
+      [90, 310], [215, 230], [735, 325], [840, 365],
+      [100, 480], [275, 455], [435, 515], [640, 445], [805, 510],
+    ];
+    for (let i = cells.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cells[i], cells[j]] = [cells[j], cells[i]];
+    }
+    const points = cells.slice(0, 11 + Math.floor(Math.random() * 4)).map(([x, y]) => ({
+      x: Math.round(x + (Math.random() - 0.5) * 64),
+      y: Math.round(y + (Math.random() - 0.5) * 54),
+    }));
+    const distance = (a, b) => (points[a].x - points[b].x) ** 2 + (points[a].y - points[b].y) ** 2;
+    const edges = [];
+    const connected = new Set([0]);
+    // A minimum-length backbone keeps every star connected without a tangled web.
+    while (connected.size < points.length) {
+      let nearest = null;
+      for (const a of connected) {
+        for (let b = 0; b < points.length; b++) {
+          if (connected.has(b)) continue;
+          const length = distance(a, b);
+          if (!nearest || length < nearest.length) nearest = { a, b, length };
+        }
+      }
+      edges.push([nearest.a, nearest.b]);
+      connected.add(nearest.b);
+    }
+    const extras = [];
+    for (let a = 0; a < points.length; a++) {
+      for (let b = a + 1; b < points.length; b++) {
+        if (distance(a, b) < 260 ** 2 && !edges.some(([from, to]) =>
+          (from === a && to === b) || (from === b && to === a))) extras.push([a, b]);
+      }
+    }
+    for (let i = extras.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [extras[i], extras[j]] = [extras[j], extras[i]];
+    }
+    edges.push(...extras.slice(0, 2 + Math.floor(Math.random() * 3)));
+    const svg = (tag, attributes) => {
+      const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [name, value] of Object.entries(attributes)) element.setAttribute(name, String(value));
+      return element;
+    };
+    const paths = edges.map(([a, b], i) => svg("path", {
+      class: "home-intro-ray",
+      d: `M${points[a].x} ${points[a].y}L${points[b].x} ${points[b].y}`,
+      pathLength: 1,
+      style: `--plot-delay:${Math.round(i / edges.length * 200)}ms`,
+    }));
+    const nodes = points.map(({ x, y }) => {
+      const radius = (2.5 + Math.random() * 2).toFixed(1);
+      const flare = Math.round(13 + Math.random() * 8);
+      const node = svg("g", {
+        class: "home-intro-node",
+        transform: `translate(${x} ${y})`,
+        style: `--node-delay:${Math.round(Math.random() * 180)}ms;--sparkle-delay:${Math.round(80 + Math.random() * 260)}ms;--sparkle-duration:${Math.round(720 + Math.random() * 300)}ms`,
+      });
+      node.append(
+        svg("circle", { class: "home-intro-node-halo", r: flare }),
+        svg("path", { class: "home-intro-node-glint", d: `M0 ${-flare}Q1 -1 ${flare} 0Q1 1 0 ${flare}Q-1 1 ${-flare} 0Q-1 -1 0 ${-flare}Z` }),
+        svg("circle", { class: "home-intro-node-core", r: radius }),
+      );
+      return node;
+    });
+    map.replaceChildren(...paths, ...nodes);
+  };
   const closeAudio = (context) => {
     if (context && context.state !== "closed") context.close().catch(() => {});
   };
@@ -134,7 +207,10 @@
   });
   document.addEventListener("DOMContentLoaded", () => {
     // If CSS or animation events fail, never leave a curtain over the page.
-    if (root.classList.contains("spark-home-intro")) timeout = window.setTimeout(() => finish(), 2400);
+    if (root.classList.contains("spark-home-intro")) {
+      timeout = window.setTimeout(() => finish(), 2400);
+      randomizeConstellation();
+    }
     syncIntroSound();
   }, { once: true });
   const syncIntroSound = (enabled = window.sparkSound?.enabled) => {
@@ -158,6 +234,7 @@
     clearHeaderReveal();
     window.clearTimeout(timeout);
     root.classList.remove("spark-home-intro");
+    randomizeConstellation();
     void root.offsetWidth;
     root.classList.add("spark-home-intro");
     soundStarted = false;

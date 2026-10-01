@@ -24,8 +24,10 @@ of all possible third-party rights.
 
 The downloaded 256 kbps stereo MP3 was encoded at 128 kbps for a smaller
 optional download, retaining the full track without trimming or remixing.
-It is locally hosted, loops after playback completes, and is not preloaded.
-No streaming service is involved.
+It is locally hosted, loops after playback completes, and attempts audible
+autoplay. If blocked, it retries on a real click, tap, or key press. Playback
+may download the track on page load; there is no separate preload.
+No streaming service is involved. Explicit pauses are remembered for the tab.
 
 ## Retained alternative (not used by the site)
 

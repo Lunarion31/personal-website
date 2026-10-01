@@ -9,7 +9,7 @@ const source = fs.readFileSync(path.join(root, "site-music.js"), "utf8");
 const key = "jamie-background-music";
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); };
 
-function harness({ saved = null, mode = "running", hidden = false, storageBlocked = false, systemVolume = false } = {}) {
+function harness({ saved = { version: 2, enabled: false }, mode = "running", hidden = false, storageBlocked = false, systemVolume = false } = {}) {
     class Events {
         constructor() { this.listeners = new Map(); }
         addEventListener(type, callback) {
@@ -17,7 +17,7 @@ function harness({ saved = null, mode = "running", hidden = false, storageBlocke
             callbacks.push(callback);
             this.listeners.set(type, callbacks);
         }
-        dispatch(type, event = {}) { for (const callback of this.listeners.get(type) || []) callback(event); }
+        dispatch(type, event = {}) { for (const callback of this.listeners.get(type) || []) callback({ type, ...event }); }
     }
     const document = new Events();
     const window = new Events();
@@ -90,14 +90,18 @@ function harness({ saved = null, mode = "running", hidden = false, storageBlocke
     };
 }
 
-test("fresh tabs neither play nor write a music preference", () => {
-    const h = harness();
-    assert.equal(h.audio.playCalls, 0);
+test("fresh tabs attempt autoplay once at the existing volume", async () => {
+    const h = harness({ saved: null });
+    await flush();
+    assert.equal(h.audio.playCalls, 1);
     assert.equal(h.audio.volume, 0.3);
-    assert.equal(h.label.textContent, "Play lo-fi");
-    assert.equal(h.toggle.attributes["aria-pressed"], "false");
-    assert.equal(h.storage.size, 0);
-    assert.equal(h.volumeControl.hidden, true);
+    assert.equal(h.label.textContent, "Lo-fi on");
+    assert.equal(h.toggle.attributes["aria-pressed"], "true");
+    assert.equal(h.state().version, 2);
+    assert.equal(h.state().enabled, true);
+    assert.equal(h.volumeControl.hidden, false);
+    h.window.dispatch("pageshow");
+    assert.equal(h.audio.playCalls, 1);
 });
 
 test("an explicit click plays independently of UI sounds and saves the tab preference", async () => {
@@ -161,14 +165,14 @@ test("autoplay rejection shows a truthful resume control and retries on a tap", 
     assert.equal(h.audio.paused, true);
     assert.equal(h.label.textContent, "Resume lo-fi");
     assert.equal(h.toggle.attributes["aria-pressed"], "false");
-    assert.match(h.status.textContent, /Press play/);
+    assert.match(h.status.textContent, /press play/);
     h.audio.mode = "running";
     await h.click();
     assert.equal(h.audio.paused, false);
     assert.equal(h.audio.currentTime, 8);
 });
 
-test("hidden tabs pause immediately and resume only after an earlier opt-in", async () => {
+test("hidden tabs pause immediately and honor the tab's playback preference", async () => {
     const h = harness();
     h.document.hidden = true;
     h.document.dispatch("visibilitychange");
@@ -218,11 +222,13 @@ test("turning music back on interrupts an unfinished fade", async () => {
 
 test("storage restrictions do not break play or pause", async () => {
     const h = harness({ storageBlocked: true });
-    await h.click();
+    await flush();
     assert.equal(h.audio.paused, false);
     await h.click();
     h.advance(300);
     assert.equal(h.audio.paused, true);
+    await h.click();
+    assert.equal(h.audio.paused, false);
 });
 
 test("failed music requests show retry instead of claiming playback", async () => {
@@ -247,19 +253,126 @@ test("hardware-only volume browsers hide the nonfunctional slider", async () => 
     assert.equal(h.audio.paused, true);
 });
 
-test("time updates checkpoint playback without enabling it in a new tab", async () => {
+test("time updates checkpoint playback and explicit pauses survive page reloads", async () => {
     const h = harness();
     await h.click();
     h.audio.currentTime = 19;
     h.advance(2100);
     h.audio.dispatch("timeupdate");
     assert.equal(h.state().position, 19);
-    const fresh = harness();
-    assert.equal(fresh.audio.playCalls, 0);
+    const fresh = harness({ saved: null });
+    assert.equal(fresh.audio.playCalls, 1);
     await h.click();
     h.advance(300);
     const muted = harness({ saved: h.state() });
     assert.equal(muted.audio.playCalls, 0);
+});
+
+test("the old opt-in default is upgraded without losing saved volume or position", async () => {
+    const h = harness({ saved: { enabled: false, volume: 0.45, position: 21 } });
+    await flush();
+    assert.equal(h.audio.paused, false);
+    assert.equal(h.audio.currentTime, 21);
+    assert.equal(h.audio.volume, 0.45);
+    assert.equal(h.state().version, 2);
+    await h.click();
+    h.advance(300);
+    const reload = harness({ saved: h.state() });
+    await flush();
+    assert.equal(reload.audio.playCalls, 0);
+    assert.equal(reload.audio.currentTime, 0);
+    assert.equal(reload.audio.volume, 0.45);
+});
+
+test("blocked autoplay retries on a trusted click, tap, or key press exactly once", async () => {
+    for (const type of ["pointerdown", "touchend", "click", "keydown"]) {
+        const h = harness({ saved: null, mode: "blocked" });
+        await flush();
+        assert.equal(h.audio.playCalls, 1);
+        assert.equal(h.audio.paused, true);
+        assert.match(h.status.textContent, /blocked autoplay/);
+        h.audio.mode = "running";
+        h.document.dispatch(type, { isTrusted: true, key: "Enter" });
+        await flush();
+        assert.equal(h.audio.paused, false, type);
+        assert.equal(h.status.textContent, "");
+        h.document.dispatch(type, { isTrusted: true, key: "Enter" });
+        await flush();
+        assert.equal(h.audio.playCalls, 2, "ordinary interactions cannot restart music");
+    }
+});
+
+test("synthetic input, scrolling, shortcuts, and music controls do not trigger fallback autoplay", async () => {
+    const h = harness({ saved: null, mode: "blocked" });
+    await flush();
+    h.audio.mode = "running";
+    h.document.dispatch("pointerdown", { isTrusted: false });
+    h.document.dispatch("wheel", { isTrusted: true });
+    for (const key of ["Control", "Meta", "Alt", "Shift", "Escape"]) {
+        h.document.dispatch("keydown", { isTrusted: true, key });
+    }
+    for (const modifier of ["ctrlKey", "metaKey", "altKey"]) {
+        h.document.dispatch("keydown", { isTrusted: true, key: "k", [modifier]: true });
+    }
+    h.document.dispatch("pointerdown", { isTrusted: true, target: { closest: () => true } });
+    await flush();
+    assert.equal(h.audio.playCalls, 1);
+    await h.click();
+    assert.equal(h.audio.playCalls, 2);
+    assert.equal(h.audio.paused, false);
+});
+
+test("autoplay never overrides a manual pause after navigation or subsequent gestures", async () => {
+    const h = harness({ saved: null });
+    await flush();
+    await h.click();
+    h.advance(300);
+    h.document.dispatch("pointerdown", { isTrusted: true });
+    h.document.dispatch("keydown", { isTrusted: true, key: "Enter" });
+    h.window.dispatch("pageshow");
+    h.document.hidden = true;
+    h.document.dispatch("visibilitychange");
+    h.document.hidden = false;
+    h.document.dispatch("visibilitychange");
+    await flush();
+    assert.equal(h.audio.playCalls, 1);
+    assert.equal(h.audio.paused, true);
+    const next = harness({ saved: h.state() });
+    await flush();
+    next.document.dispatch("click", { isTrusted: true });
+    assert.equal(next.audio.playCalls, 0);
+});
+
+test("new hidden tabs defer autoplay until visible, and then use the normal gesture fallback", async () => {
+    const h = harness({ saved: null, hidden: true, mode: "blocked" });
+    await flush();
+    assert.equal(h.audio.playCalls, 0);
+    h.document.dispatch("click", { isTrusted: true });
+    assert.equal(h.audio.playCalls, 0);
+    h.document.hidden = false;
+    h.document.dispatch("visibilitychange");
+    await flush();
+    assert.equal(h.audio.playCalls, 1);
+    h.document.hidden = true;
+    h.document.dispatch("visibilitychange");
+    h.document.dispatch("pointerdown", { isTrusted: true });
+    assert.equal(h.audio.playCalls, 1);
+    h.audio.mode = "running";
+    h.document.hidden = false;
+    h.document.dispatch("visibilitychange");
+    await flush();
+    assert.equal(h.audio.paused, false);
+});
+
+test("a missing autoplay asset requires an explicit retry, not ordinary interaction", async () => {
+    const h = harness({ saved: null, mode: "failed" });
+    await flush();
+    assert.equal(h.label.textContent, "Retry lo-fi");
+    h.audio.mode = "running";
+    h.document.dispatch("click", { isTrusted: true });
+    assert.equal(h.audio.playCalls, 1);
+    await h.click();
+    assert.equal(h.audio.paused, false);
 });
 
 test("all routes include one accessible local player outside page transitions", () => {

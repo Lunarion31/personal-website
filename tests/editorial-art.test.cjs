@@ -32,7 +32,7 @@ test("every page uses sized, accessible editorial images without new scripts", (
             if (tag.includes('alt=""')) assert.match(tag, /aria-hidden="true"/);
             else assert.doesNotMatch(tag, /aria-hidden="true"/);
         }
-        assert.match(html, /newspaper\.css\?v=jamie-journal-v18/);
+        assert.match(html, /newspaper\.css\?v=jamie-journal-v19/);
     }
 });
 

@@ -36,7 +36,7 @@ test("all routes share navigation, local motion assets and semantic page landmar
     for (const script of tags(html, "script").filter((tag) => !["/site-navigation.js", "/home-intro.js"].includes(tag.src.split("?")[0]))) assert.ok("defer" in script);
     assert.ok(html.indexOf('/site-navigation.js') < html.indexOf('</head>'), "entry initialization precedes first paint");
     const styles = tags(html, "link").filter((tag) => tag.rel === "stylesheet").map((tag) => tag.href);
-    assert.deepEqual(styles, [...(page ? ["/site.css?v=jamie-bodoni-v15", "/pages.css?v=jamie-bodoni-v15"] : ["/site.css?v=jamie-bodoni-v15"]), "/newspaper.css?v=jamie-journal-v18", "/music.css?v=lofi-v1"]);
+    assert.deepEqual(styles, [...(page ? ["/site.css?v=jamie-bodoni-v15", "/pages.css?v=jamie-bodoni-v15"] : ["/site.css?v=jamie-bodoni-v15"]), "/newspaper.css?v=jamie-journal-v19", "/music.css?v=lofi-v1"]);
     assert.ok(!html.includes("/homepage") && !html.includes('href="/styles.css"'), "no obsolete styling/motion references");
     const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
     assert.equal(ids.length, new Set(ids).size, `${page}: unique IDs`);

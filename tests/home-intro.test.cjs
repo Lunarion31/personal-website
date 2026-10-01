@@ -20,7 +20,8 @@ test("intro plots a connected constellation before the screen folds away", () =>
 
 function harness({ reduced = false, hidden = false, hash = "", scrollY = 0,
     navigationType = "navigate", entering = false, introduced = false, storageBlocked = false,
-    soundEnabled = false, audioMode = "unsupported", animationTime = 0, savedPreference = null } = {}) {
+    soundEnabled = false, audioMode = "unsupported", animationTime = 0, savedPreference = null,
+    randomSeed = 1, missingMap = false } = {}) {
     class Events {
         constructor() { this.listeners = new Map(); }
         addEventListener(type, callback) {
@@ -37,13 +38,24 @@ function harness({ reduced = false, hidden = false, hash = "", scrollY = 0,
     }
     const classes = new Set(entering ? ["spark-page-entering"] : []);
     const document = new Events();
+    class SvgElement {
+        constructor(tag) { this.tag = tag; this.attributes = {}; this.children = []; this.replacements = 0; }
+        setAttribute(name, value) { this.attributes[name] = value; }
+        append(...children) { this.children.push(...children); }
+        replaceChildren(...children) { this.children = children; this.replacements++; }
+    }
+    const map = new SvgElement("svg");
+    document.createElementNS = (namespace, tag) => {
+        assert.equal(namespace, "http://www.w3.org/2000/svg");
+        return new SvgElement(tag);
+    };
     const soundButton = new Events();
     const soundAttributes = new Map();
     soundButton.setAttribute = (key, value) => soundAttributes.set(key, value);
     document.querySelector = (selector) => selector === ".home-intro-ray" ? {
         getAnimations: () => [{ animationName: "spark-intro-ray", currentTime: animationTime,
             effect: { getTiming: () => ({ duration: 1800 }) } }],
-    } : selector === ".site-sound-toggle" ? soundButton : null;
+    } : selector === ".site-sound-toggle" ? soundButton : selector === ".home-intro-map" && !missingMap ? map : null;
     document.hidden = hidden;
     document.documentElement = { scrollHeight: 3000, clientHeight: 800, classList: {
         add: (name) => classes.add(name), remove: (name) => classes.delete(name),
@@ -125,7 +137,13 @@ function harness({ reduced = false, hidden = false, hash = "", scrollY = 0,
     window.dispatchEvent = (event) => { completions.push(event); return window.dispatch(event.type, event); };
     class CustomEvent { constructor(type, options = {}) { this.type = type; this.detail = options.detail; } }
     class Element {}
-    const environment = vm.createContext({ window, document, CustomEvent, Element, Node: Element,
+    const randomMath = Object.create(Math);
+    let randomState = randomSeed;
+    randomMath.random = () => {
+        randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
+        return randomState / 4294967296;
+    };
+    const environment = vm.createContext({ window, document, CustomEvent, Element, Node: Element, Math: randomMath,
         HTMLSelectElement: Element, performance: { now: () => 1000 } });
     vm.runInContext(source, environment);
     vm.runInContext(soundSource, environment);
@@ -136,10 +154,129 @@ function harness({ reduced = false, hidden = false, hash = "", scrollY = 0,
         userGesture = false;
     };
     return { window, document, classes, timers, storage, preference, completions,
-        localStorage, soundButton, soundAttributes, audioContexts, tapSound };
+        localStorage, soundButton, soundAttributes, audioContexts, tapSound, map };
 }
 
 const flushAudio = () => new Promise((resolve) => setImmediate(resolve));
+
+test("random constellations stay bounded, separated, and connected across many layouts", () => {
+    const layouts = new Set();
+    const nodeCounts = new Set();
+    for (let randomSeed = 1; randomSeed <= 60; randomSeed++) {
+        const h = harness({ randomSeed });
+        assert.equal(h.map.replacements, 0, "waits for the SVG to be parsed");
+        h.document.dispatch("DOMContentLoaded");
+        const nodes = h.map.children.filter(element => element.tag === "g");
+        const paths = h.map.children.filter(element => element.tag === "path");
+        assert.ok(nodes.length >= 11 && nodes.length <= 14);
+        assert.ok(paths.length >= nodes.length - 1 && paths.length <= nodes.length + 3);
+        nodeCounts.add(nodes.length);
+        const positions = nodes.map(node => {
+            const [, x, y] = node.attributes.transform.match(/^translate\((\d+) (\d+)\)$/).map(Number);
+            assert.ok(x >= 50 && x <= 880 && y >= 50 && y <= 550);
+            assert.equal(node.attributes.class, "home-intro-node");
+            assert.equal(node.children[0].attributes.class, "home-intro-node-halo");
+            assert.equal(node.children[1].attributes.class, "home-intro-node-glint");
+            assert.equal(node.children[2].attributes.class, "home-intro-node-core");
+            assert.ok(Number(node.children[2].attributes.r) >= 2.5 && Number(node.children[2].attributes.r) <= 4.5);
+            assert.match(node.attributes.style, /--node-delay:\d+ms;--sparkle-delay:\d+ms;--sparkle-duration:\d+ms/);
+            return [x, y];
+        });
+        layouts.add(JSON.stringify(h.map.children));
+        const keys = positions.map(([x, y]) => `${x},${y}`);
+        const connections = new Map(keys.map(key => [key, []]));
+        const uniqueEdges = new Set();
+        for (const path of paths) {
+            assert.equal(path.attributes.class, "home-intro-ray");
+            assert.equal(path.attributes.pathLength, "1");
+            const [, x1, y1, x2, y2] = path.attributes.d.match(/^M(\d+) (\d+)L(\d+) (\d+)$/);
+            const a = `${x1},${y1}`;
+            const b = `${x2},${y2}`;
+            assert.ok(connections.has(a) && connections.has(b));
+            assert.notEqual(a, b);
+            const edgeKey = [a, b].sort().join("|");
+            assert.ok(!uniqueEdges.has(edgeKey));
+            uniqueEdges.add(edgeKey);
+            connections.get(a).push(b);
+            connections.get(b).push(a);
+        }
+        const visited = new Set();
+        const pending = [keys[0]];
+        while (pending.length) {
+            const key = pending.pop();
+            if (visited.has(key)) continue;
+            visited.add(key);
+            pending.push(...connections.get(key).filter(next => !visited.has(next)));
+        }
+        assert.equal(visited.size, nodes.length, "every node belongs to the same constellation");
+        for (let a = 0; a < positions.length; a++) {
+            for (let b = a + 1; b < positions.length; b++) {
+                assert.ok(Math.hypot(positions[a][0] - positions[b][0], positions[a][1] - positions[b][1]) > 40);
+            }
+        }
+        assert.equal(h.map.replacements, 1);
+        assert.equal(h.timers.size, 1, "sparkles use CSS, not additional frame loops or timers");
+    }
+    assert.equal(layouts.size, 60);
+    assert.ok(nodeCounts.size > 1, "the constellation changes size as well as position");
+});
+
+test("reloading and replaying the intro both produce a new constellation", () => {
+    const first = harness({ randomSeed: 8 });
+    first.document.dispatch("DOMContentLoaded");
+    const reload = harness({ randomSeed: 19, navigationType: "reload", introduced: true });
+    reload.document.dispatch("DOMContentLoaded");
+    assert.notEqual(JSON.stringify(first.map.children), JSON.stringify(reload.map.children));
+    const replay = harness({ randomSeed: 11, soundEnabled: true });
+    replay.document.dispatch("DOMContentLoaded");
+    const before = JSON.stringify(replay.map.children);
+    replay.document.dispatch("animationend", { animationName: "spark-intro-curtain" });
+    replay.window.dispatch("spark:home-intro-play");
+    assert.notEqual(JSON.stringify(replay.map.children), before);
+    assert.equal(replay.map.replacements, 2);
+    assert.ok(replay.classes.has("spark-home-intro"));
+});
+
+test("skipped, interrupted, and reduced-motion intros do not generate or replay stars", () => {
+    for (const options of [{ reduced: true }, { hidden: true }, { hash: "#questions" },
+        { entering: true }, { introduced: true }]) {
+        const h = harness(options);
+        h.document.dispatch("DOMContentLoaded");
+        assert.equal(h.map.replacements, 0);
+    }
+    const interrupted = harness();
+    interrupted.document.dispatch("wheel");
+    interrupted.document.dispatch("DOMContentLoaded");
+    assert.equal(interrupted.map.replacements, 0);
+    const changed = harness({ soundEnabled: true });
+    changed.document.dispatch("DOMContentLoaded");
+    changed.preference.matches = true;
+    changed.preference.dispatch("change");
+    changed.window.dispatch("spark:home-intro-play");
+    assert.equal(changed.map.replacements, 1);
+    assert.ok(!changed.classes.has("spark-home-intro"));
+    const missing = harness({ missingMap: true });
+    missing.document.dispatch("DOMContentLoaded");
+    missing.document.dispatch("animationend", { animationName: "spark-intro-curtain" });
+    assert.ok(!missing.classes.has("spark-home-intro"));
+});
+
+test("staggered star sparkles are finite and cannot finish or extend the curtain", () => {
+    const h = harness();
+    h.document.dispatch("DOMContentLoaded");
+    const timing = h.map.children.filter(element => element.tag === "g").map(node => node.attributes.style);
+    assert.equal(new Set(timing).size, timing.length);
+    for (const animationName of ["intro-star-appear", "intro-star-halo", "intro-star-sparkle"]) {
+        h.document.dispatch("animationend", { animationName });
+        assert.ok(h.classes.has("spark-home-intro"));
+    }
+    const css = fs.readFileSync(path.join(__dirname, "../newspaper.css"), "utf8");
+    assert.match(css, /@keyframes intro-star-sparkle/);
+    assert.match(css, /intro-star-sparkle[^;]*ease-in-out 2 both/);
+    assert.match(css, /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\.home-intro-node-glint \{ animation: none; \}/);
+    h.document.dispatch("animationend", { animationName: "spark-intro-curtain" });
+    assert.ok(!h.classes.has("spark-home-intro"));
+});
 
 test("a fresh homepage visit starts the decorative intro before first paint", () => {
     const h = harness();

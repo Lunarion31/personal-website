@@ -9,7 +9,7 @@
     const slider = volumeControl.querySelector("input");
     const status = player.querySelector(".site-music-status");
     const storageKey = "jamie-background-music";
-    let wanted = false;
+    let wanted = true;
     let playing = false;
     let starting = false;
     let failed = false;
@@ -19,11 +19,13 @@
     let fadeFrame = null;
     let lastSave = 0;
     let adjustableVolume = true;
+    let awaitingGesture = false;
 
     try {
         const saved = JSON.parse(window.sessionStorage.getItem(storageKey));
         if (saved) {
-            wanted = saved.enabled === true;
+            // Upgrade the old opt-in default, but keep explicit pauses made in autoplay mode.
+            if (saved.version === 2 && typeof saved.enabled === "boolean") wanted = saved.enabled;
             if (Number.isFinite(saved.volume)) volume = Math.max(0, Math.min(1, saved.volume));
             if (Number.isFinite(saved.position) && saved.position >= 0) resumePosition = saved.position;
         }
@@ -42,6 +44,7 @@
     const save = () => {
         try {
             window.sessionStorage.setItem(storageKey, JSON.stringify({
+                version: 2,
                 enabled: wanted,
                 volume,
                 position: audio.readyState > 0 && Number.isFinite(audio.currentTime) ? audio.currentTime : resumePosition,
@@ -66,6 +69,7 @@
     const pauseImmediately = () => {
         request++;
         starting = false;
+        awaitingGesture = false;
         cancelFade();
         audio.pause();
         playing = false;
@@ -78,6 +82,7 @@
         cancelFade();
         setVolume(volume);
         failed = false;
+        awaitingGesture = false;
         starting = true;
         status.textContent = "";
         update();
@@ -97,7 +102,8 @@
             starting = false;
             playing = false;
             if (error?.name === "NotAllowedError") {
-                status.textContent = "Your browser paused the music. Press play to resume it.";
+                awaitingGesture = true;
+                status.textContent = "Your browser blocked autoplay. Click, tap, or press a key to start the music, or press play.";
             } else {
                 wanted = false;
                 failed = true;
@@ -110,6 +116,7 @@
     const pauseGently = () => {
         request++;
         starting = false;
+        awaitingGesture = false;
         cancelFade();
         if (audio.paused || !adjustableVolume || document.hidden) {
             pauseImmediately();
@@ -146,6 +153,17 @@
             start();
         }
     });
+    const resumeOnGesture = (event) => {
+        if (!event.isTrusted || !awaitingGesture || !wanted || starting || document.hidden ||
+            event.target?.closest?.(".site-music-player")) return;
+        if (event.type === "keydown" && (event.ctrlKey || event.metaKey || event.altKey ||
+            ["Control", "Meta", "Alt", "Shift", "Escape"].includes(event.key))) return;
+        start();
+    };
+    // Real activation is needed for audible autoplay; wheel input alone cannot grant it.
+    for (const type of ["pointerdown", "touchend", "click", "keydown"]) {
+        document.addEventListener(type, resumeOnGesture, { passive: true });
+    }
     slider.addEventListener("input", () => {
         const value = Number(slider.value);
         if (!Number.isFinite(value)) return;
@@ -160,6 +178,7 @@
     });
     audio.addEventListener("playing", () => {
         if (!wanted || document.hidden) { audio.pause(); return; }
+        awaitingGesture = false;
         playing = true;
         update();
     });
