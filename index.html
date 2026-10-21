@@ -39,10 +39,15 @@
       </header>
       <div class="layout">
         <aside>
-          <nav aria-label="On this page">
+          <nav aria-label="On this page" class="section-nav">
             <h2>around here</h2>
-            <a href="#about" aria-current="page">about me</a>
+            <a href="#about" aria-current="location">about me</a>
+            <a href="#hobbies">hobbies</a>
+            <a href="#projects">projects</a>
+            <a href="#games">vidya games</a>
+            <a href="#setup">my setup</a>
             <a href="#buttons">buttons</a>
+            <span class="section-marker" aria-hidden="true"></span>
           </nav>
           <nav aria-label="Social links">
             <h2>elsewhere</h2>
@@ -55,6 +60,10 @@
           <p class="discord">discord<br /><span>@lunarion31</span></p>
           <section class="sidebar-widget" aria-labelledby="listening-title">
             <h2 id="listening-title">last listening to</h2>
+            <div class="album-row">
+              <img id="listening-art" width="64" height="64" alt="" hidden>
+              <span id="playing-indicator" class="playing-indicator" aria-label="Currently playing" hidden><i></i><i></i><i></i></span>
+            </div>
             <p class="listening-track" id="listening-track">
               <a href="https://www.last.fm/user/LunaClient"
                 >LunaClient on Last.fm</a
@@ -314,6 +323,10 @@
         <p class="widget-detail"><a href="https://open-meteo.com/">Weather by Open-Meteo</a></p>
       </section>
     </aside>
+    <div class="space-ribbon space-ribbon-top" aria-hidden="true"><div class="space-ribbon-track"><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span></div></div>
+    <div class="space-ribbon space-ribbon-bottom" aria-hidden="true"><div class="space-ribbon-track"><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span></div></div>
+    <script src="/modern-touches.js" defer></script>
+    <script src="/space-ribbons.js" defer></script>
     <script src="/sidebar-greebles.js" defer></script>
     <script src="/sidebar-weather.js" defer></script>
     <script src="/sparkle-trail.js" defer></script>

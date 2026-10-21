@@ -3,12 +3,25 @@
   const title = document.getElementById('listening-title');
   const track = document.getElementById('listening-track');
   const detail = document.getElementById('listening-detail');
+  const art = document.getElementById('listening-art');
+  const indicator = document.getElementById('playing-indicator');
+  art.addEventListener('error', () => { art.hidden = true; });
   async function listening() {
     try {
       if (!apiBase) throw new Error('not configured');
       const response = await fetch(apiBase + '/api/listening', {signal: AbortSignal.timeout(10000)});
       if (!response.ok) throw new Error('unavailable');
       const data = await response.json();
+      art.hidden = true;
+      indicator.hidden = !data.track?.nowPlaying;
+      if (data.track?.image) {
+        const image = new URL(data.track.image);
+        if (image.protocol === 'https:' && image.hostname === 'lastfm.freetls.fastly.net') {
+          art.alt = data.track.album ? `${data.track.album} album cover` : 'Current track artwork';
+          if (art.getAttribute('src') !== image.href) art.src = image.href;
+          art.hidden = false;
+        }
+      }
       title.textContent = data.track?.nowPlaying ? 'listening to now' : 'last listening to';
       track.replaceChildren();
       if (!data.track) { track.textContent = 'No recent tracks yet'; detail.textContent = 'LunaClient on Last.fm'; return; }
@@ -19,6 +32,8 @@
       track.append(link);
       detail.textContent = data.track.artist;
     } catch {
+      art.hidden = true;
+      indicator.hidden = true;
       title.textContent = 'last listening to';
       const link = document.createElement('a');
       link.href = 'https://www.last.fm/user/LunaClient';

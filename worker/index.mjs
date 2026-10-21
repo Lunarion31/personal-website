@@ -9,7 +9,7 @@ async function listening({env}) {
     if (!response.ok || data.error) throw new Error('Last.fm unavailable');
     const tracks = data.recenttracks?.track;
     const track = Array.isArray(tracks) ? tracks[0] : tracks;
-    return Response.json({track: track ? {name: track.name, artist: track.artist?.['#text'] || '', url: track.url, nowPlaying: track['@attr']?.nowplaying === 'true'} : null}, {headers});
+    return Response.json({track: track ? {name: track.name, artist: track.artist?.['#text'] || '', url: track.url, album: track.album?.['#text'] || '', image: [...(track.image || [])].reverse().find(image => image['#text'])?.['#text'] || null, nowPlaying: track['@attr']?.nowplaying === 'true'} : null}, {headers});
   } catch {
     return Response.json({error: 'unavailable'}, {status: 502, headers: {'Cache-Control': 'no-store'}});
   }
