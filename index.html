@@ -1,80 +1,211 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f2e8">
-  <meta name="description" content="Jamie, also known as Lunarion. Semifluent in computerspeak.">
-  <title>Lunarion — Jamie</title>
-  <link rel="icon" href="/assets/lunarion-mark.svg">
-  <link rel="stylesheet" href="/simple.css">
-</head>
-<body>
-  <a class="skip-link" href="#about">Skip to content</a>
-  <div class="site">
-    <header>
-      <a class="wordmark" href="/">lunarion<span aria-hidden="true"> ☾</span></a>
-      <p>I wasted 10MB of Cloudflare storage.</p>
-    </header>
-    <div class="layout">
-      <aside>
-        <nav aria-label="On this page">
-          <h2>around here</h2>
-          <a href="#about" aria-current="page">about me</a>
-          <a href="#buttons">buttons</a>
-        </nav>
-        <nav aria-label="Social links">
-          <h2>elsewhere</h2>
-          <a href="https://github.com/lunarion31">github ↗</a>
-          <a href="https://bsky.app/profile/lunarion31.bsky.social">bluesky ↗</a>
-          <a href="mailto:lunarion31@whale.lat">email ↗</a>
-        </nav>
-        <p class="discord">discord<br><span>@lunarion31</span></p>
-        <section class="sidebar-widget" aria-labelledby="listening-title">
-          <h2 id="listening-title">last listening to</h2>
-          <p class="listening-track" id="listening-track"><a href="https://www.last.fm/user/LunaClient">LunaClient on Last.fm</a></p>
-          <p class="widget-detail" id="listening-detail">A little music corner ♫</p>
-        </section>
-        <section class="sidebar-widget visitor-widget" aria-labelledby="visitor-title">
-          <h2 id="visitor-title">you’re visitor number</h2>
-          <p class="visitor-digits" aria-label="Visitor counter not connected yet">— — — — —</p>
-          <p class="widget-detail">A little counter for this corner of the web.</p>
-        </section>
-      </aside>
-      <main id="about">
-        <section aria-labelledby="hello">
-          <h1 id="hello">Hi, I’m Jamie.</h1>
-          <p class="tagline">Semifluent in computerspeak</p>
-          <p>hey, i'm <strong>Lunarion</strong>. This is my site!</p>
-          <p>I’m a software engineering major with a crippling addiction to computers</p>
-          <p class="note">Still settling in here. More about me soon.</p>
-        </section>
-        <section class="buttons-section" id="buttons" aria-labelledby="buttons-heading">
-          <h2 id="buttons-heading">a few little buttons</h2>
-          <p>Stuff for things I like.</p>
-          <div class="buttons" aria-label="88 by 31 web buttons">
-            <a class="custom-button" href="/" aria-label="Lumi — my homepage"><img src="/assets/lumi.png" width="88" height="31" alt="Lumi"></a>
-            <a class="custom-button" href="https://qwq.sh/"><img src="/assets/buttons/hazelcaffe.png" width="88" height="31" alt="Hazel’s website" loading="lazy"></a>
-            <span class="custom-button"><img src="/assets/buttons/css.png" width="88" height="31" alt="CSS is difficult" loading="lazy"></span>
-            <a class="custom-button" href="https://www.apple.com/os/macos/"><img src="/assets/buttons/macos.gif" width="88" height="31" alt="Made with Mac OS" loading="lazy"></a>
-            <a class="custom-button" href="https://www.vocaloid.com/"><img src="/assets/buttons/vocaloid.gif" width="88" height="31" alt="Vocaloid now!" loading="lazy"></a>
-            <a class="custom-button" href="https://en.wikipedia.org/wiki/Hatsune_Miku"><img src="/assets/buttons/miku.gif" width="88" height="31" alt="This site is Miku approved" loading="lazy"></a>
-            <a class="custom-button" href="https://store.steampowered.com/app/1761390/Hatsune_Miku_Project_DIVA_Mega_Mix/"><img src="/assets/buttons/diva.png" width="88" height="31" alt="Virtual Diva" loading="lazy"></a>
-            <a class="custom-button" href="https://github.com/"><img src="/assets/buttons/github.gif" width="88" height="31" alt="GitHub — social coding" loading="lazy"></a>
-            <a class="custom-button" href="https://xkcd.com/"><img src="/assets/buttons/xkcd.gif" width="88" height="31" alt="XKCD" loading="lazy"></a>
-            <span class="custom-button"><img src="/assets/buttons/affection.gif" width="88" height="31" alt="Made with affection" loading="lazy"></span>
-            <span class="custom-button"><img src="/assets/buttons/besteyes2.gif" width="88" height="31" alt="Best viewed with eyes" loading="lazy"></span>
-            <a class="custom-button" href="https://modarchive.org/"><img src="/assets/buttons/modarchive.gif" width="88" height="31" alt="The Mod Archive" loading="lazy"></a>
-            <a class="custom-button" href="https://bomberfish.github.io/N64Wasm"><img src="/assets/buttons/mariokart.gif" width="88" height="31" alt="Mario Kart" loading="lazy"></a>
-            <span class="custom-button"><img src="/assets/buttons/imac.gif" width="88" height="31" alt="I love iMac" loading="lazy"></span>
-          </div>
-        </section>
-      </main>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f2e8" />
+    <meta
+      name="description"
+      content="Jamie, also known as Lunarion. Semifluent in computerspeak."
+    />
+    <title>Lunarion — Jamie</title>
+    <link rel="icon" href="/assets/lunarion-mark.svg" />
+    <link rel="stylesheet" href="/simple.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#about">Skip to content</a>
+    <div class="site">
+      <header>
+        <a class="wordmark" href="/"
+          >lunarion<span aria-hidden="true"> ☾</span></a
+        >
+        <p>I wasted 10MB of Cloudflare storage.</p>
+      </header>
+      <div class="layout">
+        <aside>
+          <nav aria-label="On this page">
+            <h2>around here</h2>
+            <a href="#about" aria-current="page">about me</a>
+            <a href="#buttons">buttons</a>
+          </nav>
+          <nav aria-label="Social links">
+            <h2>elsewhere</h2>
+            <a href="https://github.com/lunarion31">github ↗</a>
+            <a href="https://bsky.app/profile/lunarion31.bsky.social"
+              >bluesky ↗</a
+            >
+            <a href="mailto:lunarion31@whale.lat">email ↗</a>
+          </nav>
+          <p class="discord">discord<br /><span>@lunarion31</span></p>
+          <section class="sidebar-widget" aria-labelledby="listening-title">
+            <h2 id="listening-title">last listening to</h2>
+            <p class="listening-track" id="listening-track">
+              <a href="https://www.last.fm/user/LunaClient"
+                >LunaClient on Last.fm</a
+              >
+            </p>
+            <p class="widget-detail" id="listening-detail">
+              A little music corner ♫
+            </p>
+          </section>
+          <section
+            class="sidebar-widget visitor-widget"
+            aria-labelledby="visitor-title"
+          >
+            <h2 id="visitor-title">you’re visitor number</h2>
+            <p
+              class="visitor-digits"
+              aria-label="Visitor counter not connected yet"
+            >
+              — — — — —
+            </p>
+            <p class="widget-detail">
+              A little counter for this corner of the web.
+            </p>
+          </section>
+        </aside>
+        <main id="about">
+          <section aria-labelledby="hello">
+            <h1 id="hello">Hi, I’m Jamie.</h1>
+            <p class="tagline">Semifluent in computerspeak</p>
+            <p>hey, i'm <strong>Lunarion</strong>. This is my site!</p>
+            <p>
+              I’m a software engineering major with a crippling addiction to
+              computers
+            </p>
+            <p class="note">Still settling in here. More about me soon.</p>
+          </section>
+          <section
+            class="buttons-section"
+            id="buttons"
+            aria-labelledby="buttons-heading"
+          >
+            <h2 id="buttons-heading">a few little buttons</h2>
+            <p>Stuff for things I like.</p>
+            <div class="buttons" aria-label="88 by 31 web buttons">
+              <a class="custom-button" href="/" aria-label="Lumi — my homepage"
+                ><img src="/assets/lumi.png" width="88" height="31" alt="Lumi"
+              /></a>
+              <a class="custom-button" href="https://qwq.sh/"
+                ><img
+                  src="/assets/buttons/hazelcaffe.png"
+                  width="88"
+                  height="31"
+                  alt="Hazel’s website"
+                  loading="lazy"
+              /></a>
+              <span class="custom-button"
+                ><img
+                  src="/assets/buttons/css.png"
+                  width="88"
+                  height="31"
+                  alt="CSS is difficult"
+                  loading="lazy"
+              /></span>
+              <a class="custom-button" href="https://www.apple.com/os/macos/"
+                ><img
+                  src="/assets/buttons/macos.gif"
+                  width="88"
+                  height="31"
+                  alt="Made with Mac OS"
+                  loading="lazy"
+              /></a>
+              <a class="custom-button" href="https://www.vocaloid.com/"
+                ><img
+                  src="/assets/buttons/vocaloid.gif"
+                  width="88"
+                  height="31"
+                  alt="Vocaloid now!"
+                  loading="lazy"
+              /></a>
+              <a
+                class="custom-button"
+                href="https://en.wikipedia.org/wiki/Hatsune_Miku"
+                ><img
+                  src="/assets/buttons/miku.gif"
+                  width="88"
+                  height="31"
+                  alt="This site is Miku approved"
+                  loading="lazy"
+              /></a>
+              <a
+                class="custom-button"
+                href="https://store.steampowered.com/app/1761390/Hatsune_Miku_Project_DIVA_Mega_Mix/"
+                ><img
+                  src="/assets/buttons/diva.png"
+                  width="88"
+                  height="31"
+                  alt="Virtual Diva"
+                  loading="lazy"
+              /></a>
+              <a class="custom-button" href="https://github.com/"
+                ><img
+                  src="/assets/buttons/github.gif"
+                  width="88"
+                  height="31"
+                  alt="GitHub — social coding"
+                  loading="lazy"
+              /></a>
+              <a class="custom-button" href="https://xkcd.com/"
+                ><img
+                  src="/assets/buttons/xkcd.gif"
+                  width="88"
+                  height="31"
+                  alt="XKCD"
+                  loading="lazy"
+              /></a>
+              <span class="custom-button"
+                ><img
+                  src="/assets/buttons/affection.gif"
+                  width="88"
+                  height="31"
+                  alt="Made with affection"
+                  loading="lazy"
+              /></span>
+              <span class="custom-button"
+                ><img
+                  src="/assets/buttons/besteyes2.gif"
+                  width="88"
+                  height="31"
+                  alt="Best viewed with eyes"
+                  loading="lazy"
+              /></span>
+              <a class="custom-button" href="https://modarchive.org/"
+                ><img
+                  src="/assets/buttons/modarchive.gif"
+                  width="88"
+                  height="31"
+                  alt="The Mod Archive"
+                  loading="lazy"
+              /></a>
+              <a
+                class="custom-button"
+                href="https://bomberfish.github.io/N64Wasm"
+                ><img
+                  src="/assets/buttons/mariokart.gif"
+                  width="88"
+                  height="31"
+                  alt="Mario Kart"
+                  loading="lazy"
+              /></a>
+              <span class="custom-button"
+                ><img
+                  src="/assets/buttons/imac.gif"
+                  width="88"
+                  height="31"
+                  alt="I love iMac"
+                  loading="lazy"
+              /></span>
+            </div>
+          </section>
+        </main>
+      </div>
+      <footer>
+        <span>© 2026 Jamie</span><span>Thanks for stopping by.</span>
+      </footer>
     </div>
-    <footer><span>© 2026 Jamie</span><span>Thanks for stopping by.</span></footer>
-  </div>
-  <script src="/sparkle-trail.js" defer></script>
-  <script src="/widget-config.js"></script>
-  <script src="/sidebar-widgets.js" defer></script>
-</body>
+    <script src="/sparkle-trail.js" defer></script>
+    <script src="/widget-config.js"></script>
+    <script src="/sidebar-widgets.js" defer></script>
+  </body>
 </html>
