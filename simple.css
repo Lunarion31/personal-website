@@ -6,6 +6,10 @@ a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 3
 a:hover { color: #3b1021; }
 a:focus-visible { outline: 2px solid var(--link); outline-offset: 5px; }
 .site { width: min(620px, calc(100% - 64px)); margin: 88px auto 40px; }
+.security-banner { position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 23px; padding: 10px 46px; overflow: hidden; background: #f2e5e3; color: #4d2024; font: 12px/1.5 Arial, Helvetica, sans-serif; text-align: center; }
+.security-banner::before, .security-banner::after { position: absolute; top: 0; bottom: 0; width: 30px; background: repeating-linear-gradient(135deg, #a51f35 0 5px, transparent 5px 10px); content: ""; opacity: .8; }
+.security-banner::before { left: 0; }
+.security-banner::after { right: 0; }
 header { padding-bottom: 25px; border-bottom: 1px solid var(--line); }
 .wordmark { color: var(--burgundy); font-size: 31px; letter-spacing: -1px; text-decoration: none; }
 .wordmark span { display: inline-block; margin-left: 6px; color: #8c8b6c; font-size: 27px; }
@@ -145,6 +149,7 @@ aside { padding-top: 52px; padding-bottom: 52px; }
 .skip-link:focus { top: 26px; z-index: 40; }
 @media (min-width: 1100px) { .right-sidebar { padding-top: 52px; padding-bottom: 52px; } }
 @media (max-width: 760px) { .layout > aside { padding-top: 0; padding-bottom: 18px; } .site { margin-top: 52px; } }
+@media (max-width: 540px) { .security-banner { align-items: flex-start; padding: 9px 23px; font-size: 11px; } .security-banner::before, .security-banner::after { width: 12px; } }
 @media (prefers-reduced-motion: reduce) { .space-ribbon-track { animation: none; } }
 
 .section-nav { position: relative; }
