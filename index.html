@@ -26,6 +26,7 @@
     <meta name="twitter:image" content="https://www.lunarion31.dev/assets/lunarion-share-cream.png" />
     <meta name="twitter:image:alt" content="Lunarion — Jamie. Semifluent in computerspeak, with a pixel-art Lumi button." />
     <link rel="icon" href="/assets/lunarion-mark.svg" />
+    <script>try { if (localStorage.getItem('lunarion-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
     <link rel="stylesheet" href="/simple.css" />
   </head>
   <body>
@@ -99,6 +100,7 @@
           <section class="sidebar-widget" aria-labelledby="switches-title">
             <h2 id="switches-title">little switches</h2>
             <button type="button" class="sparkle-switch" id="sparkle-switch" aria-pressed="true" hidden>✧ sparkles on</button>
+            <button type="button" class="sparkle-switch theme-switch" id="theme-switch" aria-pressed="false">☾ dark mode</button>
           </section>
         </aside>
         <main id="about">
@@ -331,6 +333,7 @@
     <script src="/modern-touches.js" defer></script>
     <script src="/space-ribbons.js" defer></script>
     <script src="/sidebar-greebles.js" defer></script>
+    <script src="/theme-toggle.js" defer></script>
     <script src="/sidebar-weather.js" defer></script>
     <script src="/sparkle-trail.js" defer></script>
     <script src="/widget-config.js"></script>
