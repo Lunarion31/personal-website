@@ -217,3 +217,9 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 @media (prefers-reduced-motion: reduce) {
   .section-enter, .wordmark span { animation: none; }
 }
+
+.language-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.language-list li { padding: 4px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--burgundy-soft); color: var(--burgundy); font: 13px/1.5 'Courier New', monospace; }
+@media (prefers-reduced-motion: no-preference) {
+  .language-list li { transition: background-color .3s ease, color .3s ease, border-color .3s ease; }
+}
