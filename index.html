@@ -79,6 +79,15 @@
               A little counter for this corner of the web.
             </p>
           </section>
+          <section class="sidebar-widget" aria-labelledby="clock-title">
+            <h2 id="clock-title">new york time</h2>
+            <time id="sidebar-clock" class="sidebar-clock">—:—</time>
+            <p class="widget-detail" id="sidebar-date"></p>
+          </section>
+          <section class="sidebar-widget" aria-labelledby="switches-title">
+            <h2 id="switches-title">little switches</h2>
+            <button type="button" class="sparkle-switch" id="sparkle-switch" aria-pressed="true" hidden>✧ sparkles on</button>
+          </section>
         </aside>
         <main id="about">
           <section aria-labelledby="hello">
@@ -121,9 +130,32 @@
               <li>Mini Motorways</li>
             </ul>
           </section>
-          <section class="about-section" id="later" aria-labelledby="later-title">
-            <h2 id="later-title">something else</h2>
-            <p class="section-placeholder">Saving this spot for later.</p>
+          <section class="about-section" id="setup" aria-labelledby="setup-title">
+            <h2 id="setup-title">my setup</h2>
+            <article class="setup-machine">
+              <h3>MacBook Pro</h3>
+              <dl class="setup-specs">
+                <dt>chip</dt><dd>Apple M5 Pro</dd>
+                <dt>memory</dt><dd>24 GB unified memory</dd>
+                <dt>display</dt><dd>Liquid Retina XDR · ProMotion up to 120 Hz</dd>
+                <dt>ports</dt><dd>3× Thunderbolt 5, HDMI, SDXC, MagSafe 3, headphone jack</dd>
+              </dl>
+            </article>
+            <article class="setup-machine">
+              <h3>Desktop</h3>
+              <dl class="setup-specs">
+                <dt>cpu</dt><dd>Intel Core i9-12900K · 16 cores</dd>
+                <dt>gpu</dt><dd>Gigabyte WINDFORCE OC RTX 4070 Ti · 12 GB</dd>
+                <dt>memory</dt><dd>32 GB G.Skill Ripjaws S5 · DDR5-6000 CL36</dd>
+                <dt>storage</dt><dd>Samsung 980 Pro · 2 TB NVMe SSD</dd>
+                <dt>case</dt><dd>Fractal Design North</dd>
+                <dt>os</dt><dd>Windows 11 Pro</dd>
+                <dt>board</dt><dd>Asus PRIME Z790-V WIFI</dd>
+                <dt>cooler</dt><dd>Noctua NH-U12A chromax.black</dd>
+                <dt>power</dt><dd>MSI MAG A750GL PCIE5 · 750 W · 80+ Gold</dd>
+                <dt>fan</dt><dd>Noctua P12 redux-1700 PWM · 120 mm</dd>
+              </dl>
+            </article>
           </section>
         </main>
       </div>
@@ -252,8 +284,41 @@
             </div>
           </section>
     </div>
+    <aside class="right-sidebar" aria-label="Little extras">
+      <section class="greeble">
+        <h2>very important button</h2>
+        <button class="tiny-button" id="click-greeble" type="button">click me</button>
+        <p class="widget-detail"><output id="click-total">0</output> clicks. excellent work.</p>
+      </section>
+      <section class="greeble">
+        <h2><label for="pocket-note">pocket notepad</label></h2>
+        <textarea id="pocket-note" rows="5" maxlength="2000" placeholder="leave yourself a little note…" aria-describedby="note-status"></textarea>
+        <p class="widget-detail" id="note-status">Just for you, in this browser.</p>
+      </section>
+      <section class="greeble">
+        <h2>paint chips</h2>
+        <div class="paint-chips" aria-label="Site palette">
+          <span style="--chip:#f6f2e8" title="Cream #f6f2e8" role="img" aria-label="Cream"></span>
+          <span style="--chip:#947259" title="Brown #947259" role="img" aria-label="Brown"></span>
+          <span style="--chip:#accddd" title="Pastel blue #accddd" role="img" aria-label="Pastel blue"></span>
+          <span style="--chip:#5c1933" title="Deep burgundy #5c1933" role="img" aria-label="Deep burgundy"></span>
+        </div>
+      </section>
+      <section class="greeble">
+        <h2>tiny forecast</h2>
+        <p class="widget-detail">New York, NY</p>
+        <p class="pixel-cloud" id="weather-icon" aria-hidden="true">☁</p>
+        <p id="weather-current" role="status">Checking the sky…</p>
+        <p class="widget-detail" id="weather-range"></p>
+        <button class="tiny-button" id="weather-units" type="button" aria-label="Show temperatures in Celsius">°C</button>
+        <p class="widget-detail"><a href="https://open-meteo.com/">Weather by Open-Meteo</a></p>
+      </section>
+    </aside>
+    <script src="/sidebar-greebles.js" defer></script>
+    <script src="/sidebar-weather.js" defer></script>
     <script src="/sparkle-trail.js" defer></script>
     <script src="/widget-config.js"></script>
     <script src="/sidebar-widgets.js" defer></script>
+    <script src="/sidebar-clock.js" defer></script>
   </body>
 </html>

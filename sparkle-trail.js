@@ -8,6 +8,23 @@
   document.body.append(canvas);
   const colors = ['#eee0bd', '#947259', '#accddd'];
   let particles = [], frame = 0, previous = null;
+  let enabled = true;
+  try { enabled = localStorage.getItem('lunarion-sparkles') !== 'off'; } catch {}
+  const toggle = document.getElementById('sparkle-switch');
+  function updateToggle() {
+    if (!toggle) return;
+    toggle.hidden = false;
+    toggle.disabled = reducedMotion.matches;
+    toggle.setAttribute('aria-pressed', String(enabled && !reducedMotion.matches));
+    toggle.textContent = reducedMotion.matches ? '✧ reduced motion' : enabled ? '✧ sparkles on' : '✧ sparkles off';
+  }
+  toggle?.addEventListener('click', () => {
+    enabled = !enabled;
+    try { localStorage.setItem('lunarion-sparkles', enabled ? 'on' : 'off'); } catch {}
+    clear();
+    updateToggle();
+  });
+  updateToggle();
   function resize() {
     const scale = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(innerWidth * scale);
@@ -46,7 +63,7 @@
     frame = particles.length ? requestAnimationFrame(draw) : 0;
   }
   function move(event) {
-    if (reducedMotion.matches || !event.isPrimary) return;
+    if (!enabled || reducedMotion.matches || !event.isPrimary) return;
     const point = {x: event.clientX, y: event.clientY, id: event.pointerId};
     const start = previous && previous.id === point.id ? previous : point;
     const distance = Math.hypot(point.x - start.x, point.y - start.y);
@@ -82,7 +99,7 @@
     if (!event.relatedTarget) previous = null;
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) clear(); });
-  reducedMotion.addEventListener('change', clear);
+  reducedMotion.addEventListener('change', () => { clear(); updateToggle(); });
   window.addEventListener('resize', resize, {passive: true});
   resize();
 })();
