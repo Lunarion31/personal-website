@@ -25,3 +25,19 @@
   new ResizeObserver(schedule).observe(document.querySelector('main'));
   update();
 })();
+
+(() => {
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  if (motion.matches || !('IntersectionObserver' in window)) return;
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('section-enter');
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.05 });
+  document.querySelectorAll('main > section, .buttons-section').forEach(section => observer.observe(section));
+  motion.addEventListener('change', event => {
+    if (event.matches) observer.disconnect();
+  });
+})();

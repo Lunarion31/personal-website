@@ -95,6 +95,8 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 .sparkle-switch { padding: 5px 8px; border: 1px solid var(--line); background: #ece6d7; color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
 .sparkle-switch:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
 .sparkle-switch:disabled { cursor: default; color: var(--muted); }
+.theme-switch { display: inline-flex; position: fixed; top: 12px; right: 18px; z-index: 40; margin: 0; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--burgundy-soft); color: var(--burgundy); font: 12px/1.2 Georgia, serif; cursor: pointer; box-shadow: 0 2px 8px #201d2014; }
+.theme-switch:hover { background: var(--button-hover, #e5cfd7); }
 .visitor-digits { display: inline-block; padding: 5px 7px; border: 1px solid #c9c2ae; background: #ece6d7; color: #65533f; font: 14px/1.2 'Courier New', monospace; letter-spacing: 1px; box-shadow: inset 0 1px 2px #393a3310; }
 .visitor-digits { border-color: var(--line); background: var(--digit-paper, #ece6d7); color: var(--ink); }
 @media (max-width: 760px) {
@@ -134,6 +136,7 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 .paint-chips span { width: 27px; height: 32px; background: var(--chip); border: 1px solid #393a3330; }
 .pixel-cloud { color: #779aab; font-size: 40px; line-height: 1; }
 @media (min-width: 1100px) {
+  .theme-switch { top: 52px; right: 202px; }
   body { padding-right: 210px; }
   .right-sidebar { position: fixed; top: 0; bottom: 0; left: auto; right: 0; width: 186px; margin: 0; padding: 32px 24px; border-top: 0; border-left: 1px solid var(--line); display: block; overflow-y: auto; }
   .right-sidebar .greeble + .greeble { margin-top: 26px; padding-top: 17px; border-top: 1px solid var(--line); }
@@ -155,6 +158,7 @@ aside { padding-top: 52px; padding-bottom: 52px; }
 @media (min-width: 1100px) { .right-sidebar { padding-top: 52px; padding-bottom: 52px; } }
 @media (max-width: 760px) { .layout > aside { padding-top: 0; padding-bottom: 18px; } .site { margin-top: 52px; } }
 @media (max-width: 540px) { .security-banner { align-items: flex-start; padding: 9px 23px; font-size: 11px; } .security-banner::before, .security-banner::after { width: 12px; } }
+@media (max-width: 540px) { .theme-switch { padding: 5px 8px; font-size: 11px; } }
 @media (prefers-reduced-motion: reduce) { .space-ribbon-track { animation: none; } }
 
 .section-nav { position: relative; }
@@ -180,4 +184,36 @@ a, button { transition: color .18s ease, background-color .18s ease; }
   .section-marker, a, button, .custom-button { transition: none; }
   .playing-indicator i { animation: none; }
   .custom-button:hover { transform: none; }
+}
+
+/* Small, quiet movements for the personal bits of the page. */
+@media (prefers-reduced-motion: no-preference) {
+  body, aside, header, section, h1, h2, p, textarea, .security-banner,
+  .visitor-counter, .wordmark, .theme-switch {
+    transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+  }
+  .wordmark span { animation: moon-rock 7s ease-in-out infinite; transform-origin: 50% 65%; }
+  .section-enter { animation: section-arrive .6s ease-out both; }
+  a:not(.custom-button):not(.wordmark):not(.web-button) {
+    transition: color .18s ease, text-underline-offset .2s ease;
+  }
+  a:not(.custom-button):not(.wordmark):not(.web-button):is(:hover, :focus-visible) {
+    text-underline-offset: 6px;
+  }
+  .custom-button:focus-visible { transform: translateY(-3px) rotate(-2deg); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .custom-button:hover { transform: translateY(-3px) rotate(-2deg); }
+  .custom-button:nth-child(even):hover { transform: translateY(-3px) rotate(2deg); }
+}
+@keyframes moon-rock {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+@keyframes section-arrive {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-enter, .wordmark span { animation: none; }
 }
