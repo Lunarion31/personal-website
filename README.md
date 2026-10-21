@@ -23,18 +23,23 @@ They are lightweight, locally hosted SVGs with no external image dependencies.
 
 The floating **Play lo-fi** control plays **Lofi Midnight Club** by Alex Morgan
 from Pixabay (2:17), on repeat and independently of UI sounds. It attempts
-audible autoplay on page load. If the browser blocks it, a real click, tap,
+audible autoplay after the homepage introduction finishes, with a smooth
+1.2-second fade from silence. Pages with no intro (including reduced-motion
+visits) start directly with the same fade. Replaying the intro pauses the track
+and resumes its position afterwards. If the browser blocks it, a real click, tap,
 or key press retries playback; the **Resume lo-fi** control also works.
 Playback pauses when the page is hidden and fades when switched off.
 Explicit pauses, volume, and playback position are remembered in session
 storage for this tab. Between page loads it resumes from that position when
 the browser permits, unless it was explicitly paused. Existing opt-in-mode
 preferences are upgraded once to autoplay while preserving volume and position.
-Browsers that reserve volume
-for hardware controls use the device volume buttons instead of the slider.
+On browsers that reserve media-element volume for hardware controls, a local
+Web Audio gain provides the fade and slider when supported. The device volume
+remains the master level; browsers without either volume mechanism retain
+hardware-only control.
 
 The track is self-hosted at `assets/audio/lofi-midnight-club.mp3`; playback can
-download it as the page opens. There is no separate preload. Provenance and license details are in
+download it when playback starts. There is no separate preload. Provenance and license details are in
 `assets/audio/README.md`, with a credit on the Site notes page. Deployment
 has no new build dependencies or external music services. The earlier original
 loop and its renderer are retained as unused alternatives.

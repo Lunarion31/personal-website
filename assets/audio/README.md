@@ -25,8 +25,11 @@ of all possible third-party rights.
 The downloaded 256 kbps stereo MP3 was encoded at 128 kbps for a smaller
 optional download, retaining the full track without trimming or remixing.
 It is locally hosted, loops after playback completes, and attempts audible
-autoplay. If blocked, it retries on a real click, tap, or key press. Playback
-may download the track on page load; there is no separate preload.
+autoplay after the homepage introduction ends, fading in over 1.2 seconds.
+Pages without an active intro start directly with the same fade. If blocked,
+it retries on a real click, tap, or key press. Playback downloads the track
+when it starts; there is no separate preload. A local Web Audio gain provides
+fades on supported mobile browsers with hardware-only media-element volume.
 No streaming service is involved. Explicit pauses are remembered for the tab.
 
 ## Retained alternative (not used by the site)

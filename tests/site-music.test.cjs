@@ -9,7 +9,8 @@ const source = fs.readFileSync(path.join(root, "site-music.js"), "utf8");
 const key = "jamie-background-music";
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); };
 
-function harness({ saved = { version: 2, enabled: false }, mode = "running", hidden = false, storageBlocked = false, systemVolume = false } = {}) {
+function harness({ saved = { version: 2, enabled: false }, mode = "running", hidden = false, storageBlocked = false,
+    systemVolume = false, intro = false, mobileGain = false, contextBlocked = false } = {}) {
     class Events {
         constructor() { this.listeners = new Map(); }
         addEventListener(type, callback) {
@@ -36,6 +37,8 @@ function harness({ saved = { version: 2, enabled: false }, mode = "running", hid
     document.querySelector = () => toggle;
     document.getElementById = () => audio;
     document.hidden = hidden;
+    const classes = new Set(intro ? ["spark-home-intro"] : []);
+    document.documentElement = { classList: { contains: name => classes.has(name) } };
     audio.paused = true;
     audio.currentTime = 0;
     audio.readyState = 0;
@@ -44,6 +47,7 @@ function harness({ saved = { version: 2, enabled: false }, mode = "running", hid
     audio.playCalls = 0;
     audio.pauseCalls = 0;
     audio.pending = [];
+    audio.levelsAtPlay = [];
     let mediaVolume = 1;
     Object.defineProperty(audio, "volume", {
         get: () => mediaVolume,
@@ -56,6 +60,7 @@ function harness({ saved = { version: 2, enabled: false }, mode = "running", hid
     };
     audio.play = () => {
         audio.playCalls++;
+        audio.levelsAtPlay.push(audio.volume);
         if (audio.mode === "blocked") return Promise.reject(Object.assign(new Error("Blocked"), { name: "NotAllowedError" }));
         if (audio.mode === "failed") return Promise.reject(new Error("Unavailable"));
         if (audio.mode === "pending") return new Promise(resolve => audio.pending.push(() => { finishPlay(); resolve(); }));
@@ -75,6 +80,24 @@ function harness({ saved = { version: 2, enabled: false }, mode = "running", hid
     let milliseconds = 0;
     let sequence = 0;
     const frames = new Map();
+    const timers = new Map();
+    let timerSequence = 0;
+    window.setTimeout = (callback, duration) => { timers.set(++timerSequence, { callback, duration }); return timerSequence; };
+    window.clearTimeout = id => timers.delete(id);
+    const contexts = [];
+    if (mobileGain) {
+        window.AudioContext = class {
+            constructor() { this.state = "suspended"; this.blocked = contextBlocked; this.sources = 0; contexts.push(this); }
+            createGain() { this.node = { gain: { value: 1 }, connect() {} }; return this.node; }
+            createMediaElementSource(element) { assert.equal(element, audio); this.sources++; return { connect() {} }; }
+            resume() {
+                if (this.blocked) return new Promise(() => {});
+                this.state = "running";
+                return Promise.resolve();
+            }
+            close() { this.state = "closed"; return Promise.resolve(); }
+        };
+    }
     window.requestAnimationFrame = callback => { frames.set(++sequence, callback); return sequence; };
     window.cancelAnimationFrame = id => frames.delete(id);
     const advance = ms => {
@@ -84,17 +107,24 @@ function harness({ saved = { version: 2, enabled: false }, mode = "running", hid
         for (const callback of callbacks) callback(milliseconds);
     };
     vm.runInContext(source, vm.createContext({ document, window, performance: { now: () => milliseconds } }));
-    return { document, window, audio, toggle, slider, label, status, volumeControl, storage, advance,
+    return { document, window, audio, toggle, slider, label, status, volumeControl, storage, advance, classes, contexts, timers,
+        frameCount: () => frames.size,
         state: () => JSON.parse(storage.get(key) || "null"),
         click: async () => { toggle.dispatch("click"); await flush(); },
     };
 }
 
-test("fresh tabs attempt autoplay once at the existing volume", async () => {
+test("fresh tabs request audible autoplay once and fade from silence to the chosen volume", async () => {
     const h = harness({ saved: null });
     await flush();
     assert.equal(h.audio.playCalls, 1);
+    assert.equal(h.audio.levelsAtPlay[0], 0.3, "permission is requested for audible playback, not a muted workaround");
+    assert.equal(h.audio.volume, 0);
+    h.advance(600);
+    assert.ok(Math.abs(h.audio.volume - 0.15) < 0.001);
+    h.advance(600);
     assert.equal(h.audio.volume, 0.3);
+    assert.equal(h.frameCount(), 0);
     assert.equal(h.label.textContent, "Lo-fi on");
     assert.equal(h.toggle.attributes["aria-pressed"], "true");
     assert.equal(h.state().version, 2);
@@ -113,12 +143,13 @@ test("an explicit click plays independently of UI sounds and saves the tab prefe
     assert.equal(h.toggle.attributes["aria-pressed"], "true");
     assert.equal(h.state().enabled, true);
     assert.equal(h.volumeControl.hidden, false);
-    assert.doesNotMatch(source, /localStorage|sparkSound|AudioContext|fetch\(/);
+    assert.doesNotMatch(source, /localStorage|sparkSound|fetch\(/);
 });
 
 test("switching music off fades gently and preserves the paused position", async () => {
     const h = harness();
     await h.click();
+    h.advance(1200);
     h.audio.currentTime = 14;
     await h.click();
     assert.equal(h.state().enabled, false);
@@ -135,6 +166,7 @@ test("switching music off fades gently and preserves the paused position", async
 test("the volume slider works, including mute, without changing playback preference", async () => {
     const h = harness();
     await h.click();
+    h.advance(1200);
     h.slider.value = "10";
     h.slider.dispatch("input");
     assert.equal(h.audio.volume, 0.1);
@@ -148,6 +180,7 @@ test("the volume slider works, including mute, without changing playback prefere
 test("page navigation restores position and volume for an opted-in tab", async () => {
     const h = harness({ saved: { enabled: true, position: 72, volume: 0.2 } });
     await flush();
+    h.advance(1200);
     assert.equal(h.audio.currentTime, 22);
     assert.equal(h.audio.volume, 0.2);
     h.audio.currentTime = 31;
@@ -211,10 +244,11 @@ test("muting while playback is pending prevents a late play promise from startin
 test("turning music back on interrupts an unfinished fade", async () => {
     const h = harness();
     await h.click();
+    h.advance(1200);
     await h.click();
     h.advance(100);
     await h.click();
-    h.advance(1000);
+    h.advance(1200);
     assert.equal(h.audio.paused, false);
     assert.equal(h.audio.volume, 0.3);
     assert.equal(h.state().enabled, true);
@@ -271,6 +305,7 @@ test("time updates checkpoint playback and explicit pauses survive page reloads"
 test("the old opt-in default is upgraded without losing saved volume or position", async () => {
     const h = harness({ saved: { enabled: false, volume: 0.45, position: 21 } });
     await flush();
+    h.advance(1200);
     assert.equal(h.audio.paused, false);
     assert.equal(h.audio.currentTime, 21);
     assert.equal(h.audio.volume, 0.45);
@@ -373,6 +408,193 @@ test("a missing autoplay asset requires an explicit retry, not ordinary interact
     assert.equal(h.audio.playCalls, 1);
     await h.click();
     assert.equal(h.audio.paused, false);
+});
+
+test("the homepage waits for the actual intro end before starting music", async () => {
+    const h = harness({ saved: null, intro: true });
+    await flush();
+    assert.equal(h.audio.playCalls, 0);
+    assert.equal(h.audio.readyState, 0);
+    assert.equal(h.label.textContent, "After intro");
+    h.window.dispatch("pageshow");
+    h.document.dispatch("click", { isTrusted: true });
+    assert.equal(h.audio.playCalls, 0);
+    h.classes.delete("spark-home-intro");
+    h.window.dispatch("spark:home-intro-end");
+    await flush();
+    assert.equal(h.audio.playCalls, 1);
+    assert.equal(h.audio.volume, 0);
+    h.advance(300);
+    assert.ok(Math.abs(h.audio.volume - 0.046875) < 0.001);
+    h.advance(300);
+    assert.ok(Math.abs(h.audio.volume - 0.15) < 0.001);
+    h.advance(600);
+    assert.equal(h.audio.volume, 0.3);
+    h.window.dispatch("spark:home-intro-end");
+    assert.equal(h.audio.playCalls, 1, "duplicate completion events cannot restart the track");
+});
+
+test("skipped, interrupted, and late-initialized intros do not strand playback", async () => {
+    const skipped = harness({ saved: null });
+    await flush();
+    assert.equal(skipped.audio.playCalls, 1, "no active intro needs no completion event");
+    const interrupted = harness({ saved: null, intro: true });
+    interrupted.classes.delete("spark-home-intro");
+    interrupted.window.dispatch("spark:home-intro-end", { detail: { interrupted: true } });
+    await flush();
+    assert.equal(interrupted.audio.playCalls, 1);
+    assert.equal(interrupted.audio.volume, 0);
+    const hidden = harness({ saved: null, intro: true, hidden: true });
+    hidden.classes.delete("spark-home-intro");
+    hidden.window.dispatch("spark:home-intro-end");
+    assert.equal(hidden.audio.playCalls, 0);
+    hidden.document.hidden = false;
+    hidden.document.dispatch("visibilitychange");
+    await flush();
+    assert.equal(hidden.audio.playCalls, 1);
+});
+
+test("cancelling queued music during the intro keeps it off afterwards", async () => {
+    const h = harness({ saved: null, intro: true });
+    await h.click();
+    assert.equal(h.state().enabled, false);
+    h.classes.delete("spark-home-intro");
+    h.window.dispatch("spark:home-intro-end");
+    await flush();
+    assert.equal(h.audio.playCalls, 0);
+    assert.equal(h.label.textContent, "Play lo-fi");
+});
+
+test("replaying the intro pauses the track, then resumes its position with a fresh fade", async () => {
+    const h = harness({ saved: null });
+    await flush();
+    h.advance(1200);
+    h.audio.currentTime = 19;
+    h.classes.add("spark-home-intro");
+    h.window.dispatch("spark:home-intro-play");
+    assert.equal(h.audio.paused, true);
+    assert.equal(h.frameCount(), 0);
+    assert.equal(h.state().position, 19);
+    h.classes.delete("spark-home-intro");
+    h.window.dispatch("spark:home-intro-end");
+    await flush();
+    assert.equal(h.audio.paused, false);
+    assert.equal(h.audio.currentTime, 19);
+    assert.equal(h.audio.volume, 0);
+    h.advance(1200);
+    assert.equal(h.audio.volume, 0.3);
+});
+
+test("volume changes retarget the fade smoothly, and zero volume mutes immediately", async () => {
+    const h = harness({ saved: null });
+    await flush();
+    h.advance(300);
+    const before = h.audio.volume;
+    h.slider.value = "20";
+    h.slider.dispatch("input");
+    assert.equal(h.audio.volume, before);
+    assert.equal(h.state().volume, 0.2);
+    h.advance(1200);
+    assert.equal(h.audio.volume, 0.2);
+    await h.click();
+    h.advance(300);
+    await h.click();
+    h.advance(300);
+    h.slider.value = "0";
+    h.slider.dispatch("input");
+    assert.equal(h.audio.volume, 0);
+    assert.equal(h.frameCount(), 0);
+    h.advance(2000);
+    assert.equal(h.audio.volume, 0);
+    assert.equal(h.audio.paused, false);
+});
+
+test("hiding, leaving, or pausing during the fade cancels its remaining frames", async () => {
+    for (const action of ["hide", "leave", "pause"]) {
+        const h = harness({ saved: null });
+        await flush();
+        h.advance(300);
+        if (action === "hide") { h.document.hidden = true; h.document.dispatch("visibilitychange"); }
+        else if (action === "leave") h.window.dispatch("pagehide");
+        else { await h.click(); h.advance(300); }
+        assert.equal(h.audio.paused, true, action);
+        assert.equal(h.frameCount(), 0, action);
+        h.advance(2000);
+        assert.equal(h.audio.paused, true);
+    }
+});
+
+test("an intro replay cancels a pending play promise without leaking music into the curtain", async () => {
+    const h = harness({ saved: null, mode: "pending" });
+    h.classes.add("spark-home-intro");
+    h.window.dispatch("spark:home-intro-play");
+    h.audio.pending[0]();
+    await flush();
+    assert.equal(h.audio.paused, true);
+    assert.equal(h.frameCount(), 0);
+    h.audio.mode = "running";
+    h.classes.delete("spark-home-intro");
+    h.window.dispatch("spark:home-intro-end");
+    await flush();
+    assert.equal(h.audio.paused, false);
+    assert.equal(h.audio.volume, 0);
+});
+
+test("mobile hardware-volume browsers use one local gain for fades and the slider", async () => {
+    const h = harness({ saved: null, systemVolume: true, mobileGain: true, intro: true });
+    assert.equal(h.contexts.length, 0, "nothing is allocated during the intro");
+    h.classes.delete("spark-home-intro");
+    h.window.dispatch("spark:home-intro-end");
+    await flush();
+    assert.equal(h.contexts.length, 1);
+    assert.equal(h.contexts[0].node.gain.value, 0);
+    assert.equal(h.audio.volume, 1);
+    assert.equal(h.volumeControl.hidden, false);
+    h.advance(600);
+    assert.ok(Math.abs(h.contexts[0].node.gain.value - 0.15) < 0.001);
+    h.advance(600);
+    assert.equal(h.contexts[0].node.gain.value, 0.3);
+    h.slider.value = "20";
+    h.slider.dispatch("input");
+    assert.equal(h.contexts[0].node.gain.value, 0.2);
+    await h.click();
+    h.advance(300);
+    await h.click();
+    h.advance(1200);
+    assert.equal(h.contexts.length, 1);
+    assert.equal(h.contexts[0].sources, 1);
+    assert.equal(h.contexts[0].node.gain.value, 0.2);
+});
+
+test("a blocked mobile audio context stays silent and retries only with a real gesture", async () => {
+    const h = harness({ saved: null, systemVolume: true, mobileGain: true, contextBlocked: true });
+    await flush();
+    assert.equal(h.contexts[0].node.gain.value, 0);
+    assert.notEqual(h.label.textContent, "Lo-fi on");
+    [...h.timers.values()][0].callback();
+    await flush();
+    await flush();
+    assert.equal(h.audio.paused, true);
+    assert.equal(h.label.textContent, "Resume lo-fi");
+    assert.equal(h.timers.size, 0);
+    h.contexts[0].blocked = false;
+    h.document.dispatch("touchend", { isTrusted: true });
+    await flush();
+    assert.equal(h.audio.paused, false);
+    assert.equal(h.contexts[0].node.gain.value, 0);
+    h.advance(1200);
+    assert.equal(h.contexts[0].node.gain.value, 0.3);
+});
+
+test("mobile gain detection still works when the saved volume is 100 percent", async () => {
+    const h = harness({ saved: { version: 2, enabled: true, volume: 1 }, systemVolume: true, mobileGain: true });
+    await flush();
+    assert.equal(h.contexts.length, 1);
+    assert.equal(h.contexts[0].node.gain.value, 0);
+    h.advance(600);
+    assert.equal(h.contexts[0].node.gain.value, 0.5);
+    h.advance(600);
+    assert.equal(h.contexts[0].node.gain.value, 1);
 });
 
 test("all routes include one accessible local player outside page transitions", () => {

@@ -1,0 +1,10 @@
+{
+  "name": "lunarion-widgets",
+  "main": "index.mjs",
+  "compatibility_date": "2026-10-20",
+  "vars": {
+    "ALLOWED_ORIGINS": "https://lunarion31.dev,https://lunarion31.github.io,http://127.0.0.1:4174"
+  }
+  // For CLI deployment, add a d1_databases entry with binding VISITORS,
+  // database_name and database_id from your Cloudflare account.
+}

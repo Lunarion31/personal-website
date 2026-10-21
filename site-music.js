@@ -9,6 +9,7 @@
     const slider = volumeControl.querySelector("input");
     const status = player.querySelector(".site-music-status");
     const storageKey = "jamie-background-music";
+    const introActive = () => document.documentElement.classList.contains("spark-home-intro");
     let wanted = true;
     let playing = false;
     let starting = false;
@@ -17,9 +18,12 @@
     let resumePosition = 0;
     let request = 0;
     let fadeFrame = null;
+    let fadeDirection = null;
     let lastSave = 0;
     let adjustableVolume = true;
     let awaitingGesture = false;
+    let musicContext = null;
+    let musicGain = null;
 
     try {
         const saved = JSON.parse(window.sessionStorage.getItem(storageKey));
@@ -34,12 +38,37 @@
     }
 
     const setVolume = (level) => {
-        try { audio.volume = level; } catch {}
+        try {
+            if (musicGain) musicGain.gain.value = level;
+            else audio.volume = level;
+        } catch {}
     };
-    setVolume(volume);
+    const currentVolume = () => musicGain ? musicGain.gain.value : audio.volume;
     // Some mobile browsers reserve media volume for the device's volume buttons.
-    adjustableVolume = Math.abs(audio.volume - volume) < 0.01;
+    const volumeProbe = volume === 0.5 ? 0.25 : 0.5;
+    setVolume(volumeProbe);
+    adjustableVolume = Math.abs(audio.volume - volumeProbe) < 0.01;
+    setVolume(volume);
     slider.value = String(Math.round(volume * 100));
+    const prepareMobileGain = () => {
+        if (adjustableVolume || musicContext) return;
+        const Constructor = window.AudioContext || window.webkitAudioContext;
+        if (!Constructor) return;
+        let context;
+        try {
+            // iOS reserves media-element volume for hardware; a local gain can still fade it.
+            context = new Constructor();
+            const gain = context.createGain();
+            gain.gain.value = 0;
+            gain.connect(context.destination);
+            context.createMediaElementSource(audio).connect(gain);
+            musicContext = context;
+            musicGain = gain;
+            adjustableVolume = true;
+        } catch {
+            context?.close().catch(() => {});
+        }
+    };
 
     const save = () => {
         try {
@@ -53,11 +82,12 @@
     };
     const update = () => {
         const active = wanted && playing && !audio.paused;
-        const action = starting ? "Cancel background music" : active ? "Pause background music" : "Play background music";
-        label.textContent = starting ? "Starting…" : active ? "Lo-fi on" : failed ? "Retry lo-fi" : wanted ? "Resume lo-fi" : "Play lo-fi";
+        const waiting = wanted && introActive();
+        const action = starting || waiting ? "Cancel background music" : active ? "Pause background music" : "Play background music";
+        label.textContent = waiting ? "After intro" : starting ? "Starting…" : active ? "Lo-fi on" : failed ? "Retry lo-fi" : wanted ? "Resume lo-fi" : "Play lo-fi";
         toggle.setAttribute("aria-pressed", String(active));
         toggle.setAttribute("aria-label", action);
-        toggle.setAttribute("aria-busy", String(starting));
+        toggle.setAttribute("aria-busy", String(starting || waiting));
         toggle.title = adjustableVolume ? action : `${action}. Use your device's volume buttons to adjust.`;
         player.setAttribute("data-playing", String(active));
         volumeControl.hidden = !active || !adjustableVolume;
@@ -65,6 +95,7 @@
     const cancelFade = () => {
         if (fadeFrame !== null) window.cancelAnimationFrame(fadeFrame);
         fadeFrame = null;
+        fadeDirection = null;
     };
     const pauseImmediately = () => {
         request++;
@@ -76,11 +107,33 @@
         setVolume(volume);
         update();
     };
-    const start = async () => {
-        if (!wanted || starting || document.hidden) return;
-        const token = ++request;
+    const fadeIn = (initialVolume) => {
         cancelFade();
-        setVolume(volume);
+        if (!adjustableVolume || volume === initialVolume) { setVolume(volume); return; }
+        const began = performance.now();
+        fadeDirection = "in";
+        setVolume(initialVolume);
+        const fade = (now) => {
+            if (!wanted || audio.paused || document.hidden || introActive()) { pauseImmediately(); return; }
+            const progress = Math.min(1, Math.max(0, (now - began) / 1200));
+            const eased = progress * progress * (3 - 2 * progress);
+            setVolume(initialVolume + (volume - initialVolume) * eased);
+            if (progress < 1) fadeFrame = window.requestAnimationFrame(fade);
+            else { fadeFrame = null; fadeDirection = null; setVolume(volume); }
+        };
+        fadeFrame = window.requestAnimationFrame(fade);
+    };
+    const start = async () => {
+        if (!wanted || starting || document.hidden || introActive() || (playing && !audio.paused && fadeDirection !== "out")) return;
+        const token = ++request;
+        prepareMobileGain();
+        const alreadyPlaying = !audio.paused;
+        const initialVolume = alreadyPlaying ? currentVolume() : 0;
+        cancelFade();
+        // Ask for audible playback at the chosen native volume, then silence it before the first frame.
+        // The mobile gain starts at zero without altering the media element's autoplay eligibility.
+        if (musicGain || alreadyPlaying) setVolume(initialVolume);
+        else setVolume(volume);
         failed = false;
         awaitingGesture = false;
         starting = true;
@@ -88,19 +141,34 @@
         update();
         save();
         try {
-            await audio.play();
+            const resumed = musicContext?.resume().catch(() => {});
+            const playback = audio.play();
+            setVolume(initialVolume);
+            await playback;
+            if (musicContext && musicContext.state !== "running" && token === request) {
+                let timer;
+                try {
+                    await Promise.race([resumed, new Promise(resolve => { timer = window.setTimeout(resolve, 500); })]);
+                } finally { window.clearTimeout(timer); }
+                if (token === request && musicContext.state !== "running") {
+                    audio.pause();
+                    throw Object.assign(new Error("Audio needs a user gesture"), { name: "NotAllowedError" });
+                }
+            }
             if (token !== request) {
-                if (!wanted || document.hidden) audio.pause();
+                if (!wanted || document.hidden || introActive()) audio.pause();
                 return;
             }
             starting = false;
             playing = true;
+            fadeIn(initialVolume);
             update();
             save();
         } catch (error) {
             if (token !== request) return;
             starting = false;
             playing = false;
+            setVolume(volume);
             if (error?.name === "NotAllowedError") {
                 awaitingGesture = true;
                 status.textContent = "Your browser blocked autoplay. Click, tap, or press a key to start the music, or press play.";
@@ -123,13 +191,15 @@
             return;
         }
         const began = performance.now();
-        const initialVolume = audio.volume;
+        const initialVolume = currentVolume();
+        fadeDirection = "out";
         const fade = (now) => {
             const progress = Math.min(1, Math.max(0, (now - began) / 280));
             setVolume(initialVolume * (1 - progress) ** 2);
             if (progress < 1) fadeFrame = window.requestAnimationFrame(fade);
             else {
                 fadeFrame = null;
+                fadeDirection = null;
                 audio.pause();
                 playing = false;
                 setVolume(volume);
@@ -141,7 +211,7 @@
     };
 
     toggle.addEventListener("click", () => {
-        if (wanted && (playing || starting)) {
+        if (wanted && (playing || starting || introActive())) {
             wanted = false;
             failed = false;
             status.textContent = "";
@@ -168,7 +238,10 @@
         const value = Number(slider.value);
         if (!Number.isFinite(value)) return;
         volume = Math.max(0, Math.min(1, value / 100));
-        if (fadeFrame === null) setVolume(volume);
+        if (fadeDirection === "in") {
+            if (volume === 0) { cancelFade(); setVolume(0); }
+            else fadeIn(currentVolume());
+        } else if (fadeFrame === null) setVolume(volume);
         save();
     });
     audio.addEventListener("loadedmetadata", () => {
@@ -177,12 +250,14 @@
         resumePosition = 0;
     });
     audio.addEventListener("playing", () => {
-        if (!wanted || document.hidden) { audio.pause(); return; }
+        if (!wanted || document.hidden || introActive()) { audio.pause(); return; }
+        if (musicContext && musicContext.state !== "running") return;
         awaitingGesture = false;
         playing = true;
         update();
     });
     audio.addEventListener("pause", () => {
+        cancelFade();
         playing = false;
         update();
     });
@@ -205,6 +280,10 @@
     });
     window.addEventListener("pagehide", () => { save(); pauseImmediately(); });
     window.addEventListener("pageshow", () => { if (wanted && audio.paused) start(); });
+    window.addEventListener("spark:home-intro-end", () => { if (wanted) start(); });
+    window.addEventListener("spark:home-intro-play", () => {
+        if (introActive()) { save(); pauseImmediately(); }
+    });
     update();
     if (wanted) start();
 })();
