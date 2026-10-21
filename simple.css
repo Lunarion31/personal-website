@@ -11,7 +11,19 @@ header { padding-bottom: 25px; border-bottom: 1px solid var(--line); }
 .wordmark span { display: inline-block; margin-left: 6px; color: #8c8b6c; font-size: 27px; }
 header p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
 .layout { display: grid; grid-template-columns: 145px minmax(0, 1fr); gap: 39px; padding: 36px 0 44px; }
-aside { border-right: 1px solid var(--line); padding-right: 24px; font-size: 13px; }
+aside {
+  position: fixed;
+  top: 32px;
+  left: clamp(18px, 3vw, 42px);
+  z-index: 10;
+  width: 145px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  padding-right: 24px;
+  font-size: 13px;
+  scrollbar-width: thin;
+}
 h2 { margin: 0 0 10px; font-size: 15px; font-weight: normal; }
 aside h2 { color: var(--muted); font-size: 12px; }
 nav { margin-bottom: 27px; }
@@ -43,7 +55,18 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 @media (max-width: 540px) {
   .site { width: calc(100% - 36px); margin-top: 35px; }
   .layout { grid-template-columns: 1fr; gap: 28px; padding-top: 24px; }
-  aside { display: flex; flex-wrap: wrap; gap: 20px 34px; padding: 0 0 18px; border-right: 0; border-bottom: 1px solid var(--line); }
+  aside {
+    position: static;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 34px;
+    padding: 0 0 18px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
   nav { margin: 0; }
   .discord { margin: 0; }
   h1 { font-size: 26px; }
@@ -64,3 +87,13 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 
 /* Button collection sits below the footer. */
 .site > .buttons-section { margin-top: 26px; padding-top: 0; border-top: 0; }
+
+.about-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+.about-section h2 { font-size: 19px; margin-bottom: 8px; }
+.section-placeholder { color: var(--muted); font-size: 13px; margin-bottom: 0; }
+.project-item h3 { margin: 0 0 5px; font-size: 15px; font-weight: normal; }
+.project-item p { margin: 0; }
+.section-label { margin: 0 0 8px; color: var(--muted); font-size: 12px; font-style: italic; }
+.game-list { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 24px; }
+.game-list li { break-inside: avoid; margin-bottom: 4px; }
+@media (max-width: 540px) { .game-list { columns: 1; } }
