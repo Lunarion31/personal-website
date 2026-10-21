@@ -61,3 +61,6 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 @media (max-width: 540px) {
   .sidebar-widget { margin-top: 0; flex: 1 1 135px; }
 }
+
+/* Button collection sits below the footer. */
+.site > .buttons-section { margin-top: 26px; padding-top: 0; border-top: 0; }
