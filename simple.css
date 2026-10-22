@@ -223,3 +223,14 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 @media (prefers-reduced-motion: no-preference) {
   .language-list li { transition: background-color .3s ease, color .3s ease, border-color .3s ease; }
 }
+
+.contact-list { margin: 12px 0 0; padding: 0; list-style: none; overflow-wrap: anywhere; }
+.contact-list li + li { margin-top: 8px; }
+.contact-list strong { font-weight: bold; }
+.pgp-fingerprint { white-space: break-spaces; font-family: 'Courier New', monospace; font-size: .9em; }
+
+.pgp-key { text-align: center; max-width: 100%; overflow-x: auto; padding: 16px; margin: 18px 0 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--burgundy-soft); color: var(--ink); font: 12px/1.6 'Courier New', monospace; }
+.pgp-key:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+.pgp-download { font-size: 13px; }
+
+.pgp-key code { display: block; width: max-content; min-width: 100%; }
