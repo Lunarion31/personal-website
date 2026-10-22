@@ -234,3 +234,5 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 .pgp-download { font-size: 13px; }
 
 .pgp-key code { display: block; width: max-content; min-width: 100%; }
+
+.personal-status #personal-status-text { padding-left: 10px; border-left: 2px solid var(--burgundy); white-space: pre-line; }
