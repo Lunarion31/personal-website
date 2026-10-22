@@ -18,7 +18,7 @@
   note.addEventListener('input', () => {
     try {
       localStorage.setItem('lunarion-note', note.value);
-      status.textContent = 'Saved in this browser. Just for you.';
+      status.textContent = 'Just for you, in this browser.';
     } catch { status.textContent = 'Couldn’t save; keep this page open.'; }
   });
 })();
