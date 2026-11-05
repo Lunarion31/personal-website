@@ -6,7 +6,7 @@
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   document.body.append(canvas);
-  const colors = ['#eee0bd', '#947259', '#accddd'];
+  const colors = ['#f4eddf', '#c5a268', '#82603e'];
   let particles = [], frame = 0, previous = null;
   let enabled = true;
   try { enabled = localStorage.getItem('lunarion-sparkles') !== 'off'; } catch {}

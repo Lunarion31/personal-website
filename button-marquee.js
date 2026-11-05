@@ -71,7 +71,7 @@
     dragging = false;
     touching = false;
     shelf.classList.remove('is-dragging');
-    resumeAt = performance.now() + 1500;
+    resumeAt = performance.now() + 450;
   }
   window.addEventListener('pointerup', release);
   window.addEventListener('pointercancel', release);
@@ -79,14 +79,14 @@
   shelf.addEventListener('click', event => {
     if (moved) { event.preventDefault(); event.stopPropagation(); moved = false; }
   }, true);
-  shelf.addEventListener('wheel', () => { resumeAt = performance.now() + 1500; }, { passive: true });
+  shelf.addEventListener('wheel', () => { resumeAt = performance.now() + 450; }, { passive: true });
   function frame(now) {
     const elapsed = Math.min(now - lastFrame, 50);
     lastFrame = now;
     if (!motion.matches && !document.hidden && !dragging && !touching &&
         now >= resumeAt && !shelf.matches(':hover, :focus-within')) {
       // Retain subpixel movement: some browsers round scrollLeft assignments.
-      pendingDistance += elapsed * 0.025;
+      pendingDistance += elapsed * 0.032;
       const pixels = Math.floor(pendingDistance);
       pendingDistance -= pixels;
       shelf.scrollLeft += pixels;
