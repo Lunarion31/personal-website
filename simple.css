@@ -242,15 +242,13 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 .button-window { overflow-x: auto; padding: 10px 0; }
 .button-window .buttons { flex-wrap: nowrap; width: max-content; }
 .button-window .custom-button { flex-shrink: 0; }
-.button-window.is-moving { overflow-x: hidden; }
+/* Native scrolling supports touch and horizontal trackpad gestures. */
+.button-window.is-moving { scrollbar-width: none; cursor: grab; }
+.button-window.is-moving::-webkit-scrollbar { display: none; }
+.button-window.is-dragging { cursor: grabbing; user-select: none; }
+.button-window img { -webkit-user-drag: none; user-select: none; }
 .button-track { display: flex; width: max-content; }
 .button-track .buttons { padding-right: 8px; }
-.button-track { animation: button-drift 55s linear infinite; }
-.button-window:hover .button-track, .button-window:focus-within .button-track,
-.button-window.is-paused .button-track { animation-play-state: paused; }
-@keyframes button-drift { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) {
-  .button-track { animation: none; }
   .button-track > [aria-hidden] { display: none; }
-  .button-window.is-moving { overflow-x: auto; }
 }
