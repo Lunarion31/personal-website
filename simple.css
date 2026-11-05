@@ -249,6 +249,3 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 .button-window img { -webkit-user-drag: none; user-select: none; }
 .button-track { display: flex; width: max-content; }
 .button-track .buttons { padding-right: 8px; }
-@media (prefers-reduced-motion: reduce) {
-  .button-track > [aria-hidden] { display: none; }
-}

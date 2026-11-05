@@ -4,16 +4,50 @@
   if (!buttons) return;
   const track = document.createElement('div');
   track.className = 'button-track';
-  const copy = buttons.cloneNode(true);
-  copy.setAttribute('aria-hidden', 'true');
-  copy.querySelectorAll('a').forEach(link => link.tabIndex = -1);
-  track.append(buttons, copy);
+  track.append(buttons);
   shelf.append(track);
   shelf.classList.add('is-moving');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let dragging = false, moved = false, origin = 0, initialScroll = 0;
   let touching = false, resumeAt = 0, lastFrame = 0;
   let pendingDistance = 0;
+  let loopWidth = 0, loopStart = 0;
+  function cloneButtons() {
+    const copy = buttons.cloneNode(true);
+    copy.setAttribute('aria-hidden', 'true');
+    copy.removeAttribute('aria-label');
+    copy.querySelectorAll('a').forEach(link => link.tabIndex = -1);
+    return copy;
+  }
+  function rebuild() {
+    const width = buttons.offsetWidth;
+    if (!width) return;
+    const offset = loopWidth ? ((shelf.scrollLeft - loopStart) % loopWidth + loopWidth) % loopWidth : 0;
+    const previous = shelf.scrollLeft;
+    track.querySelectorAll('[aria-hidden="true"]').forEach(copy => copy.remove());
+    const copies = Math.ceil(shelf.clientWidth / width) + 2;
+    for (let i = 0; i < copies; i++) {
+      track.prepend(cloneButtons());
+      track.append(cloneButtons());
+    }
+    loopWidth = width;
+    loopStart = copies * width;
+    shelf.scrollLeft = loopStart + offset;
+    if (dragging) initialScroll += shelf.scrollLeft - previous;
+  }
+  function wrap() {
+    if (!loopWidth) return;
+    const previous = shelf.scrollLeft;
+    if (previous >= loopStart && previous < loopStart + loopWidth) return;
+    const offset = ((previous - loopStart) % loopWidth + loopWidth) % loopWidth;
+    shelf.scrollLeft = loopStart + offset;
+    // Keep the pointer anchored to the same button across each seam.
+    if (dragging) initialScroll += shelf.scrollLeft - previous;
+  }
+  rebuild();
+  new ResizeObserver(rebuild).observe(shelf);
+  shelf.addEventListener('scroll', wrap, { passive: true });
+
   shelf.addEventListener('dragstart', event => event.preventDefault());
   shelf.addEventListener('pointerdown', event => {
     moved = false;
@@ -31,7 +65,7 @@
       shelf.setPointerCapture(event.pointerId);
       shelf.classList.add('is-dragging');
     }
-    if (moved) shelf.scrollLeft = initialScroll - distance;
+    if (moved) { shelf.scrollLeft = initialScroll - distance; wrap(); }
   });
   function release() {
     dragging = false;
@@ -51,13 +85,12 @@
     lastFrame = now;
     if (!motion.matches && !document.hidden && !dragging && !touching &&
         now >= resumeAt && !shelf.matches(':hover, :focus-within')) {
-      const width = buttons.offsetWidth;
       // Retain subpixel movement: some browsers round scrollLeft assignments.
       pendingDistance += elapsed * 0.025;
       const pixels = Math.floor(pendingDistance);
       pendingDistance -= pixels;
       shelf.scrollLeft += pixels;
-      if (width && shelf.scrollLeft >= width) shelf.scrollLeft -= width;
+      wrap();
     }
     requestAnimationFrame(frame);
   }
