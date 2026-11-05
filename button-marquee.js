@@ -13,6 +13,7 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let dragging = false, moved = false, origin = 0, initialScroll = 0;
   let touching = false, resumeAt = 0, lastFrame = 0;
+  let pendingDistance = 0;
   shelf.addEventListener('dragstart', event => event.preventDefault());
   shelf.addEventListener('pointerdown', event => {
     moved = false;
@@ -51,7 +52,11 @@
     if (!motion.matches && !document.hidden && !dragging && !touching &&
         now >= resumeAt && !shelf.matches(':hover, :focus-within')) {
       const width = buttons.offsetWidth;
-      shelf.scrollLeft += elapsed * 0.025;
+      // Retain subpixel movement: some browsers round scrollLeft assignments.
+      pendingDistance += elapsed * 0.025;
+      const pixels = Math.floor(pendingDistance);
+      pendingDistance -= pixels;
+      shelf.scrollLeft += pixels;
       if (width && shelf.scrollLeft >= width) shelf.scrollLeft -= width;
     }
     requestAnimationFrame(frame);
