@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lumi button preview</title><style>
+@font-face{font-family:'Geist Serif';src:url('./fonts/GeistSerif-Regular.woff2')}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#f4eddf;color:#381321;font:13px system-ui;display:grid;place-items:center}main{text-align:center;padding:32px 18px}h1{font-size:18px;font-weight:500;margin-bottom:40px}.stage{padding:55px 30px;background:#e8dfce;border:1px solid #cbbba1;display:grid;place-items:center}.button{position:relative;width:88px;height:31px;isolation:isolate;overflow:hidden}canvas{display:block;width:88px;height:31px;image-rendering:pixelated}.large{width:440px;height:155px}.large .button{transform:scale(5);transform-origin:top left}.ring{position:absolute;right:-5px;top:-3px;width:24px;height:10px;border:1px solid #c5a268;border-radius:50%;transform:rotate(-27deg);pointer-events:none;z-index:2}.actual{display:flex;justify-content:center;padding:27px}p{font-size:12px;color:#78675e}button{border:1px solid #cbbba1;background:transparent;color:inherit;padding:7px 12px;cursor:pointer;font:inherit}@media(max-width:540px){.large{width:264px;height:93px}.large .button{transform:scale(3)}}
+</style></head><body><main><h1>lumi / observatory button</h1><div class="stage"><div class="large"><div class="button"><canvas width="88" height="31" aria-label="Lumi observatory on a hill beneath gold stars"></canvas></div></div></div><p>Enlarged preview</p><div class="actual"><div class="button"><canvas width="88" height="31" aria-label="Lumi observatory button at actual size"></canvas></div></div><p>88 × 31 · Geist Serif · shooting star every 5 seconds</p><button id="pause" aria-pressed="false">Pause animation</button></main><script>
+const canvases=[...document.querySelectorAll('canvas')];
+const palette={sky:'#29101f',hill:'#4b2535',front:'#351826',gold:'#c5a268',cream:'#f4eddf'};
+const stars=[[4,5],[10,12],[16,3],[29,6],[35,3],[42,11],[49,4],[56,8],[62,3],[68,13],[78,4],[83,15],[5,18],[37,16],[48,19],[59,15]];
+let paused=false,elapsed=0,last=0;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+function draw(ctx,t){
+ const p=palette;ctx.clearRect(0,0,88,31);ctx.fillStyle=p.sky;ctx.fillRect(0,0,88,31);
+ function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
+ // Pinpoint stars, with two slow cross-shaped twinkles.
+ stars.forEach(([x,y],i)=>{ctx.globalAlpha=.5+.5*Math.sin(t*.001+i*2)**2;rect(x,y,1,1,i%3?p.gold:p.cream)});ctx.globalAlpha=1;
+ for(const [x,y,phase] of [[44,5,0],[8,8,2]]){const a=(Math.sin(t*.0013+phase)+1)/2;ctx.globalAlpha=.3+.7*a;rect(x,y,1,1,p.cream);if(a>.65){rect(x-1,y,3,1,p.gold);rect(x,y-1,1,3,p.gold)}ctx.globalAlpha=1}
+ // Draw the far and near halves separately so the planet sits inside its ring.
+ function ring(front){
+   const angle=-27*Math.PI/180;
+   for(let step=0;step<240;step++){
+     const theta=step/240*Math.PI*2;
+     if((Math.sin(theta)>=0)!==front)continue;
+     const u=10*Math.cos(theta),v=3*Math.sin(theta);
+     rect(Math.round(76+u*Math.cos(angle)-v*Math.sin(angle)),
+          Math.round(6+u*Math.sin(angle)+v*Math.cos(angle)),1,1,
+          front?'#d7b77f':'#927345');
+   }
+ }
+ ring(false);
+ // A circular pixel silhouette, shaded from the upper left.
+ const planetX=76,planetY=6,planetRadius=5;
+ for(let y=1;y<=11;y++)for(let x=71;x<=81;x++){
+   const dx=x-planetX,dy=y-planetY;
+   if(dx*dx+dy*dy>planetRadius*planetRadius)continue;
+   const shade=dx*.55+dy*.8;
+   rect(x,y,1,1,shade<-2?'#dec18b':shade>3?'#82603e':shade>0?'#ad8955':p.gold);
+ }
+ ring(true);
+ // Shooting star sweeps through the open sky, away from the lettering.
+ const paths=[[33,1,72,14],[68,1,35,15],[40,0,53,18],[60,0,43,17]];
+ const time=t%5000;
+ if(time>1000&&time<1600){
+   const f=(time-1000)/600;
+   const [sx,sy,ex,ey]=paths[Math.floor(t/5000)%paths.length];
+   const dx=ex-sx,dy=ey-sy,length=Math.hypot(dx,dy);
+   for(let i=6;i>=0;i--){
+     ctx.globalAlpha=(1-i/7)*Math.min(1,f*8,(1-f)*8);
+     rect(Math.round(sx+f*dx-i*dx/length),Math.round(sy+f*dy-i*dy/length),1,1,i?p.gold:p.cream);
+   }
+   ctx.globalAlpha=1;
+ }
+ // Stepped hill silhouette and shadowed foreground.
+ [[0,26,7,5],[7,23,7,8],[14,21,6,10],[20,20,9,11],[29,22,6,9],[35,24,10,7],[45,27,13,4],[58,29,29,2]].forEach(v=>rect(...v,p.hill));
+ [[0,29,11,2],[11,27,8,4],[19,25,9,6],[28,27,10,4],[38,29,15,2]].forEach(v=>rect(...v,p.front));
+ // Dome, slit, and telescope aimed into the sky.
+ rect(14,15,15,7,'#a68b65');rect(13,15,17,1,p.gold);rect(15,12,13,3,p.gold);rect(17,10,9,2,p.gold);rect(20,9,4,1,p.cream);
+ rect(22,10,2,5,'#4c3032');rect(24,10,3,2,'#d8c29a');rect(26,8,3,2,'#d8c29a');rect(28,6,3,2,p.cream);rect(30,5,2,3,p.gold);
+ rect(15,16,1,5,'#d6bf96');rect(25,16,3,6,'#826546');rect(20,18,3,4,'#422333');rect(20,18,2,2,'#e1bf78');rect(13,22,18,1,'#78543e');
+ // Fine border with breathing room for the wordmark.
+ ctx.strokeStyle='#a482545e';ctx.lineWidth=1;ctx.strokeRect(.5,.5,87,30);
+ ctx.fillStyle=p.cream;ctx.font='13px "Geist Serif"';ctx.textAlign='right';ctx.textBaseline='alphabetic';const beat=t%10000;
+ const ease=n=>n*n*(3-2*n);
+ const phase=(a,b)=>ease(Math.max(0,Math.min(1,(beat-a)/(b-a))));
+ if(beat<1000 || beat>=7000){ctx.fillText('lumi',84,28);return;}
+ const nameLeft=84-ctx.measureText('lumi').width;
+ const home=Math.round(nameLeft+ctx.measureText('l').width/2);
+ const x=Math.round(-8+(home+8)*phase(1000,2200)+(100-home)*phase(3500,4550));
+ const y=Math.round(12-11*phase(3500,4550));
+ if(beat<2600){ctx.fillText('lumi',84,28);}
+ else {
+   ctx.fillText('umi',84,28);
+   ctx.textAlign='left';
+   if(beat<4550){ctx.fillText('l',nameLeft+x-home,Math.round(28-7*phase(2600,3450)+y-12));}
+   else if(beat>=5400){
+     const fall=Math.min(1,(beat-5400)/680);
+     const bounce=beat<6080?0:2*Math.sin(Math.PI*Math.min(1,(beat-6080)/240));
+     ctx.fillText('l',nameLeft,Math.round(-2+30*fall*fall-bounce));
+   }
+ }
+ if(beat>=4550)return;
+ if(beat>=2200&&beat<3450){
+   for(let row=0;row<13;row++){const w=1+Math.floor(row/3);ctx.globalAlpha=.22;rect(x-w,y+3+row,2*w+1,1,'#ffdb82');}ctx.globalAlpha=1;
+ }
+ // Stepped glass dome, bright saucer rim, three alternating landing lights.
+ rect(x-2,y-4,5,1,'#e9d5ac');rect(x-3,y-3,7,2,'#af9878');rect(x-5,y-1,11,1,'#82603e');
+ rect(x-6,y,13,2,'#dec18b');rect(x-4,y+2,9,1,'#82603e');
+ for(let i=0;i<3;i++)rect(x-4+i*4,y,1,1,(Math.floor(t/160)+i)%2?'#fff1c9':'#705146');
+}
+function frame(now){if(last&&!paused&&!reduced.matches)elapsed+=Math.min(now-last,80);last=now;canvases.forEach(c=>draw(c.getContext('2d'),elapsed));requestAnimationFrame(frame)}
+document.fonts.load('13px "Geist Serif"').then(()=>requestAnimationFrame(frame));
+document.getElementById('pause').onclick=function(){paused=!paused;this.textContent=paused?'Play animation':'Pause animation';this.setAttribute('aria-pressed',paused)};
+</script></body></html>
