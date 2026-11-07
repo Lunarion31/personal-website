@@ -222,14 +222,20 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
             id="buttons"
             aria-label="Web buttons"
           >
+            <div class="link-back">
+              <button id="copy-lumi" type="button" aria-label="Copy Lumi button embed code">
+                <img src="/static/img/buttons/lumi.gif" width="88" height="31" alt="Lumi">
+              </button>
+              <p>click to copy my button, hotlinking preferred!</p>
+              <span id="copy-lumi-status" role="status"></span>
+              <textarea id="lumi-embed" aria-label="Lumi button embed code" readonly hidden>&lt;a href="https://lunarion31.dev/"&gt;&lt;img src="https://lunarion31.dev/static/img/buttons/lumi.gif" width="88" height="31" alt="Lumi"&gt;&lt;/a&gt;</textarea>
+            </div>
             <div class="button-window">
             <div class="buttons" aria-label="88 by 31 web buttons">
               <a class="custom-button" href="https://www.hrtowii.dev/"><img src="/assets/buttons/hrtowii.png" width="88" height="31" alt="hrtowii"></a>
               <a class="custom-button" href="https://circulars.dev/"><img src="/assets/buttons/circulars.gif" width="88" height="31" alt="circulars.dev"></a>
               <a class="custom-button" href="https://otomir23.me/"><img src="/assets/buttons/otomir23.png" width="88" height="31" alt="otomir23"></a>
-              <a class="custom-button" href="/" aria-label="Lumi — my homepage"
-                ><img src="/static/img/buttons/lumi.gif" width="88" height="31" alt="Lumi"
-              /></a>
+
               <a class="custom-button" href="https://qwq.sh/"
                 ><img
                   src="/assets/buttons/hazelcaffe.png"
@@ -367,6 +373,7 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <div class="space-ribbon space-ribbon-top" aria-hidden="true"><div class="space-ribbon-track"><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span></div></div>
     <div class="space-ribbon space-ribbon-bottom" aria-hidden="true"><div class="space-ribbon-track"><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span><span>+ · * ☾ · . ☼ * · ✧ . + · ☽ * . ☼ · + ✧ · </span></div></div>
     <script src="/status.js" defer></script>
+    <script src="/copy-lumi.js" defer></script>
     <script src="/button-marquee.js" defer></script>
     <script src="/modern-touches.js" defer></script>
     <script src="/space-ribbons.js" defer></script>
