@@ -9,6 +9,8 @@
   shelf.classList.add('is-moving');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let dragging = false, moved = false, origin = 0, initialScroll = 0;
+  let activePointer = null;
+  let mouseOverShelf = false;
   let touching = false, resumeAt = 0, lastFrame = 0;
   let pendingDistance = 0;
   let loopWidth = 0, loopStart = 0;
@@ -48,33 +50,44 @@
   new ResizeObserver(rebuild).observe(shelf);
   shelf.addEventListener('scroll', wrap, { passive: true });
 
+  shelf.addEventListener('pointerenter', event => {
+    if (event.pointerType === 'mouse') mouseOverShelf = true;
+  });
+  shelf.addEventListener('pointerleave', event => {
+    if (event.pointerType === 'mouse') mouseOverShelf = false;
+  });
   shelf.addEventListener('dragstart', event => event.preventDefault());
   shelf.addEventListener('pointerdown', event => {
+    if (activePointer !== null || event.button !== 0) return;
+    activePointer = event.pointerId;
+    // Capture on the clicked item so plain taps still activate links and
+    // releases outside the row return here without window-wide handlers.
+    event.target.setPointerCapture(event.pointerId);
     moved = false;
     if (event.pointerType !== 'mouse') { touching = true; return; }
-    if (event.button !== 0) return;
     dragging = true;
     origin = event.clientX;
     initialScroll = shelf.scrollLeft;
   });
   shelf.addEventListener('pointermove', event => {
-    if (!dragging) return;
+    if (!dragging || event.pointerId !== activePointer) return;
     const distance = event.clientX - origin;
     if (Math.abs(distance) > 5) {
       moved = true;
-      shelf.setPointerCapture(event.pointerId);
       shelf.classList.add('is-dragging');
     }
     if (moved) { shelf.scrollLeft = initialScroll - distance; wrap(); }
   });
-  function release() {
+  function release(event) {
+    if (event.pointerId !== activePointer) return;
+    activePointer = null;
     dragging = false;
     touching = false;
     shelf.classList.remove('is-dragging');
     resumeAt = performance.now() + 450;
   }
-  window.addEventListener('pointerup', release);
-  window.addEventListener('pointercancel', release);
+  shelf.addEventListener('pointerup', release);
+  shelf.addEventListener('pointercancel', release);
   shelf.addEventListener('lostpointercapture', release);
   shelf.addEventListener('click', event => {
     if (moved) { event.preventDefault(); event.stopPropagation(); moved = false; }
@@ -84,7 +97,7 @@
     const elapsed = Math.min(now - lastFrame, 50);
     lastFrame = now;
     if (!motion.matches && !document.hidden && !dragging && !touching &&
-        now >= resumeAt && !shelf.matches(':hover, :focus-within')) {
+        now >= resumeAt && !mouseOverShelf && !shelf.querySelector('a:focus-visible')) {
       // Retain subpixel movement: some browsers round scrollLeft assignments.
       pendingDistance += elapsed * 0.032;
       const pixels = Math.floor(pendingDistance);
