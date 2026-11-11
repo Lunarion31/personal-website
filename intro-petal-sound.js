@@ -5,7 +5,7 @@
   if (!AudioEngine) return;
   button.hidden = false;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  let audio, buffers, loading, enabled = false, revision = 0;
+  let audio, buffers, loading, enabled = true, revision = 0, readyRevision = -1;
 
   const voices = new Set();
 
@@ -31,28 +31,50 @@
     voices.clear();
   }
 
-  button.addEventListener('click', async () => {
-    const request = ++revision;
-    enabled = !enabled;
+  function ready(request) {
+    if (request !== revision || readyRevision === request || !enabled || !buffers || document.hidden || audio?.state !== 'running') return;
+    readyRevision = request;
     sync();
-    if (!enabled) { stop(); return; }
-    button.textContent = '♫ loading…';
+    window.dispatchEvent(new Event('intro-sound-ready'));
+  }
+
+  async function activate(request) {
     try {
       audio ??= new AudioEngine();
-      await audio.resume();
-      await load();
-      if (request !== revision || !enabled) return;
+      // Fetch in parallel: resume may remain pending until a trusted gesture.
+      await Promise.all([audio.resume(), load()]);
+      if (request !== revision || !enabled || document.hidden) return;
       if (audio.state !== 'running') throw new Error('Audio unavailable');
-      sync();
-      window.dispatchEvent(new Event('intro-sound-ready'));
+      ready(request);
     } catch {
-      if (request !== revision) return;
-      enabled = false;
+      if (request !== revision || !enabled) return;
       stop();
       sync();
       button.textContent = '♫ retry sound';
     }
+  }
+
+  button.addEventListener('click', () => {
+    const retry = button.textContent === '♫ retry sound';
+    enabled = retry || !enabled;
+    const request = ++revision;
+    sync();
+    if (!enabled) { stop(); return; }
+    button.textContent = '♫ loading…';
+    activate(request);
   });
+
+  function unlock(event) {
+    if (!event.isTrusted || !enabled || document.hidden) return;
+    if (event.target.closest?.('#intro-sound-switch')) return;
+    if (audio?.state !== 'running') {
+      const request = revision;
+      audio?.resume().then(() => load()).then(() => ready(request)).catch(() => {});
+    }
+  }
+  for (const event of ['pointerdown', 'touchstart', 'keydown']) {
+    addEventListener(event, unlock, {passive: true});
+  }
 
   addEventListener('garden-intro-cue', event => {
     if (!enabled || !buffers || document.hidden || audio?.state !== 'running') return;
@@ -91,4 +113,5 @@
   });
   motion.addEventListener('change', sync);
   sync();
+  activate(revision);
 })();
