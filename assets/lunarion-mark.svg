@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#9dbdff"/><path d="M41 10a23 23 0 1 0 13 33A23 23 0 0 1 41 10Z" fill="#10233f"/><path d="m48 13 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z" fill="#10233f"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <title>Lumi observatory</title>
+  <rect width="16" height="16" rx="2" fill="#29101f"/>
+  <path fill="#4b2535" d="M0 14h2v-1h3v-1h6v1h3v1h2v2H0z"/>
+  <path fill="#c5a268" d="M2 9h1V7h2V6h4v1h2v2h1v1H2z"/>
+  <path fill="#a68b65" d="M3 10h8v3H3z"/>
+  <path fill="#29101f" d="M6 11h2v2H6zM7 6h2v3H7z"/>
+  <path fill="#f4eddf" d="M8 6h2V5h1V4h2V2h2v3h-2v1h-2v1H8zM3 2h1v1H3z"/>
+</svg>
