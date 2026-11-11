@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lunarion · Garden intros</title>
+<style>
+@font-face{font-family:Geist;src:url('/assets/fonts/geist-regular.woff2')}
+@font-face{font-family:Display;src:url('/assets/fonts/geist-serif-regular.woff2')}
+*{box-sizing:border-box}body{margin:0;padding:32px clamp(16px,4vw,64px) 48px;background:#f4eddf;color:#29101f;font:14px/1.5 Geist,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}h1{font:400 34px Display,Georgia,serif;margin:0}
+main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 24px}
+article{min-width:0}canvas{display:block;width:100%;aspect-ratio:5/3;background:#29101f;border-radius:3px}
+.caption{display:flex;gap:12px;justify-content:space-between;align-items:center;padding-top:12px}
+h2{font:400 23px Display,Georgia,serif;margin:0 0 3px}p{margin:0;color:#735647}
+button{font:inherit;border:1px solid #bba58d;border-radius:3px;padding:7px 12px;background:transparent;color:inherit;cursor:pointer;white-space:nowrap}
+button:hover{background:#e9ddc7}button:focus-visible{outline:2px solid #702e40;outline-offset:3px}
+@media(max-width:700px){main{grid-template-columns:1fr}h1{font-size:27px}.caption{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><h1>Four ways into the garden</h1><button id="replay-all" type="button">Replay all</button></header>
+<main>
+<article><canvas data-mode="wake" aria-label="Stems unfurl from the bottom corners, flowers open and a petal drifts free"></canvas><div class="caption"><div><h2>The garden wakes up</h2><p>Stems rise, blooms open, one petal floats free.</p></div><button type="button">Replay</button></div></article>
+<article><canvas data-mode="breeze" aria-label="Large petals sweep across the foreground and reveal the homepage"></canvas><div class="caption"><div><h2>A breeze opens the page</h2><p>A close-up petal sweep reveals the garden.</p></div><button type="button">Replay</button></div></article>
+<article><canvas data-mode="ink" aria-label="Gold stems are traced and rose ink washes into the flower petals"></canvas><div class="caption"><div><h2>Flowers drawn in ink</h2><p>Gold lines first, then a wash of rose pigment.</p></div><button type="button">Replay</button></div></article>
+<article><canvas data-mode="arrival" aria-label="One flower opens beside the name and releases petals that wake the garden"></canvas><div class="caption"><div><h2>Flowers follow your arrival</h2><p>One bloom opens, the rest answer.</p></div><button type="button">Replay</button></div></article>
+</main>
+<script type="module" src="/previews/intros.js"></script>
+</body></html>

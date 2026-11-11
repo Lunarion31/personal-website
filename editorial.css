@@ -25,3 +25,6 @@ h1 { letter-spacing: -.035em; }
 #copy-lumi img { display:block; image-rendering:pixelated; }
 #copy-lumi:focus-visible { outline:2px solid var(--link); outline-offset:4px; }
 #lumi-embed { width:100%; color:var(--ink); background:var(--paper); }
+
+.garden-overlay { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+@media print { .garden-overlay { display: none; } }

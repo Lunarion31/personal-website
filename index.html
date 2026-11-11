@@ -27,9 +27,11 @@
     <meta name="twitter:image:alt" content="Lunarion. A hilltop observatory, a shooting star, a UFO, and a ringed planet in a burgundy sky." />
     <link rel="icon" type="image/svg+xml" href="/assets/lunarion-mark.svg?v=2" />
     <script>try { if (localStorage.getItem('lunarion-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
+    <script src="/intro-boot.js"></script>
+    <link rel="stylesheet" href="/intro.css?v=2" />
     <link rel="preload" href="/assets/fonts/geist-mono-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/simple.css" />
-    <link rel="stylesheet" href="/editorial.css" />
+    <link rel="stylesheet" href="/editorial.css?v=garden-2" />
   </head>
   <body>
     <a class="skip-link" href="#about">Skip to content</a>
@@ -369,6 +371,9 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
         <p class="widget-detail"><a href="https://open-meteo.com/">Weather by Open-Meteo</a></p>
       </section>
     </aside>
+    <canvas id="night-garden" class="garden-overlay" aria-hidden="true"></canvas>
+    <script src="/night-garden.js?v=4" defer></script>
+    <script type="module" src="/garden-intro.js?v=3"></script>
     <script src="/status.js" defer></script>
     <script src="/copy-lumi.js" defer></script>
     <script src="/button-marquee.js?v=2" defer></script>

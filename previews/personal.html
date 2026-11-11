@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lunarion · Night garden study</title>
+<style>
+@font-face{font-family:Display;src:url('/assets/fonts/geist-serif-regular.woff2')}
+@font-face{font-family:Geist;src:url('/assets/fonts/geist-regular.woff2')}
+*{box-sizing:border-box}html{background:#241722;color:#f6e7d5}body{margin:0;font:16px/1.65 Geist,sans-serif;background:radial-gradient(ellipse at 76% 42%,#54344065,transparent 55%)}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}main{position:relative;min-height:100svh;max-width:1500px;margin:auto;padding:10vh 8vw 8vh}
+h1,h2,p{margin:0}h1,h2,.paths a{font-family:Display,Georgia,serif;font-weight:400}h1{font-size:clamp(76px,13vw,196px);line-height:.94;letter-spacing:-.065em}
+.intro{width:min(28ch,100%);margin:4vh 0 0 12vw;text-wrap:pretty}.intro b{font-weight:400;color:#f2c080}.paths{margin:5vh 0 0 48%;width:max-content;display:grid;gap:2px}.paths a{font-size:clamp(24px,3.1vw,46px);line-height:1.4}.paths a:nth-child(2){margin-left:1em}.paths a:nth-child(3){margin-left:.4em}
+a{color:#f4d9be;text-decoration-color:#ae8679;text-underline-offset:.18em;text-decoration-thickness:1px}a:hover,a:focus-visible{color:#ffd891}.button{display:block;width:88px;margin:5vh 0 0 24%;transform:rotate(-5deg)}.button img{display:block;image-rendering:pixelated}
+@media(max-width:640px){main{padding:12vh 7vw 9vh}.intro{margin:4vh 0 0 3vw;max-width:23ch}.paths{margin:9vh 0 0 34%}.button{margin:7vh 0 0 9%}}
+</style></head><body><canvas id="night-garden" aria-hidden="true"></canvas>
+<main><h1>lunarion</h1><p class="intro"><b>Hi, I’m Jamie.</b> I’m a software engineering major with a crippling addiction to computers.</p>
+<nav class="paths" aria-label="Explore"><a href="/#projects">my projects</a><a href="/#games">vidya games</a><a href="/#contact">say hello</a></nav>
+<a class="button" href="/#buttons"><img src="/static/img/buttons/lumi.png" width="88" height="31" alt="Jamie's web buttons"></a></main>
+<script src="/night-garden.js"></script></body></html>
