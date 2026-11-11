@@ -28,3 +28,9 @@ h1 { letter-spacing: -.035em; }
 
 .garden-overlay { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 @media print { .garden-overlay { display: none; } }
+
+.page-controls { position:absolute; top:20px; right:max(40px, calc((100vw - 1440px)/2)); display:flex; gap:8px; z-index:40; }
+.page-controls .theme-switch { position:static; }
+.page-controls [hidden] { display:none; }
+@media(max-width:1000px) { .page-controls { right:24px; } }
+@media(max-width:650px) { .page-controls { right:16px; } }

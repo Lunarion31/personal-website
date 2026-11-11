@@ -1,7 +1,19 @@
 import {drawGardenIntro} from './garden-intro-art.js';
 
 const root = document.documentElement;
+let finishActiveIntro;
 if (root.dataset.intro) startIntro();
+
+function replayIntro() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  finishActiveIntro?.(true);
+  scrollTo({top: 0, behavior: 'instant'});
+  root.dataset.intro = 'waiting';
+  window.lunarionIntroTimeout = setTimeout(() => finishActiveIntro?.(), 7000);
+  startIntro();
+}
+document.getElementById('replay-intro').addEventListener('click', replayIntro);
+addEventListener('intro-sound-ready', () => { if (root.dataset.intro) replayIntro(); });
 
 async function startIntro() {
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -10,6 +22,7 @@ async function startIntro() {
   layer.setAttribute('aria-hidden', 'true');
   layer.innerHTML = '<div class="intro-scene"><canvas></canvas><p class="intro-name">lunarion</p></div>';
   document.body.append(layer);
+  window.dispatchEvent(new Event('garden-intro-start'));
   const canvas = layer.querySelector('canvas');
   const mode = ['wake', 'breeze', 'ink', 'arrival'][Math.floor(Math.random() * 4)];
   layer.dataset.mode = mode;
@@ -17,7 +30,7 @@ async function startIntro() {
   const abort = new AbortController();
   const options = {signal: abort.signal};
 
-  function finish() {
+  function finish(reason) {
     if (finished) return;
     finished = true;
     cancelAnimationFrame(frame);
@@ -25,7 +38,11 @@ async function startIntro() {
     delete root.dataset.intro;
     layer.remove();
     abort.abort();
+    if (finishActiveIntro === finish) finishActiveIntro = null;
+    window.dispatchEvent(new CustomEvent('garden-intro-end', {detail: {cancelled: !!reason}}));
   }
+
+  finishActiveIntro = finish;
 
   // Scrolling, keyboard navigation and restored pages give control immediately.
   for (const event of ['wheel', 'touchstart', 'keydown', 'pagehide', 'resize']) {
@@ -47,11 +64,16 @@ async function startIntro() {
     const ctx = canvas.getContext('2d');
     // Match the scene's proportions at both portrait and desktop sizes.
     ctx.setTransform(canvas.width / 600, 0, 0, canvas.height / 360, 0, 0);
-    let drawing = null;
+    let drawing = null, nextCue = 0;
+    const bloomAt = {wake: 800, breeze: 500, ink: 1100, arrival: 600}[mode];
+    const cues = [[bloomAt, 'paper'], [2300, 'fabric'], [3550, 'chime']];
     function tick(now) {
       if (finished) return;
       started ??= now;
       const elapsed = now - started;
+      while (nextCue < cues.length && elapsed >= cues[nextCue][0]) {
+        window.dispatchEvent(new CustomEvent('garden-intro-cue', {detail: cues[nextCue++][1]}));
+      }
       if (elapsed < 2300) drawGardenIntro({ctx, mode}, elapsed, true);
       else if (!drawing) {
         drawing = tracePage();
@@ -74,7 +96,7 @@ function tracePage() {
   svg.classList.add('intro-drawing');
   svg.setAttribute('width', document.documentElement.clientWidth);
   svg.setAttribute('height', document.documentElement.scrollHeight);
-  const targets = document.querySelectorAll('.site, .buttons-section, .right-sidebar, .theme-switch');
+  const targets = document.querySelectorAll('.site, .buttons-section, .right-sidebar');
   const range = document.createRange();
 
   function add(tag, attrs, y) {
