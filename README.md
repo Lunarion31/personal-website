@@ -13,6 +13,6 @@ Open [the homepage](http://127.0.0.1:4174/). Run the local checks with `node --t
 ## Editing the site
 
 - Edit the homepage and button carousel in `index.html`, the styles in `simple.css` and `editorial.css`, and the sidebar status in `status.js`.
-- Edit the animated Lumi artwork in [the observatory preview](previews/observatory.html). Other sites embed [the GIF](static/img/buttons/lumi.gif) and [the original PNG](static/img/buttons/lumi.png) directly. The older PNG at `assets/lumi.png` also supplies the social card renderer.
-- The share image is `assets/lunarion-share-cream.png`. Regenerate it on macOS with Pillow installed using `python3 scripts/render-share-card.py`.
+- Edit the animated Lumi artwork in [the observatory preview](previews/observatory.html). Other sites embed [the GIF](static/img/buttons/lumi.gif) and [the original PNG](static/img/buttons/lumi.png) directly. The older PNG at `assets/lumi.png` is also available for hotlinks.
+- The share image is `assets/lunarion-observatory.png`. Regenerate it on macOS with Pillow installed using `python3 scripts/render-share-card.py`.
 - For the sidebar APIs and D1 database, see [Cloudflare setup](CLOUDFLARE-SETUP.md).
