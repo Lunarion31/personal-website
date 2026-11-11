@@ -41,27 +41,13 @@ h2 { margin: 0 0 10px; font-size: 15px; font-weight: normal; }
 aside h2 { color: var(--muted); font-size: 12px; }
 nav { margin-bottom: 27px; }
 nav a { display: table; margin: 5px 0; }
-.discord { color: var(--muted); font-size: 12px; line-height: 1.8; }
-.discord span { color: var(--ink); }
 h1 { font-family: 'Geist Serif', Georgia, serif; font-style: normal; font-size: 28px; line-height: 1.25; font-weight: normal; letter-spacing: -.5px; margin: 0 0 6px; }
 p { margin: 0 0 18px; }
-.tagline { color: var(--muted); font-size: 14px; font-style: italic; margin-bottom: 27px; }
 strong { font-weight: normal; }
-.note { color: var(--muted); font-size: 13px; margin-top: 24px; }
 .buttons-section { margin-top: 34px; padding-top: 23px; border-top: 1px solid var(--line); }
 .buttons-section h2 { margin-bottom: 2px; }
 .buttons-section > p { color: var(--muted); font-size: 13px; margin-bottom: 15px; }
 .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-.web-button { width: 88px; height: 31px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; overflow: hidden; border: 2px ridge var(--line); font: bold 8px/1.15 'Geist Mono', monospace; letter-spacing: -.3px; text-align: center; }
-.web-button small { display: block; font-size: 7px; font-weight: normal; letter-spacing: -.3px; }
-.lunar-button { background: #29101f; color: #f4eddf; }
-.lunar-button > span:first-child { font-size: 22px; }
-.html-button { background: #e9ddc7; color: #4b2535; }
-.html-button > span:first-child { color: #82603e; font-size: 13px; }
-.web-button-green { background: #e9ddc7; color: #4b2535; }
-.web-button-green small { font-size: 11px; font-weight: bold; }
-.web-button-green > span:last-child { font-size: 18px; }
-.buttons-section .button-note { font-size: 11px; margin: 12px 0 0; }
 footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 11px; }
 .skip-link { position: absolute; left: 16px; top: -80px; padding: 8px; background: var(--paper); }
 .skip-link:focus { top: 10px; }
@@ -84,7 +70,6 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
     margin-bottom: 28px;
   }
   nav { margin: 0; }
-  .discord { margin: 0; }
   h1 { font-size: 26px; }
 }
 
@@ -113,7 +98,6 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 
 .about-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
 .about-section h2 { color: var(--burgundy); font-size: 19px; margin-bottom: 8px; }
-.section-placeholder { color: var(--muted); font-size: 13px; margin-bottom: 0; }
 .project-item h3 { margin: 0 0 5px; font-size: 15px; font-weight: normal; }
 .project-item p { margin: 0; }
 .setup-machine + .setup-machine { margin-top: 24px; }
@@ -147,27 +131,15 @@ footer { border-top: 1px solid var(--line); padding-top: 15px; display: flex; ju
 }
 @media (max-width: 760px) { .right-sidebar { width: calc(100% - 36px); } }
 
-.space-ribbon { position: fixed; left: 0; right: 0; height: 40px; overflow: hidden; z-index: 30; pointer-events: none; background: transparent; color: var(--decoration); font: 12px/22px 'Geist Mono', monospace; }
-.space-ribbon-top { top: 0; }
-.space-ribbon-bottom { bottom: 0; }
-.space-ribbon-track { display: flex; width: max-content; animation: space-drift 65s linear infinite; }
-.space-ribbon-track > span { display: flex; justify-content: space-around; flex: none; width: max(50vw, 640px); white-space: pre; }
-.space-ribbon-track i { display: inline-block; font-style: normal; transform: translateY(var(--dip, 0px)); }
-.space-ribbon-bottom .space-ribbon-track i { transform: translateY(calc(18px - var(--dip, 0px))); }
-.space-ribbon-bottom .space-ribbon-track { animation-direction: reverse; }
-@keyframes space-drift { to { transform: translateX(-50%); } }
-/* Leave room for the fixed ribbons at either end of each scroll area. */
 aside { padding-top: 52px; padding-bottom: 52px; }
 .skip-link:focus { top: 26px; z-index: 40; }
 @media (min-width: 1100px) { .right-sidebar { padding-top: 52px; padding-bottom: 52px; } }
 @media (max-width: 760px) { .layout > aside { padding-top: 0; padding-bottom: 18px; } .site { margin-top: 52px; } }
 @media (max-width: 540px) { .security-banner { align-items: flex-start; padding: 9px 23px; font-size: 11px; } .security-banner::before, .security-banner::after { width: 12px; } }
 @media (max-width: 540px) { .theme-switch { padding: 5px 8px; font-size: 11px; } }
-@media (prefers-reduced-motion: reduce) { .space-ribbon-track { animation: none; } }
 
 .section-nav { position: relative; }
 .section-nav a[aria-current="location"] { text-decoration: none; color: var(--burgundy); }
-.section-marker { position: absolute; left: 0; top: 0; height: 2px; background: var(--burgundy); pointer-events: none; transition: transform .24s ease, width .24s ease; }
 .album-row { display: flex; align-items: end; gap: 9px; }
 #listening-art { border-radius: 4px; object-fit: cover; margin-bottom: 8px; }
 .playing-indicator { display: inline-flex; align-items: end; gap: 3px; height: 18px; margin-bottom: 10px; }
@@ -185,7 +157,7 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 .tiny-button:hover, .sparkle-switch:hover:not(:disabled) { background: var(--button-hover, #dfcba7); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .section-marker, a, button, .custom-button { transition: none; }
+  a, button, .custom-button { transition: none; }
   .playing-indicator i { animation: none; }
   .custom-button:hover { transform: none; }
 }
@@ -198,10 +170,10 @@ a, button { transition: color .18s ease, background-color .18s ease; }
   }
   .wordmark span { animation: moon-rock 7s ease-in-out infinite; transform-origin: 50% 65%; }
   .section-enter { animation: section-arrive .6s ease-out both; }
-  a:not(.custom-button):not(.wordmark):not(.web-button) {
+  a:not(.custom-button):not(.wordmark) {
     transition: color .18s ease, text-underline-offset .2s ease;
   }
-  a:not(.custom-button):not(.wordmark):not(.web-button):is(:hover, :focus-visible) {
+  a:not(.custom-button):not(.wordmark):is(:hover, :focus-visible) {
     text-underline-offset: 6px;
   }
   .custom-button:focus-visible { transform: translateY(-3px) rotate(-2deg); }

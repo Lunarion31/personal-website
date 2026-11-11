@@ -2,7 +2,6 @@
   const nav = document.querySelector('.section-nav');
   const links = [...nav.querySelectorAll('a[href^="#"]')];
   const targets = links.map(link => document.querySelector(link.getAttribute('href')));
-  const marker = nav.querySelector('.section-marker');
   let queued = false;
   function update() {
     queued = false;
@@ -15,9 +14,6 @@
       if (index === selected) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
     });
-    const rect = links[selected].getBoundingClientRect(), base = nav.getBoundingClientRect();
-    marker.style.width = `${rect.width}px`;
-    marker.style.transform = `translate(${rect.left - base.left}px, ${rect.bottom - base.top + 1}px)`;
   }
   function schedule() { if (!queued) { queued = true; requestAnimationFrame(update); } }
   window.addEventListener('scroll', schedule, {passive:true});

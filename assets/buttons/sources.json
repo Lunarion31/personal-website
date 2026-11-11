@@ -5,11 +5,6 @@
     "link": "https://qwq.sh/"
   },
   {
-    "source": "https://bomberfish.ca/button.gif",
-    "alt": "Bomberfish",
-    "link": "https://bomberfish.ca/"
-  },
-  {
     "source": "https://qwq.sh/88x31/css.png",
     "alt": "CSS is difficult",
     "link": null
@@ -58,11 +53,6 @@
     "source": "https://bomberfish.ca/buttons/modarchive.gif",
     "alt": "The Mod Archive",
     "link": "https://modarchive.org/"
-  },
-  {
-    "source": "https://bomberfish.ca/buttons/mariokart.gif",
-    "alt": "Mario Kart",
-    "link": "https://bomberfish.github.io/N64Wasm"
   },
   {
     "source": "https://bomberfish.ca/buttons/imac.gif",
