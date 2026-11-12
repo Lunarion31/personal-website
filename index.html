@@ -32,6 +32,7 @@
     <link rel="preload" href="/assets/fonts/geist-mono-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/simple.css" />
     <link rel="stylesheet" href="/editorial.css?v=garden-7" />
+    <link rel="stylesheet" href="/site-charms.css" />
   </head>
   <body>
     <a class="skip-link" href="#about">Skip to content</a>
@@ -44,6 +45,7 @@
           >lunarion<span aria-hidden="true"> ☾</span></a
         >
         <p>I wasted 10MB of Cloudflare's storage for this site.</p>
+<div class="site-charm charm-cd"><div class="disc-stage"><button id="disc" class="disc" type="button" aria-label="Spin the CD" aria-describedby="disc-help"><span class="disc-grooves" aria-hidden="true"></span><span class="disc-label" aria-hidden="true">lumi</span><span class="disc-hole" aria-hidden="true"></span></button></div><p id="disc-help">Flick to spin. Move across it to catch the light.</p></div>
       </header>
       <div class="layout">
         <aside>
@@ -78,6 +80,7 @@
               A little music corner ♫
             </p>
           </section>
+
           <section
             class="sidebar-widget visitor-widget"
             aria-labelledby="visitor-title"
@@ -113,9 +116,11 @@
             </p>
           </section>
           <section class="about-section" id="hobbies" aria-labelledby="hobbies-title">
+<div class="site-charm charm-pinwheel"><div class="pinwheel-stage" id="pinwheel-stage"><span class="pinwheel-stick" aria-hidden="true"></span><button id="pinwheel" class="pinwheel" type="button" aria-label="Spin the pinwheel"><span class="vane"></span><span class="vane"></span><span class="vane"></span><span class="vane"></span><span class="pin" aria-hidden="true"></span></button></div><p>Wave your cursor past it, or give it a tap.</p></div>
             <h2 id="hobbies-title">hobbies</h2>
             <p>Fullstack development, information technology, systems administration, and cybersecurity. Check out the <a href="#games">games I play!</a></p>
           </section>
+
           <section class="about-section" id="languages" aria-labelledby="languages-title">
             <h2 id="languages-title">languages I know</h2>
             <ul class="language-list">
@@ -156,6 +161,7 @@
             </ul>
           </section>
           <section class="about-section" id="setup" aria-labelledby="setup-title">
+<div class="site-charm charm-lamp"><button class="lava-lamp" id="lava-lamp" type="button" aria-label="Change the lava lamp glow"><span class="lamp-cap" aria-hidden="true"></span><span class="lamp-glass" aria-hidden="true"><span class="lava"><i></i><i></i><i></i><i></i><i></i></span></span><span class="lamp-base" aria-hidden="true"></span></button><p id="lava-caption" aria-live="polite">Rose glow · tap to change</p></div>
             <h2 id="setup-title">my setup</h2>
             <article class="setup-machine">
               <h3>MacBook Pro (Ugh yes I know, I'm a disgusting consumerist)</h3>
@@ -183,6 +189,7 @@
             </article>
           </section>
           <section class="about-section" id="contact" aria-labelledby="contact-title">
+<div class="site-charm charm-jar"><button id="firefly-jar" class="firefly-jar" type="button" aria-label="Scatter the fireflies"><span class="jar-lid" aria-hidden="true"></span><span class="jar-glass" aria-hidden="true"><span id="fireflies" class="fireflies"></span></span></button><p>Tap the glass and watch them scatter.</p></div>
             <h2 id="contact-title">contact me</h2>
             <ul class="contact-list">
               <li><strong>Bluesky:</strong> <a href="https://bsky.app/profile/lunarion31.bsky.social">lunarion31.bsky.social</a></li>
@@ -348,6 +355,7 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
       <button type="button" class="theme-switch" id="theme-switch" aria-pressed="false">☾ dark mode</button>
     </div>
     <aside class="right-sidebar" aria-label="Little extras">
+
       <section class="greeble">
         <h2>very important button</h2>
         <button class="tiny-button" id="click-greeble" type="button">click me</button>
@@ -376,8 +384,15 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
         <button class="tiny-button" id="weather-units" type="button" aria-label="Show temperatures in Celsius">°C</button>
         <p class="widget-detail"><a href="https://open-meteo.com/">Weather by Open-Meteo</a></p>
       </section>
+
     </aside>
+<svg class="filter-definitions" width="0" height="0" aria-hidden="true" focusable="false">
+<defs><filter id="lava-flow" x="-50%" y="-30%" width="200%" height="160%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceGraphic" stdDeviation="6" result="soft"/>
+<feColorMatrix in="soft" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -9"/>
+</filter></defs></svg>
     <canvas id="night-garden" class="garden-overlay" aria-hidden="true"></canvas>
+    <script src="/site-charms.js" defer></script>
     <script src="/night-garden.js?v=4" defer></script>
     <script type="module" src="/garden-intro.js?v=15"></script>
     <script src="/status.js" defer></script>
