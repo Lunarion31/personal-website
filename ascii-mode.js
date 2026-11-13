@@ -102,7 +102,7 @@
       });
       renderer.draw(()=>{
         if(!active||token!==generation||!texture||document.hidden)return;
-        if(pendingIntro){pendingIntro=false;startAsciiIntro();sceneLast=0}
+        if(pendingIntro&&!document.getElementById('mobile-notice')?.open){pendingIntro=false;startAsciiIntro();sceneLast=0}
         const now=performance.now(),delta=sceneLast?Math.min((now-sceneLast)/1000,.08):0;
         if(!reduced.matches){sceneTime+=delta;if(intro)intro.elapsed+=delta*1000}sceneLast=now;
         compose();texture.cellColor(23,13,22);renderer.background(23,13,22);renderer.image(texture,renderer.grid.cols,renderer.grid.rows);

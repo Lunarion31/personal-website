@@ -1,6 +1,6 @@
 /* Set by the synchronous head script before the body can paint. */
 html[data-ascii-loading],html[data-ascii-loading] body{background:#170d16!important}
-html[data-ascii-loading] body>:not(#ascii-viewport):not(#ascii-loading){visibility:hidden!important}
+html[data-ascii-loading] body>:not(#ascii-viewport):not(#ascii-loading):not(#mobile-notice){visibility:hidden!important}
 /* ASCII scenery sits behind native, fully interactive monospace page content. */
 html.textmode-active,html.textmode-active[data-theme=dark]{color-scheme:dark;--paper:#170d16;--ink:#f4dfb5;--muted:#c5a78e;--line:transparent;--burgundy:#e2b683;--burgundy-soft:#352032;--link:#dfb2c1;background:#170d16}
 .textmode-active body{background:#170d16;color:var(--ink);isolation:isolate}

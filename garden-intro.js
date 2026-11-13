@@ -19,6 +19,12 @@ document.getElementById('replay-intro').addEventListener('click', replayIntro);
 addEventListener('intro-sound-ready', () => { if (root.dataset.intro) replayIntro(); });
 
 async function startIntro() {
+  if(document.getElementById('mobile-notice')?.open){
+    clearTimeout(window.lunarionIntroTimeout);
+    await new Promise(resolve=>addEventListener('mobile-notice-dismissed',resolve,{once:true}));
+    if(finishActiveIntro)return;
+    window.lunarionIntroTimeout=setTimeout(()=>finishActiveIntro?.(),7000);
+  }
   if(asciiEnabled()){delete root.dataset.intro;return}
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const layer = document.createElement('div');
