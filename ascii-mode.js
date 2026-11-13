@@ -1,6 +1,7 @@
 (() => {
   const code=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a','enter'];
   const preferenceKey='lunarion-ascii-mode';
+  function reportProgress(){dispatchEvent(new CustomEvent('konami-progress',{detail:{next:code[progress]||code[0]}}))}
   let transitionPending=false,burstRequest=0;
   function changeModeAfterPetals(){
     if(transitionPending)return;transitionPending=true;const id=++burstRequest,next=!active;let timer;
@@ -112,13 +113,13 @@
   }
   document.addEventListener('keydown',event=>{
     if(transitionPending||event.repeat||event.isComposing||event.ctrlKey||event.metaKey||event.altKey)return;
-    if(event.target.closest('input,textarea,select,[contenteditable="true"]')){progress=0;return}
+    if(event.target.closest('input,textarea,select,[contenteditable="true"]')){progress=0;reportProgress();return}
     const key=event.key.toLowerCase(),expected=code[progress];
     const entered=code.slice(0,progress).concat(key);progress=0;
     for(let length=Math.min(code.length,entered.length);length>0;length--){if(entered.slice(-length).every((value,i)=>value===code[i])){progress=length;break}}
     if(progress>0)event.preventDefault();
     if(key===expected&&progress>0)dispatchEvent(new CustomEvent('konami-step',{detail:{step:progress,total:code.length,complete:progress===code.length}}));
-    if(progress===code.length){progress=0;changeModeAfterPetals()}
+    if(progress===code.length){progress=0;reportProgress();changeModeAfterPetals()}else reportProgress()
   });
   addEventListener('ascii-restore-timeout',()=>{if(active)stop(false)});
   addEventListener('ascii-intro-request',startAsciiIntro);

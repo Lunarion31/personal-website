@@ -13,12 +13,31 @@ const blooms = [
  ];
 const flowers = blooms.map(() => ({retreat: 0}));
 const keyHints=['↑','↑','↓','↓','←','→','←','→','B','A','↵'];
+let hintTime=0,heldHint=null,nextInput='↑';
+const whisper=document.createElement('div');whisper.className='keycap-whisper';whisper.hidden=true;whisper.setAttribute('role','tooltip');
+const nextKey=document.createElement('kbd');nextKey.textContent=nextInput;
+whisper.append(document.createTextNode("hm? what's this? maybe try "),nextKey,document.createTextNode('?'));document.body.append(whisper);
+addEventListener('konami-progress',event=>{
+  nextInput={arrowup:'↑',arrowdown:'↓',arrowleft:'←',arrowright:'→',b:'B',a:'A',enter:'Enter'}[event.detail.next]||'↑';
+  nextKey.textContent=nextInput;
+});
+function updateWhisper(hints){
+  const hit=!burst&&cursor.active?hints.find(h=>h.fade>.15&&Math.hypot(cursor.x-h.x,cursor.y-h.y)<h.radius+14):null;
+  heldHint=hit||null;whisper.hidden=!hit;
+  if(!hit)return;
+  const box=whisper.getBoundingClientRect(),left=Math.max(12,Math.min(width-box.width-12,hit.x-box.width/2));
+  let top=hit.y-hit.radius-box.height-14;
+  const below=top<12;if(below)top=hit.y+hit.radius+14;
+  whisper.dataset.side=below?'below':'above';whisper.style.left=Math.round(left)+'px';whisper.style.top=Math.round(Math.max(12,Math.min(height-box.height-12,top)))+'px';
+  whisper.style.setProperty('--tip-x',Math.max(14,Math.min(box.width-14,hit.x-left))+'px');
+}
 let quiverStart=-10,quiverPower=0,burst=null,petalsReleased=false;
 function finishBurst(){
   if(!burst)return;const id=burst.id;burst=null;
   queueMicrotask(()=>dispatchEvent(new CustomEvent('konami-burst-end',{detail:{id}})));
 }
 addEventListener('konami-burst',event=>{
+  heldHint=null;whisper.hidden=true;
   if(quiet.matches){queueMicrotask(()=>dispatchEvent(new CustomEvent('konami-burst-end',{detail:{id:event.detail.id}})));return}
   const particles=[],speed=Math.max(width,height)*1.25;
   for(const [index,flower] of flowers.entries()){
@@ -133,14 +152,17 @@ function garden(t, dt = 0) {
     petal((7+i%5*2)*scale, (4+i%3)*scale, ['#d19c7980','#b778848f','#f5c9a36a'][i%3]);ctx.restore();
   }
   // A sparse, ordered trail: at most two keycaps, beginning with the first Up.
-  const latest=Math.floor(t/14);
+  if(heldHint&&(!cursor.active||Math.hypot(cursor.x-heldHint.x,cursor.y-heldHint.y)>heldHint.radius+14))heldHint=null;
+  if(!heldHint)hintTime+=dt;
+  const hintPositions=[],latest=Math.floor(hintTime/14);
   for(let sequence=Math.max(0,latest-1);sequence<=latest;sequence++){
-    const age=t-sequence*14;if(age<0||age>24)continue;
+    const age=hintTime-sequence*14;if(age<0||age>24)continue;
     const progress=age/24,i=sequence%2;
     const x=width*(.24+i*.5)+Math.sin(progress*6+i*2)*32;
     const y=progress*(height+100)-50,radius=Math.max(10,Math.min(13,11*scale));
     const label=keyHints[sequence%keyHints.length];
     const fade=Math.min(1,progress*9,(1-progress)*9);
+    hintPositions.push({x,y,radius,fade});
     ctx.save();ctx.globalAlpha=fade*.22;ctx.translate(x,y);ctx.rotate(Math.sin(t*.5+i)*.2);
     ctx.fillStyle='#f4eddf55';ctx.strokeStyle='#b58b8d88';ctx.lineWidth=.75;
     ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.fill();ctx.stroke();
@@ -148,6 +170,7 @@ function garden(t, dt = 0) {
     ctx.fillStyle=document.documentElement.dataset.theme==='dark'||document.documentElement.classList.contains('textmode-active')?'#dec18b':'#633b50';ctx.font='500 '+Math.round(radius*1.1)+"px 'Geist Mono',monospace";ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,0,.5);ctx.restore();
   }
 
+  updateWhisper(hintPositions);
   if(burst){
     burst.elapsed+=dt;const age=burst.elapsed,travel=age*.7+age*age*.7;let allGone=true;
     for(const p of burst.particles){

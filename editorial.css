@@ -36,3 +36,9 @@ h1 { letter-spacing: -.035em; }
 @media(max-width:650px) { .page-controls { right:16px; } }
 
 .cheat-code-hint{margin:10px 0 0;color:var(--muted);font:10px/1.6 'Geist Mono',monospace;letter-spacing:.02em}
+
+.keycap-whisper{position:fixed;z-index:80;width:max-content;max-width:calc(100vw - 24px);white-space:nowrap;padding:11px 14px;border:1px solid #c5a26866;border-radius:12px;background:var(--paper);color:var(--ink);font:12px/1.6 'Geist Mono',monospace;pointer-events:none}
+.keycap-whisper::after{content:'';position:absolute;left:calc(var(--tip-x,50%) - 5px);bottom:-6px;width:10px;height:10px;transform:rotate(45deg);background:var(--paper);border-right:1px solid #c5a26866;border-bottom:1px solid #c5a26866}
+.keycap-whisper[data-side=below]::after{bottom:auto;top:-6px;transform:rotate(225deg)}
+.keycap-whisper kbd{color:var(--burgundy);font:inherit;font-weight:700;white-space:nowrap}
+.textmode-active .keycap-whisper{border-color:#c5a26866!important}
