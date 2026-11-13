@@ -42,21 +42,20 @@
       detail.textContent = 'Live music unavailable right now.';
     }
   }
+  let pageVisitId;
   async function visitor() {
     const digits = document.querySelector('.visitor-digits');
     const note = document.querySelector('.visitor-widget .widget-detail');
     try {
       if (!apiBase) throw new Error('not configured');
-      let visitorId = localStorage.getItem('lunarion-visitor-id');
-      if (!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(visitorId || '')) {
-        visitorId = crypto.randomUUID();
-        localStorage.setItem('lunarion-visitor-id', visitorId);
-      }
+      // A fresh token counts this page load, including refreshes. Keep it in memory
+      // so the same visit can be retried without registering a second visit.
+      const visitorId = pageVisitId ??= crypto.randomUUID();
       const response = await fetch(apiBase + '/api/visitor', {method: 'POST', headers: {'X-Visitor-ID': visitorId}, signal: AbortSignal.timeout(10000)});
       const data = await response.json();
       if (!response.ok || !Number.isSafeInteger(data.number) || data.number < 1) throw new Error('unavailable');
       digits.textContent = String(data.number).padStart(5, '0');
-      digits.setAttribute('aria-label', `You are visitor number ${data.number}`);
+      digits.setAttribute('aria-label', `${data.number} visits to this site`);
       note.textContent = 'Happy you’re here ♡';
     } catch {
       digits.textContent = '— — — — —';

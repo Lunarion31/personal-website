@@ -18,7 +18,9 @@ For CLI deployments, add your D1 binding and set the deployed origin list in `wo
 
 ## Behavior
 
-The browser stores a random UUID in localStorage and sends it to the Worker. The database assigns one number per UUID. Refreshes retain the number; a different browser or cleared storage counts again. No third-party cookies or stored IP addresses are involved. If browser storage is blocked, the counter stays unavailable rather than incrementing on every load. This counts browser identities, not verified unique people, and does not prevent bots from inflating totals.
+The browser creates a fresh random UUID in memory for each page load and sends it to the Worker. The existing `visitors` table assigns one number per token, so every refresh or new page load now counts as a visit. The same in-memory token can be reused for retries without counting that load twice. Browser storage is not required, and no third-party cookies or stored IP addresses are involved. This counts page visits, including repeat visitors and bots, rather than unique people.
+
+The count continues from the existing database; earlier numbers were assigned to browser identities. No database migration or Worker redeployment is needed for this change. The counter shows the total when this page load was registered; it does not poll or increment while the page sits open.
 
 The Worker allows browser requests only from configured origins. This is a CORS boundary, not authentication. Use a separate database for preview if you do not want testing counted in production.
 
