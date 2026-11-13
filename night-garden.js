@@ -6,20 +6,37 @@ const quiet = matchMedia('(prefers-reduced-motion: reduce)');
 let width, height, frame, time = 0, last = 0;
 const overlay = canvas.classList.contains('garden-overlay');
 const cursor = { x: 0, y: 0, active: false };
-const petals = Array.from({length: 23}, () => ({dx: 0, dy: 0, shrink: 1}));
+const random=(min,max)=>min+Math.random()*(max-min);
+function seedDrifter(state,whole,initial=false){
+  const duration=whole?random(34,56):random(22,43);
+  Object.assign(state,{duration,age:initial?random(0,duration):-random(whole?2:.15,whole?10:2.8),startX:random(.03,.97),drift:random(-100,100),sway:random(18,65),windSpeed:random(.18,.55),phase:random(0,Math.PI*2),spin:random(-.75,.75),flutter:random(.35,.9),radius:whole?random(20,27):random(7,17),breadth:random(.35,.62),color:Math.floor(random(0,4)),seed:random(0,10),dx:0,dy:0,pose:null});
+  return state;
+}
+function advanceDrifter(state,whole,dt){state.age+=dt;if(state.age>state.duration)seedDrifter(state,whole);return state.age>=0}
+const petals=Array.from({length:34},()=>seedDrifter({},false,true));
+const driftingFlowers=Array.from({length:3},()=>seedDrifter({},true,true));
+const driftingTones=['#c98f9e','#e1aaa0','#b77f9d','#deb9b0'];
 const blooms = [
   [.91,.25,65,-.4], [.84,.43,42,.3], [1.02,.52,83,-.6],
   [.055,.77,46,.5], [-.025,.52,70,-.3], [.145,.95,29,.3]
  ];
-const flowers = blooms.map(() => ({retreat: 0}));
-const keyHints=['↑','↑','↓','↓','←','→','←','→','B','A','↵'];
+const flowers = blooms.map(() => ({dx:0,dy:0}));
+const keyHints=['↑','↑','↓','↓','←','→','←','→','B','A'];
+const hintInterval=6,hintDuration=24;
 let hintTime=0,heldHint=null,nextInput='↑';
 const whisper=document.createElement('div');whisper.className='keycap-whisper';whisper.hidden=true;whisper.setAttribute('role','tooltip');
 const nextKey=document.createElement('kbd');nextKey.textContent=nextInput;
-whisper.append(document.createTextNode("hm? what's this? maybe try "),nextKey,document.createTextNode('?'));document.body.append(whisper);
+const keyFeedback=document.createElement('span');keyFeedback.className='keycap-feedback';keyFeedback.setAttribute('role','status');
+let flashTimer,feedbackTimer;
+addEventListener('konami-step',()=>{
+  clearTimeout(flashTimer);clearTimeout(feedbackTimer);nextKey.textContent=nextInput;keyFeedback.textContent='';whisper.dataset.feedback='flash';
+  flashTimer=setTimeout(()=>{whisper.dataset.feedback='correct';keyFeedback.textContent='✓'},55);
+  feedbackTimer=setTimeout(()=>{delete whisper.dataset.feedback;keyFeedback.textContent='';nextKey.textContent=nextInput},260);
+});
+whisper.append(document.createTextNode("hm? what's this? maybe try "),nextKey,document.createTextNode('?'),keyFeedback);document.body.append(whisper);
 addEventListener('konami-progress',event=>{
-  nextInput={arrowup:'↑',arrowdown:'↓',arrowleft:'←',arrowright:'→',b:'B',a:'A',enter:'Enter'}[event.detail.next]||'↑';
-  nextKey.textContent=nextInput;
+  nextInput={arrowup:'↑',arrowdown:'↓',arrowleft:'←',arrowright:'→',b:'B',a:'A'}[event.detail.next]||'↑';
+  if(!whisper.dataset.feedback)nextKey.textContent=nextInput;
 });
 function updateWhisper(hints){
   const hit=!burst&&cursor.active?hints.find(h=>h.fade>.15&&Math.hypot(cursor.x-h.x,cursor.y-h.y)<h.radius+14):null;
@@ -53,6 +70,10 @@ addEventListener('konami-burst',event=>{
     const angle=Math.atan2(p.pose.y-height*.5,p.pose.x-width*.5);
     particles.push({...p.pose,inner:0,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,spin:(i%2?1:-1)*1.2,alpha:1});
   }
+  for(const [i,flower] of driftingFlowers.entries())if(flower.pose){
+    const pose=flower.pose,angle=Math.atan2(pose.y-height*.5,pose.x-width*.5);
+    for(let j=0;j<7;j++)particles.push({...pose,inner:j*Math.PI*2/7,vx:Math.cos(angle+(j-3)*.15)*speed,vy:Math.sin(angle+(j-3)*.15)*speed,spin:(j%2?1:-1)*.9,length:pose.r*(1+.08*Math.sin(j*2+pose.seed)),breadth:pose.r*.5,tone:driftingTones[(j+pose.color)%4]});
+  }
   petalsReleased=true;burst={id:event.detail.id,elapsed:0,particles};garden(time,0);
 });
 addEventListener('ascii-mode-change',event=>{if(!event.detail.enabled)petalsReleased=false});
@@ -63,15 +84,14 @@ addEventListener('konami-step',event=>{
   quiverStart=time;quiverPower=event.detail.complete?1.65:1+event.detail.step*.025;
 });
 
-function retreat(state, x, y, dt) {
+function retreat(state, x, y, dt, radius=120, strength=65) {
   const rx = x - cursor.x, ry = y - cursor.y;
   const distance = Math.hypot(rx, ry);
-  const proximity = cursor.active ? Math.max(0, 1 - distance / 120) : 0;
+  const proximity = cursor.active ? Math.max(0, 1 - distance / radius) : 0;
   const angle = distance ? Math.atan2(ry, rx) : -Math.PI / 2;
   const ease = 1 - Math.exp(-7 * dt);
-  state.dx += (Math.cos(angle) * proximity * 65 - state.dx) * ease;
-  state.dy += (Math.sin(angle) * proximity * 65 - state.dy) * ease;
-  state.shrink += (1 - proximity * .28 - state.shrink) * ease;
+  state.dx += (Math.cos(angle) * proximity * strength - state.dx) * ease;
+  state.dy += (Math.sin(angle) * proximity * strength - state.dy) * ease;
 }
 
 function petal(length, breadth, tone) {
@@ -102,27 +122,15 @@ function garden(t, dt = 0) {
     const stemX = overlay ? (u > .5 ? width - (1-u)*6*margin : u*6*margin) : width*u;
     const flower = flowers[index];
     const tipX = stemX + sway, tipY = height*v+quiver*1.8;
-    const distance = Math.hypot(tipX - cursor.x, tipY - cursor.y);
-    const proximity = cursor.active ? Math.max(0, 1 - distance / 150) : 0;
-    flower.retreat += (proximity * .22 - flower.retreat) * (1 - Math.exp(-5 * dt));
-    const root = width*(u>.5?1.04:-.02);
-    const points = [
-      [root, height*1.1],
-      [root-40*scale, height*.83],
-      [tipX+58*scale, tipY+110*scale],
-      [tipX, tipY]
-    ];
-    // Subdivide the stem curve: its shortened endpoint carries the flower.
-    const amount = 1 - flower.retreat;
-    const mix = (a, b) => [a[0]+(b[0]-a[0])*amount, a[1]+(b[1]-a[1])*amount];
-    const a = mix(points[0], points[1]), b = mix(points[1], points[2]);
-    const c = mix(points[2], points[3]);
-    const d = mix(a, b), e = mix(b, c), tip = mix(d, e);
+    retreat(flower,tipX,tipY,dt,150,75);
+    const root=width*(u>.5?1.04:-.02);
+    const a=[root-40*scale,height*.83];
+    const d=[tipX+58*scale+flower.dx*.65,tipY+110*scale+flower.dy*.65];
+    const tip=[tipX+flower.dx,tipY+flower.dy];
     flower.x=tip[0];flower.y=tip[1];
-    const turn = Math.atan2(tip[1]-d[1],tip[0]-d[0]) -
-      Math.atan2(tipY-points[2][1],tipX-points[2][0]);
+    const turn=Math.atan2(tip[1]-d[1],tip[0]-d[0])-Math.atan2(-110*scale,-58*scale);
     ctx.strokeStyle = '#b59a72'; ctx.lineWidth = 1.3*scale;
-    ctx.beginPath(); ctx.moveTo(...points[0]);
+    ctx.beginPath(); ctx.moveTo(root,height*1.1);
     ctx.bezierCurveTo(...a,...d,...tip); ctx.stroke();
     flower.pose={x:tip[0],y:tip[1],turn:tilt+sway*.009+turn,sx:scale,sy:scale*.72};
     ctx.globalAlpha=overlay ? .72 : 1;
@@ -139,25 +147,39 @@ function garden(t, dt = 0) {
     ctx.restore();
   }
   ctx.globalAlpha = 1;
-  if(!petalsReleased)for(let i=0;i<petals.length;i++){
-    const progress=(i*.618034+t*(.024+i%3*.008))%1;
-    const x=(i*.381966%1)*width+Math.sin(progress*5+i)*44+progress*50;
-    const y=progress*(height+70)-35;
-    const p = petals[i];
-    retreat(p, x, y, dt);
-    p.pose={x:x+p.dx,y:y+p.dy,turn:i+progress*5+Math.sin(t*.8+i)*.3,sx:p.shrink*(.25+.75*Math.abs(Math.cos(progress*6+i))),sy:p.shrink,length:(7+i%5*2)*scale,breadth:(4+i%3)*scale,tone:['#d19c7980','#b778848f','#f5c9a36a'][i%3]};
-    ctx.save();ctx.translate(x+p.dx,y+p.dy);ctx.rotate(i+progress*5+Math.sin(t*.8+i)*.3);
-    ctx.scale(p.shrink,p.shrink);
-    ctx.scale(.25+.75*Math.abs(Math.cos(progress*6+i)),1);
-    petal((7+i%5*2)*scale, (4+i%3)*scale, ['#d19c7980','#b778848f','#f5c9a36a'][i%3]);ctx.restore();
+  if(!petalsReleased)for(const p of petals){
+    p.pose=null;if(!advanceDrifter(p,false,dt))continue;
+    const progress=p.age/p.duration;
+    const x=p.startX*width+Math.sin(p.age*p.windSpeed+p.phase)*p.sway+progress*p.drift,y=progress*(height+100)-50;
+    retreat(p,x,y,dt);
+    const turn=p.phase+p.age*p.spin,sx=.25+.75*Math.abs(Math.cos(p.age*p.flutter+p.phase));
+    const length=p.radius*scale,breadth=length*p.breadth,tone=['#d19c7980','#b778848f','#f5c9a36a'][p.color%3];
+    p.pose={x:x+p.dx,y:y+p.dy,turn,sx,sy:1,length,breadth,tone};
+    ctx.save();ctx.translate(x+p.dx,y+p.dy);ctx.rotate(turn);ctx.scale(sx,1);petal(length,breadth,tone);ctx.restore();
   }
-  // A sparse, ordered trail: at most two keycaps, beginning with the first Up.
+  // Independent lifetimes and fresh paths keep whole blossoms from repeating a loop.
+  if(!petalsReleased)for(const flower of driftingFlowers){
+    flower.pose=null;if(!advanceDrifter(flower,true,dt))continue;
+    const progress=flower.age/flower.duration;
+    const x=flower.startX*width+Math.sin(flower.age*flower.windSpeed+flower.phase)*flower.sway+progress*flower.drift,y=progress*(height+110)-55;
+    retreat(flower,x,y,dt);
+    const r=flower.radius*scale,turn=flower.phase+flower.age*flower.spin*.45;
+    const sx=1,sy=.7+.15*Math.sin(flower.age*flower.flutter+flower.phase);
+    const alpha=Math.min(1,progress*8,(1-progress)*8)*.5;
+    flower.pose={x:x+flower.dx,y:y+flower.dy,turn,sx,sy,r,alpha,seed:flower.seed,color:flower.color};
+    ctx.save();ctx.globalAlpha=alpha;ctx.translate(x+flower.dx,y+flower.dy);ctx.rotate(turn);ctx.scale(sx,sy);
+    for(let j=0;j<7;j++){ctx.save();ctx.rotate(j*Math.PI*2/7);petal(r*(1+.08*Math.sin(j*2+flower.seed)),r*.5,driftingTones[(j+flower.color)%4]);ctx.restore()}
+    ctx.fillStyle='#493044';ctx.beginPath();ctx.arc(0,0,r*.16,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#e8c98c';for(let j=0;j<6;j++)ctx.fillRect(Math.cos(j*2.4)*r*.1,Math.sin(j*2.4)*r*.1,1.2,1.6);
+    ctx.restore();
+  }
+  // An ordered trail, beginning with the first Up and capped at four keycaps.
   if(heldHint&&(!cursor.active||Math.hypot(cursor.x-heldHint.x,cursor.y-heldHint.y)>heldHint.radius+14))heldHint=null;
   if(!heldHint)hintTime+=dt;
-  const hintPositions=[],latest=Math.floor(hintTime/14);
-  for(let sequence=Math.max(0,latest-1);sequence<=latest;sequence++){
-    const age=hintTime-sequence*14;if(age<0||age>24)continue;
-    const progress=age/24,i=sequence%2;
+  const hintPositions=[],latest=Math.floor(hintTime/hintInterval);
+  for(let sequence=Math.max(0,latest-Math.ceil(hintDuration/hintInterval)+1);sequence<=latest;sequence++){
+    const age=hintTime-sequence*hintInterval;if(age<0||age>hintDuration)continue;
+    const progress=age/hintDuration,i=sequence%2;
     const x=width*(.24+i*.5)+Math.sin(progress*6+i*2)*32;
     const y=progress*(height+100)-50,radius=Math.max(10,Math.min(13,11*scale));
     const label=keyHints[sequence%keyHints.length];

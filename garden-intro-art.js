@@ -51,11 +51,23 @@
     ctx.restore();
   }
 
+  // Independent positions and timing avoid a diagonal procession in the intro.
+  const introDrifters = Array.from({length:13}, () => ({
+    x:Math.random()*600, phase:Math.random(), speed:.025+Math.random()*.025,
+    sway:12+Math.random()*24, turn:Math.random()*Math.PI*2
+  }));
+  const breezePaths = [
+    {delay:0,y:75,arc:80}, {delay:.24,y:305,arc:-45},
+    {delay:.08,y:190,arc:65}, {delay:.37,y:25,arc:35},
+    {delay:.16,y:355,arc:-70}, {delay:.43,y:140,arc:-55},
+    {delay:.04,y:260,arc:45}, {delay:.3,y:105,arc:90},
+    {delay:.2,y:330,arc:-30}
+  ];
   function drifting(ctx, t, alpha = 1) {
     ctx.save();ctx.globalAlpha=alpha*.65;
     for(let i=0;i<13;i++){
-      const u=(i*.618+t*.035)%1;
-      ctx.save();ctx.translate((i*.382%1)*600+Math.sin(u*5+i)*24,u*415-30);
+      const drift=introDrifters[i],u=(drift.phase+t*drift.speed)%1;
+      ctx.save();ctx.translate(drift.x+Math.sin(u*5+drift.turn)*drift.sway,u*415-30);
       ctx.rotate(i+u*5);ctx.scale(.4+.6*Math.abs(Math.cos(u*5+i)),1);
       petal(ctx,7+i%4*2,4+i%3,'#d2958c');ctx.restore();
     }
@@ -88,9 +100,9 @@
     drifting(ctx,t,phase(t,1.5,.9));
     if(mode==='breeze'){
       for(let i=0;i<9;i++){
-        const u=limit((t-i*.065)/1.65);
-        if(u>=1)continue;
-        ctx.save();ctx.translate(-180+u*1040,40+i*40+Math.sin(u*4+i)*100);
+        const path=breezePaths[i],u=limit((t-path.delay)/1.65);
+        if(u<=0||u>=1)continue;
+        ctx.save();ctx.translate(-180+u*1040,path.y+Math.sin(u*Math.PI)*path.arc);
         ctx.rotate(-.7+u*2+i*.8);ctx.scale(.8+Math.sin(u*Math.PI)*.6,1);
         petal(ctx,170+i%3*30,80,['#bb797b','#d2958c','#ac6a76'][i%3]);ctx.restore();
       }

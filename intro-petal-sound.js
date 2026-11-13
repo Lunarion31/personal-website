@@ -8,6 +8,7 @@
   let audio, buffers, loading, enabled = true, revision = 0, readyRevision = -1;
 
   const voices = new Set();
+  let thunkBuffer, whooshBuffer;
 
   function sync() {
     button.textContent = enabled ? '♫ sound on' : '♫ sound off';
@@ -99,6 +100,68 @@
       voices.delete(source);
       source.disconnect(); gain.disconnect();
     };
+  });
+  addEventListener('konami-step', async () => {
+    if (!enabled || document.hidden) return;
+    const request = revision;
+    try {
+      audio ??= new AudioEngine();
+      // Resume on this key gesture, then let intro cancellation finish before sounding it.
+      await audio.resume();
+      if (!enabled || request !== revision || document.hidden || audio.state !== 'running') return;
+      if (!thunkBuffer) {
+        const duration = .085, rate = audio.sampleRate;
+        thunkBuffer = audio.createBuffer(1, Math.ceil(duration * rate), rate);
+        const data = thunkBuffer.getChannelData(0);
+        let phase = 0, held = 0, previous = -1, seed = 71;
+        for (let i = 0; i < data.length; i++) {
+          const time = i / rate, step = Math.floor(time * 8000);
+          if (step !== previous) {
+            phase += (68 + 125 * Math.exp(-time * 80)) / 8000;
+            seed = (Math.imul(seed, 1664525) + 1013904223) | 0;
+            const noise = ((seed >>> 0) / 4294967296 * 2 - 1) * Math.exp(-time * 210) * .22;
+            const tone = (Math.sin(phase * Math.PI * 2) > 0 ? 1 : -1) * .38;
+            held = Math.round((tone + noise) * 16) / 16; previous = step;
+          }
+          const attack = Math.min(1, time / .0015);
+          data[i] = held * attack * Math.exp(-time * 65) * (1 - time / duration);
+        }
+      }
+      const source = audio.createBufferSource(), gain = audio.createGain();
+      source.buffer = thunkBuffer; gain.gain.value = .22;
+      source.connect(gain).connect(audio.destination); voices.add(source);
+      source.onended = () => { voices.delete(source); source.disconnect(); gain.disconnect(); };
+      source.start();
+    } catch { /* Visual feedback still works when browser audio is unavailable. */ }
+  });
+  addEventListener('konami-burst', async () => {
+    if (!enabled || motion.matches || document.hidden) return;
+    const request = revision;
+    try {
+      audio ??= new AudioEngine();
+      await audio.resume();
+      if (!enabled || request !== revision || document.hidden || audio.state !== 'running') return;
+      const duration = .85;
+      if (!whooshBuffer) {
+        whooshBuffer = audio.createBuffer(1, Math.ceil(audio.sampleRate * duration), audio.sampleRate);
+        const data = whooshBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      }
+      const source = audio.createBufferSource(), filter = audio.createBiquadFilter(), gain = audio.createGain();
+      const now = audio.currentTime;
+      source.buffer = whooshBuffer;
+      filter.type = 'bandpass'; filter.Q.value = .65;
+      filter.frequency.setValueAtTime(350, now);
+      filter.frequency.exponentialRampToValueAtTime(2100, now + .22);
+      filter.frequency.exponentialRampToValueAtTime(450, now + duration);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(.24, now + .12);
+      gain.gain.exponentialRampToValueAtTime(.001, now + duration);
+      source.connect(filter).connect(gain).connect(audio.destination);
+      voices.add(source);
+      source.onended = () => { voices.delete(source); source.disconnect(); filter.disconnect(); gain.disconnect(); };
+      source.start(now, 0, duration);
+    } catch { /* The petal animation can continue without audio. */ }
   });
   addEventListener('garden-intro-start', stop);
   addEventListener('garden-intro-end', event => { if (event.detail.cancelled) stop(); });

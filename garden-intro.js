@@ -1,4 +1,4 @@
-import {drawGardenIntro} from './garden-intro-art.js';
+import {drawGardenIntro} from './garden-intro-art.js?v=2';
 
 const root = document.documentElement;
 let finishActiveIntro;

@@ -42,3 +42,9 @@ h1 { letter-spacing: -.035em; }
 .keycap-whisper[data-side=below]::after{bottom:auto;top:-6px;transform:rotate(225deg)}
 .keycap-whisper kbd{color:var(--burgundy);font:inherit;font-weight:700;white-space:nowrap}
 .textmode-active .keycap-whisper{border-color:#c5a26866!important}
+
+.keycap-feedback{display:inline-block;width:1em;margin-left:5px;color:#9ac8a7;font-weight:700}
+.keycap-whisper kbd{display:inline-block;padding:0 3px;border-radius:3px;transition:color .055s,background-color .055s}
+.keycap-whisper[data-feedback=flash] kbd{color:#5a3e24;background:#ead095}
+.keycap-whisper[data-feedback=correct] kbd{color:#9ac8a7;background:#203c30}
+@media(prefers-reduced-motion:reduce){.keycap-whisper kbd{transition:none}}

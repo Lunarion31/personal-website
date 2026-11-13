@@ -1,5 +1,5 @@
 (() => {
-  const code=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a','enter'];
+  const code=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];
   const preferenceKey='lunarion-ascii-mode';
   function reportProgress(){dispatchEvent(new CustomEvent('konami-progress',{detail:{next:code[progress]||code[0]}}))}
   let transitionPending=false,burstRequest=0;
@@ -89,7 +89,7 @@
       await Promise.all([load('/assets/vendor/textmode/textmode.umd.js'),load('/ascii-landscape.js'),load('/ascii-sakura.js'),document.fonts.ready]);
       if(!active||token!==generation)return;
       await window.prepareLunarionLandscape();
-      ({drawGardenIntro:drawIntro}=await import('/garden-intro-art.js'));
+      ({drawGardenIntro:drawIntro}=await import('/garden-intro-art.js?v=2'));
       if(!active||token!==generation)return;
       document.documentElement.classList.add('textmode-active');
       description=document.createElement('span');description.className='ascii-scene-description';description.textContent='ASCII wonderland: a waterfall feeds a flowing river beneath sakura trees, mist, a rainbow, and swaying flowers.';document.body.append(description);
