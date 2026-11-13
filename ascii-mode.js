@@ -86,7 +86,7 @@
   async function start(){
     active=true;savePreference(true);dispatchEvent(new CustomEvent('ascii-mode-change',{detail:{enabled:true}}));const token=++generation;loading=announce('Opening the character garden…');
     try{
-      await Promise.all([load('/assets/vendor/textmode/textmode.umd.js'),load('/ascii-landscape.js'),load('/ascii-sakura.js'),document.fonts.ready]);
+      await Promise.all([load('/assets/vendor/textmode/textmode.umd.js'),load('/ascii-landscape.js?v=2'),load('/ascii-sakura.js'),document.fonts.ready]);
       if(!active||token!==generation)return;
       await window.prepareLunarionLandscape();
       ({drawGardenIntro:drawIntro}=await import('/garden-intro-art.js?v=2'));
@@ -95,7 +95,7 @@
       description=document.createElement('span');description.className='ascii-scene-description';description.textContent='ASCII wonderland: a waterfall feeds a flowing river beneath sakura trees, mist, a rainbow, and swaying flowers.';document.body.append(description);
       source=document.createElement('canvas');source.width=innerWidth;source.height=innerHeight;context=source.getContext('2d');
       output=document.createElement('canvas');output.id='ascii-viewport';output.width=innerWidth;output.height=innerHeight;output.style.opacity='0';output.setAttribute('aria-hidden','true');document.body.append(output);
-      renderer=textmode.create({canvas:output,width:innerWidth,height:innerHeight,fontSize:5,frameRate:30});
+      renderer=textmode.create({canvas:output,width:innerWidth,height:innerHeight,fontSize:5,frameRate:60});
       renderer.setup(()=>{
         if(!active||token!==generation)return;
         pendingIntro=true;compose();texture=renderer.createTexture(source);texture.characters(' ░▒▓█');texture.charColorMode('sampled');texture.cellColorMode('fixed');texture.cellColor(23,13,22);texture.background(0,0,0);

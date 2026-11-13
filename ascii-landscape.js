@@ -8,9 +8,7 @@ window.prepareLunarionLandscape=async()=>{
  const sakura=['#251925','#3b2438','#56314e','#74425f','#985574','#bb7a98','#d6a3b9','#edc9d0'];
  const palette=meta.palette.map((hex,i)=>(i<8?sakura[i]:hex).slice(1).match(/../g).map(c=>parseInt(c,16)));
  const cover={' ':0,'·':.3,'•':.6,'●':1},tree=window.createLunarionSakura(4);
- let last=-Infinity;
  function update(time){
-  if(time-last<1/meta.fps&&time>=last)return;last=time;
   const cells=frame(time+6,{color:indices}).replace(/\n/g,'');
   for(let i=0;i<indices.length;i++){
    const level=cover[cells[i]]||0,color=palette[indices[i]],offset=i*4;
