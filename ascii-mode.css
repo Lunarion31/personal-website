@@ -1,0 +1,38 @@
+/* Set by the synchronous head script before the body can paint. */
+html[data-ascii-loading],html[data-ascii-loading] body{background:#170d16!important}
+html[data-ascii-loading] body>:not(#ascii-viewport):not(#ascii-loading){visibility:hidden!important}
+/* ASCII scenery sits behind native, fully interactive monospace page content. */
+html.textmode-active,html.textmode-active[data-theme=dark]{color-scheme:dark;--paper:#170d16;--ink:#f4dfb5;--muted:#c5a78e;--line:transparent;--burgundy:#e2b683;--burgundy-soft:#352032;--link:#dfb2c1;background:#170d16}
+.textmode-active body{background:#170d16;color:var(--ink);isolation:isolate}
+#ascii-viewport{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;background:#170d16}
+.textmode-active .site,.textmode-active .right-sidebar{position:relative;z-index:1;background:transparent!important}
+.textmode-active .page-controls{z-index:3}
+.textmode-active body *,.textmode-active body *::before,.textmode-active body *::after{font-family:'Geist Mono',monospace!important;border-color:transparent!important;box-shadow:none!important}
+.textmode-active header,.textmode-active footer,.textmode-active .about-section,.textmode-active .sidebar-widget,.textmode-active .right-sidebar,.textmode-active .section-nav a,.textmode-active .security-banner{border-style:none!important}
+/* Match the intro's generous serif lettering, rendered only by the ASCII canvas. */
+.textmode-active .wordmark{font:400 clamp(64px,13vw,190px)/1 'Geist Serif',Georgia,serif!important;letter-spacing:-.045em;color:transparent!important;text-decoration:none}
+.textmode-active .wordmark:focus-visible{outline:2px solid #c5a268;outline-offset:8px}
+.textmode-active .garden-overlay{visibility:hidden}
+.textmode-active h1{color:#edc1cf;font-size:clamp(30px,4vw,56px);line-height:1.2;letter-spacing:-.04em}
+.textmode-active h2,.textmode-active h3{color:#cbb9e2}
+.textmode-active .about-section>h2::before{color:#e6b1c4}
+.textmode-active #pocket-note{background:#291927;color:#f4dfb5}
+.textmode-active .sidebar-widget h2,.textmode-active .section-nav h2,.textmode-active .greeble h2{font-size:13px}
+.textmode-active .section-nav a,.textmode-active .about-section>h2{font-size:15px}
+.textmode-active main>section:first-child>p{font-size:clamp(18px,1.8vw,22px)}
+.textmode-active .buttons-section{background:transparent!important}
+#ascii-loading{position:fixed;right:24px;bottom:20px;z-index:10001;background:#291927;color:#f4dfb5;padding:8px 12px;border:1px solid #c5a268;font:12px 'Geist Mono',monospace}
+.ascii-scene-description{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+.textmode-active.ascii-intro-running .site,.textmode-active.ascii-intro-running .right-sidebar{opacity:0;pointer-events:none}
+.textmode-active .site,.textmode-active .right-sidebar{transition:opacity .75s ease}
+@media(prefers-reduced-motion:reduce){.textmode-active .site,.textmode-active .right-sidebar{transition:none}}
+
+/* Quiet the art immediately behind navigation without moving the sidebar. */
+.textmode-active .layout>aside{background:transparent}
+.textmode-active .layout>aside .sidebar-widget{font-size:13px;line-height:1.7}
+.textmode-active .layout>aside .widget-detail{font-size:12px;line-height:1.65;color:#d2bdad}
+.textmode-active .layout>aside .section-nav a::before{color:#ccb9a6}
+.textmode-active .layout>aside h2{letter-spacing:.04em}
+
+@media(min-width:651px){.textmode-active .layout>aside{padding-left:12px;padding-right:28px}}

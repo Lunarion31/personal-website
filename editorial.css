@@ -34,3 +34,5 @@ h1 { letter-spacing: -.035em; }
 .page-controls [hidden] { display:none; }
 @media(max-width:1000px) { .page-controls { right:24px; } }
 @media(max-width:650px) { .page-controls { right:16px; } }
+
+.cheat-code-hint{margin:10px 0 0;color:var(--muted);font:10px/1.6 'Geist Mono',monospace;letter-spacing:.02em}

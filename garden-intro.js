@@ -2,9 +2,12 @@ import {drawGardenIntro} from './garden-intro-art.js';
 
 const root = document.documentElement;
 let finishActiveIntro;
-if (root.dataset.intro) startIntro();
+function asciiEnabled(){if(root.classList.contains('textmode-active'))return true;try{return localStorage.getItem('lunarion-ascii-mode')==='on'}catch{return false}}
+if (root.dataset.intro && !asciiEnabled()) startIntro();
+addEventListener('ascii-mode-change',event=>{if(event.detail.enabled)finishActiveIntro?.(true)});
 
 function replayIntro() {
+  if(asciiEnabled()){finishActiveIntro?.(true);dispatchEvent(new Event('ascii-intro-request'));return}
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   finishActiveIntro?.(true);
   scrollTo({top: 0, behavior: 'instant'});
@@ -16,6 +19,7 @@ document.getElementById('replay-intro').addEventListener('click', replayIntro);
 addEventListener('intro-sound-ready', () => { if (root.dataset.intro) replayIntro(); });
 
 async function startIntro() {
+  if(asciiEnabled()){delete root.dataset.intro;return}
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const layer = document.createElement('div');
   layer.id = 'garden-intro';
@@ -70,6 +74,7 @@ async function startIntro() {
     function tick(now) {
       if (finished) return;
       started ??= now;
+      if(asciiEnabled()){finish(true);dispatchEvent(new Event('ascii-intro-request'));return}
       const elapsed = now - started;
       while (nextCue < cues.length && elapsed >= cues[nextCue][0]) {
         window.dispatchEvent(new CustomEvent('garden-intro-cue', {detail: cues[nextCue++][1]}));

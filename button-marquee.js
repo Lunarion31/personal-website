@@ -26,7 +26,7 @@
     if (!width) return;
     const offset = loopWidth ? ((shelf.scrollLeft - loopStart) % loopWidth + loopWidth) % loopWidth : 0;
     const previous = shelf.scrollLeft;
-    track.querySelectorAll('[aria-hidden="true"]').forEach(copy => copy.remove());
+    track.querySelectorAll(':scope > .buttons[aria-hidden="true"]').forEach(copy => copy.remove());
     const copies = Math.ceil(shelf.clientWidth / width) + 2;
     for (let i = 0; i < copies; i++) {
       track.prepend(cloneButtons());
