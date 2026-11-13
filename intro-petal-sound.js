@@ -7,6 +7,42 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let audio, buffers, loading, enabled = true, revision = 0, readyRevision = -1;
 
+  const reminder=document.createElement('div');
+  reminder.id='sound-reminder';reminder.hidden=true;reminder.setAttribute('aria-label','Sound reminder');
+  reminder.innerHTML='<p>This site has a little sound.</p><span>Your browser is keeping it quiet.</span><div><button type="button" class="sound-reminder-enable">Enable sound</button><button type="button" class="sound-reminder-dismiss">Not now</button></div>';
+  (document.querySelector('.page-controls')||document.body).append(reminder);
+  let previewReminder=['localhost','127.0.0.1','[::1]'].includes(location.hostname)&&new URLSearchParams(location.search).get('sound-preview')==='1';
+  let reminderDismissed=false,reminderTimer,reminderFade;
+  try{reminderDismissed=sessionStorage.getItem('lunarion-sound-reminder-dismissed')==='yes'}catch{}
+  function showReminder(){reminderFade?.cancel();reminderFade=null;reminder.hidden=false}
+  function hideReminder(){
+    if(previewReminder)return;
+    clearTimeout(reminderTimer);
+    if(reminder.hidden||reminderFade)return;
+    if(motion.matches){reminder.hidden=true;return}
+    const fade=reminder.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-4px)'}],{duration:220,easing:'ease-out',fill:'forwards'});
+    reminderFade=fade;
+    fade.finished.then(()=>{if(reminderFade===fade){reminder.hidden=true;reminderFade=null;fade.cancel()}}).catch(()=>{});
+  }
+  function dismissReminder(){previewReminder=false;reminderDismissed=true;hideReminder();try{sessionStorage.setItem('lunarion-sound-reminder-dismissed','yes')}catch{}}
+  function scheduleReminder(){
+    clearTimeout(reminderTimer);
+    if(reminderDismissed||!enabled||document.hidden||audio?.state==='running')return;
+    reminderTimer=setTimeout(()=>{
+      if(reminderDismissed||!enabled||document.hidden||audio?.state==='running')return;
+      if(document.documentElement.dataset.intro||document.documentElement.classList.contains('ascii-intro-running')){scheduleReminder();return}
+      showReminder();
+    },5500);
+  }
+  reminder.querySelector('.sound-reminder-dismiss').addEventListener('click',dismissReminder);
+  reminder.querySelector('.sound-reminder-enable').addEventListener('click',()=>{
+    previewReminder=false;
+    enabled=true;const request=++revision;
+    reminder.querySelector('.sound-reminder-enable').textContent='Enabling…';
+    activate(request);
+    setTimeout(()=>{if(!reminder.hidden){reminder.querySelector('.sound-reminder-enable').textContent='Try again';reminder.querySelector('span').textContent='Still quiet? Check your browser’s sound setting for this site.'}},2000);
+  });
+
   const voices = new Set();
   let thunkBuffer, whooshBuffer;
 
@@ -34,6 +70,7 @@
 
   function ready(request) {
     if (request !== revision || readyRevision === request || !enabled || !buffers || document.hidden || audio?.state !== 'running') return;
+    hideReminder();
     readyRevision = request;
     sync();
     window.dispatchEvent(new Event('intro-sound-ready'));
@@ -41,7 +78,8 @@
 
   async function activate(request) {
     try {
-      audio ??= new AudioEngine();
+      if(!audio){audio=new AudioEngine();audio.addEventListener('statechange',()=>{if(audio.state==='running')hideReminder();else scheduleReminder()})}
+      scheduleReminder();
       // Fetch in parallel: resume may remain pending until a trusted gesture.
       await Promise.all([audio.resume(), load()]);
       if (request !== revision || !enabled || document.hidden) return;
@@ -60,14 +98,14 @@
     enabled = retry || !enabled;
     const request = ++revision;
     sync();
-    if (!enabled) { stop(); return; }
+    if (!enabled) { dismissReminder(); stop(); return; }
     button.textContent = '♫ loading…';
     activate(request);
   });
 
   function unlock(event) {
     if (!event.isTrusted || !enabled || document.hidden) return;
-    if (event.target.closest?.('#intro-sound-switch')) return;
+    if (event.target.closest?.('#intro-sound-switch,#sound-reminder')) return;
     if (audio?.state !== 'running') {
       const request = revision;
       audio?.resume().then(() => load()).then(() => ready(request)).catch(() => {});
@@ -167,14 +205,15 @@
   addEventListener('garden-intro-end', event => { if (event.detail.cancelled) stop(); });
   document.addEventListener('visibilitychange', async () => {
     if (!audio) return;
-    if (document.hidden) { stop(); await audio.suspend().catch(() => {}); }
-    else if (enabled) await audio.resume().catch(() => {});
+    if (document.hidden) { hideReminder(); stop(); await audio.suspend().catch(() => {}); }
+    else if (enabled) { scheduleReminder();await audio.resume().catch(() => {}); }
   });
-  addEventListener('pagehide', () => { stop(); audio?.suspend().catch(() => {}); });
+  addEventListener('pagehide', () => { hideReminder(); stop(); audio?.suspend().catch(() => {}); });
   addEventListener('pageshow', event => {
     if (event.persisted && enabled) audio?.resume().catch(() => {});
   });
   motion.addEventListener('change', sync);
   sync();
   activate(revision);
+  if(previewReminder)setTimeout(showReminder,500);
 })();

@@ -42,3 +42,7 @@ html.textmode-active{--note-paper:#291927;--button-hover:#4b2535;--digit-paper:#
 .textmode-active #theme-switch{display:none}
 .textmode-active :is(.theme-switch,.tiny-button,.sparkle-switch,#touch-code-pad button){background:#291927!important;color:#f4dfb5!important;border-color:#c5a26866!important}
 .textmode-active .keycap-feedback{color:#9ac8a7!important}
+
+.textmode-active #sound-reminder{background:#291927;color:#f4dfb5;border:1px solid #c5a26866!important}
+
+.textmode-active .page-controls:has(#sound-reminder:not([hidden])){z-index:120}
