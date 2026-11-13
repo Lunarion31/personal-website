@@ -3,9 +3,9 @@ html[data-intro] .buttons-section,
 html[data-intro] .right-sidebar,
 html[data-intro] #night-garden { opacity: 0; }
 #garden-intro { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; pointer-events: none; }
-.intro-scene { position: fixed; inset: 0; background: #29101f; transition: opacity .55s ease; }
+.intro-scene { position: fixed; inset: 0; background: var(--paper); transition: opacity .55s ease; }
 .intro-scene canvas { width: 100%; height: 100%; display: block; }
-.intro-name { position: absolute; top: 27%; left: 0; width: 100%; text-align: center; margin: 0; color: #f4eddf; font: 400 clamp(64px, 13vw, 190px)/1 'Geist Serif', Georgia, serif; letter-spacing: -.045em; }
+.intro-name { position: absolute; top: 27%; left: 0; width: 100%; text-align: center; margin: 0; color: var(--ink); font: 400 clamp(64px, 13vw, 190px)/1 'Geist Serif', Georgia, serif; letter-spacing: -.045em; }
 .intro-drawing { position: absolute; top: 0; left: 0; overflow: visible; opacity: 0; transition: opacity .45s ease; }
 .intro-drawing text, .intro-drawing path, .intro-drawing rect {
   fill: none; stroke: #c5a268; stroke-width: .7;
@@ -29,4 +29,6 @@ html[data-intro=fill] :is(.site,.buttons-section,.right-sidebar,#night-garden) {
 @media print { #garden-intro { display: none; } }
 
 html[data-intro] .page-controls { z-index:110; }
-html[data-intro=waiting] .page-controls .theme-switch { color:#f4eddf; border-color:#c5a26880; }
+html[data-intro=waiting] .page-controls .theme-switch { color:var(--ink); border-color:var(--line); }
+html:not([data-theme=dark]) .intro-drawing :is(text,path,rect){stroke:#81465e;stroke-width:1}
+html[data-theme=dark] .intro-drawing :is(text,path,rect){stroke:#dec18b;stroke-width:.85}

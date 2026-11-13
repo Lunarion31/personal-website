@@ -45,8 +45,8 @@
       if(box.bottom>0&&box.top<innerHeight){
         context.save();context.translate(box.left+box.width*.5,box.top+box.height*.5);
         context.scale(box.width*.85+120,box.height*.5+190);
-        const veil=context.createRadialGradient(0,0,0,0,0,1);
-        veil.addColorStop(0,'#170d16ba');veil.addColorStop(.3,'#170d169c');veil.addColorStop(.6,'#170d1652');veil.addColorStop(.84,'#170d161c');veil.addColorStop(1,'#170d1600');
+        const veil=context.createRadialGradient(0,0,0,0,0,1),veilColor='#170d16';
+        veil.addColorStop(0,veilColor+'ba');veil.addColorStop(.3,veilColor+'9c');veil.addColorStop(.6,veilColor+'52');veil.addColorStop(.84,veilColor+'1c');veil.addColorStop(1,veilColor+'00');
         context.fillStyle=veil;context.fillRect(-1,-1,2,2);context.restore();
       }
     }
@@ -69,7 +69,7 @@
       if(elapsed>=2300)document.documentElement.classList.remove('ascii-intro-running');
       if(elapsed>=3050){endAsciiIntro();return}
       if(introCanvas.width!==innerWidth||introCanvas.height!==innerHeight){introCanvas.width=innerWidth;introCanvas.height=innerHeight}
-      const c=introCanvas.getContext('2d');c.save();c.setTransform(innerWidth/600,0,0,innerHeight/360,0,0);drawIntro({ctx:c,mode:intro.mode},elapsed,true);c.restore();
+      const c=introCanvas.getContext('2d');c.save();c.setTransform(innerWidth/600,0,0,innerWidth/600,0,0);drawIntro({ctx:c,mode:intro.mode,height:innerHeight*600/innerWidth,dark:true},elapsed,true);c.restore();
       const size=Math.max(64,Math.min(innerWidth*.13,190));c.font=size+"px 'Geist Serif',Georgia,serif";c.textAlign='center';c.textBaseline='top';
       const textWidth=c.measureText('lunarion').width,g=c.createLinearGradient((innerWidth-textWidth)/2,0,(innerWidth+textWidth)/2,0);g.addColorStop(0,'#ecd096');g.addColorStop(.5,'#dba8b4');g.addColorStop(1,'#b6a1cf');c.fillStyle=g;c.fillText('lunarion',innerWidth/2,innerHeight*.27);
       context.save();context.globalAlpha=elapsed<2300?1:Math.max(0,1-(elapsed-2300)/750);context.drawImage(introCanvas,0,0);context.restore();
@@ -86,10 +86,10 @@
   async function start(){
     active=true;savePreference(true);dispatchEvent(new CustomEvent('ascii-mode-change',{detail:{enabled:true}}));const token=++generation;loading=announce('Opening the character garden…');
     try{
-      await Promise.all([load('/assets/vendor/textmode/textmode.umd.js'),load('/ascii-landscape.js?v=2'),load('/ascii-sakura.js'),document.fonts.ready]);
+      await Promise.all([load('/assets/vendor/textmode/textmode.umd.js'),load('/ascii-landscape.js?v=4'),load('/ascii-sakura.js'),document.fonts.ready]);
       if(!active||token!==generation)return;
       await window.prepareLunarionLandscape();
-      ({drawGardenIntro:drawIntro}=await import('/garden-intro-art.js?v=2'));
+      ({drawGardenIntro:drawIntro}=await import('/garden-intro-art.js?v=4'));
       if(!active||token!==generation)return;
       document.documentElement.classList.add('textmode-active');
       description=document.createElement('span');description.className='ascii-scene-description';description.textContent='ASCII wonderland: a waterfall feeds a flowing river beneath sakura trees, mist, a rainbow, and swaying flowers.';document.body.append(description);
@@ -106,12 +106,12 @@
         if(pendingIntro){pendingIntro=false;startAsciiIntro();sceneLast=0}
         const now=performance.now(),delta=sceneLast?Math.min((now-sceneLast)/1000,.08):0;
         if(!reduced.matches){sceneTime+=delta;if(intro)intro.elapsed+=delta*1000}sceneLast=now;
-        compose();renderer.background(23,13,22);renderer.image(texture,renderer.grid.cols,renderer.grid.rows);
+        compose();texture.cellColor(23,13,22);renderer.background(23,13,22);renderer.image(texture,renderer.grid.cols,renderer.grid.rows);
         output.style.opacity='1';output.dataset.ready='true';releaseBoot();loading?.remove();loading=null;
       });
     }catch(error){if(active&&token===generation){stop(false);announce('ASCII mode needs WebGL2 in this browser. The normal site is still available.')}}
   }
-  document.addEventListener('keydown',event=>{
+  function enterCodeKey(event){
     if(transitionPending||event.repeat||event.isComposing||event.ctrlKey||event.metaKey||event.altKey)return;
     if(event.target.closest('input,textarea,select,[contenteditable="true"]')){progress=0;reportProgress();return}
     const key=event.key.toLowerCase(),expected=code[progress];
@@ -120,7 +120,15 @@
     if(progress>0)event.preventDefault();
     if(key===expected&&progress>0)dispatchEvent(new CustomEvent('konami-step',{detail:{step:progress,total:code.length,complete:progress===code.length}}));
     if(progress===code.length){progress=0;reportProgress();changeModeAfterPetals()}else reportProgress()
-  });
+  }
+  document.addEventListener('keydown',enterCodeKey);
+  document.querySelectorAll('[data-code-key]').forEach(button=>button.addEventListener('click',()=>{
+    endAsciiIntro(true);
+    enterCodeKey({key:button.dataset.codeKey,target:button,preventDefault(){}});
+  }));
+  const keypadToggle=document.querySelector('.cheat-code-toggle'),keypad=document.getElementById('touch-code-pad');
+  keypadToggle?.addEventListener('click',()=>{keypad.hidden=!keypad.hidden;keypadToggle.setAttribute('aria-expanded',String(!keypad.hidden))});
+  addEventListener('theme-change',()=>{if(active)renderer?.redraw()});
   addEventListener('ascii-restore-timeout',()=>{if(active)stop(false)});
   addEventListener('ascii-intro-request',startAsciiIntro);
   for(const name of ['wheel','touchstart'])addEventListener(name,()=>endAsciiIntro(true),{passive:true});

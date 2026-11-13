@@ -10,7 +10,7 @@ html.textmode-active,html.textmode-active[data-theme=dark]{color-scheme:dark;--p
 .textmode-active body *,.textmode-active body *::before,.textmode-active body *::after{font-family:'Geist Mono',monospace!important;border-color:transparent!important;box-shadow:none!important}
 .textmode-active header,.textmode-active footer,.textmode-active .about-section,.textmode-active .sidebar-widget,.textmode-active .right-sidebar,.textmode-active .section-nav a,.textmode-active .security-banner{border-style:none!important}
 /* Match the intro's generous serif lettering, rendered only by the ASCII canvas. */
-.textmode-active .wordmark{font:400 clamp(64px,13vw,190px)/1 'Geist Serif',Georgia,serif!important;letter-spacing:-.045em;color:transparent!important;text-decoration:none}
+.textmode-active .wordmark{font:400 clamp(64px,13vw,190px)/.9 'Geist Serif',Georgia,serif!important;letter-spacing:-.045em;color:transparent!important;text-decoration:none}
 .textmode-active .wordmark:focus-visible{outline:2px solid #c5a268;outline-offset:8px}
 .textmode-active .garden-overlay{visibility:hidden}
 .textmode-active h1{color:#edc1cf;font-size:clamp(30px,4vw,56px);line-height:1.2;letter-spacing:-.04em}
@@ -36,3 +36,9 @@ html.textmode-active,html.textmode-active[data-theme=dark]{color-scheme:dark;--p
 .textmode-active .layout>aside h2{letter-spacing:.04em}
 
 @media(min-width:651px){.textmode-active .layout>aside{padding-left:12px;padding-right:28px}}
+
+/* ASCII is always a night garden; keep the normal site's theme preference. */
+html.textmode-active{--note-paper:#291927;--button-hover:#4b2535;--digit-paper:#351826}
+.textmode-active #theme-switch{display:none}
+.textmode-active :is(.theme-switch,.tiny-button,.sparkle-switch,#touch-code-pad button){background:#291927!important;color:#f4dfb5!important;border-color:#c5a26866!important}
+.textmode-active .keycap-feedback{color:#9ac8a7!important}

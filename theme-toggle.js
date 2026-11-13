@@ -3,6 +3,7 @@
   if (!button) return;
   function sync() {
     const dark = document.documentElement.dataset.theme === 'dark';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#29101f':'#f4eddf');
     button.setAttribute('aria-pressed', String(dark));
     button.textContent = dark ? '☀ light mode' : '☾ dark mode';
   }
@@ -12,6 +13,7 @@
     else delete document.documentElement.dataset.theme;
     try { localStorage.setItem('lunarion-theme', dark ? 'dark' : 'light'); } catch {}
     sync();
+    dispatchEvent(new Event('theme-change'));
   });
   sync();
 })();

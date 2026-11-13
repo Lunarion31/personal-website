@@ -1,4 +1,4 @@
-import {drawGardenIntro} from './garden-intro-art.js?v=2';
+import {drawGardenIntro} from './garden-intro-art.js?v=4';
 
 const root = document.documentElement;
 let finishActiveIntro;
@@ -67,7 +67,7 @@ async function startIntro() {
     canvas.height = Math.round(innerHeight * ratio);
     const ctx = canvas.getContext('2d');
     // Match the scene's proportions at both portrait and desktop sizes.
-    ctx.setTransform(canvas.width / 600, 0, 0, canvas.height / 360, 0, 0);
+    ctx.setTransform(canvas.width / 600, 0, 0, canvas.width / 600, 0, 0);
     let drawing = null, nextCue = 0;
     const bloomAt = {wake: 800, breeze: 500, ink: 1100, arrival: 600}[mode];
     const cues = [[bloomAt, 'paper'], [2300, 'fabric'], [3550, 'chime']];
@@ -79,7 +79,7 @@ async function startIntro() {
       while (nextCue < cues.length && elapsed >= cues[nextCue][0]) {
         window.dispatchEvent(new CustomEvent('garden-intro-cue', {detail: cues[nextCue++][1]}));
       }
-      if (elapsed < 2300) drawGardenIntro({ctx, mode}, elapsed, true);
+      if (elapsed < 2300) drawGardenIntro({ctx, mode, height:innerHeight*600/innerWidth}, elapsed, true);
       else if (!drawing) {
         drawing = tracePage();
         layer.append(drawing);

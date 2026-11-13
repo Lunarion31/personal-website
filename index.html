@@ -28,12 +28,12 @@
     <link rel="icon" type="image/svg+xml" href="/assets/lunarion-mark.svg?v=2" />
     <script>try { if (localStorage.getItem('lunarion-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
     <script src="/intro-boot.js?v=3"></script>
-    <link rel="stylesheet" href="/intro.css?v=10" />
+    <link rel="stylesheet" href="/intro.css?v=11" />
     <link rel="preload" href="/assets/fonts/geist-mono-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/simple.css" />
-    <link rel="stylesheet" href="/editorial.css?v=garden-11" />
+    <link rel="stylesheet" href="/editorial.css?v=garden-15" />
     <link rel="stylesheet" href="/site-charms.css" />
-    <link rel="stylesheet" href="/ascii-mode.css?v=8" />
+    <link rel="stylesheet" href="/ascii-mode.css?v=11" />
   </head>
   <body>
     <a class="skip-link" href="#about">Skip to content</a>
@@ -105,7 +105,15 @@
           <section class="sidebar-widget" aria-labelledby="switches-title">
             <h2 id="switches-title">little switches</h2>
             <button type="button" class="sparkle-switch" id="sparkle-switch" aria-pressed="true" hidden>✧ sparkles on</button>
-            <p class="cheat-code-hint">cheat codes enabled</p>
+            <p class="cheat-code-hint"><button type="button" class="cheat-code-toggle" aria-expanded="false" aria-controls="touch-code-pad">cheat codes enabled</button></p>
+            <div id="touch-code-pad" hidden role="group" aria-label="Enter a cheat code">
+              <button type="button" data-code-key="ArrowUp" aria-label="Up">↑</button>
+              <button type="button" data-code-key="ArrowDown" aria-label="Down">↓</button>
+              <button type="button" data-code-key="ArrowLeft" aria-label="Left">←</button>
+              <button type="button" data-code-key="ArrowRight" aria-label="Right">→</button>
+              <button type="button" data-code-key="b">B</button>
+              <button type="button" data-code-key="a">A</button>
+            </div>
           </section>
         </aside>
         <main id="about">
@@ -395,16 +403,16 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
 </filter></defs></svg>
     <canvas id="night-garden" class="garden-overlay" aria-hidden="true"></canvas>
     <script src="/site-charms.js" defer></script>
-    <script src="/ascii-mode.js?v=13" defer></script>
-    <script src="/night-garden.js?v=18" defer></script>
-    <script type="module" src="/garden-intro.js?v=17"></script>
+    <script src="/ascii-mode.js?v=16" defer></script>
+    <script src="/night-garden.js?v=21" defer></script>
+    <script type="module" src="/garden-intro.js?v=19"></script>
     <script src="/status.js" defer></script>
     <script src="/copy-lumi.js" defer></script>
     <script src="/button-marquee.js?v=2" defer></script>
     <script src="/modern-touches.js?v=2" defer></script>
     <script src="/sidebar-greebles.js" defer></script>
-    <script src="/intro-petal-sound.js?v=7" defer></script>
-    <script src="/theme-toggle.js" defer></script>
+    <script src="/intro-petal-sound.js?v=9" defer></script>
+    <script src="/theme-toggle.js?v=2" defer></script>
     <script src="/sidebar-weather.js" defer></script>
     <script src="/sparkle-trail.js" defer></script>
     <script src="/widget-config.js"></script>

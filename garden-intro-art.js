@@ -26,8 +26,8 @@
     }
   }
 
-  function flower(ctx, f, growth, opening, wind, ink = false, pigment = 1) {
-    const p0=[f.root,390],p1=[f.root-30,300],p2=[f.x+35,f.y+64],p3=[f.x+wind,f.y];
+  function flower(ctx, f, growth, opening, wind, ink = false, pigment = 1, height = 360) {
+    const p0=[f.root,height+30],p1=[f.root-30,300],p2=[f.x+35,f.y+64],p3=[f.x+wind,f.y];
     const a=mix(p0,p1,growth),b=mix(p1,p2,growth),c=mix(p2,p3,growth);
     const d=mix(a,b,growth),e=mix(b,c,growth),tip=mix(d,e,growth);
     ctx.strokeStyle='#b59a72';ctx.lineWidth=1;
@@ -63,11 +63,11 @@
     {delay:.04,y:260,arc:45}, {delay:.3,y:105,arc:90},
     {delay:.2,y:330,arc:-30}
   ];
-  function drifting(ctx, t, alpha = 1) {
+  function drifting(ctx, t, alpha = 1, height = 360) {
     ctx.save();ctx.globalAlpha=alpha*.65;
     for(let i=0;i<13;i++){
       const drift=introDrifters[i],u=(drift.phase+t*drift.speed)%1;
-      ctx.save();ctx.translate(drift.x+Math.sin(u*5+drift.turn)*drift.sway,u*415-30);
+      ctx.save();ctx.translate(drift.x+Math.sin(u*5+drift.turn)*drift.sway,u*(height+55)-30);
       ctx.rotate(i+u*5);ctx.scale(.4+.6*Math.abs(Math.cos(u*5+i)),1);
       petal(ctx,7+i%4*2,4+i%3,'#d2958c');ctx.restore();
     }
@@ -85,9 +85,9 @@
   }
 
   export function drawGardenIntro(scene, elapsed, nameOnly = false) {
-    const {ctx,mode}=scene;
+    const {ctx,mode,height=360,dark=document.documentElement.dataset.theme==='dark'}=scene;
     const t=elapsed/1000;
-    ctx.clearRect(0,0,600,360);ctx.fillStyle='#29101f';ctx.fillRect(0,0,600,360);
+    ctx.clearRect(0,0,600,height);ctx.fillStyle=dark?'#29101f':'#f4eddf';ctx.fillRect(0,0,600,height);
     if (!nameOnly) page(ctx, mode==='breeze'?phase(t,.35,1.3):mode==='ink'?phase(t,.65,1.15):phase(t,0,.65));
     for (const [i,f] of flowers.entries()) {
       let growth=1,opening=1,pigment=1;
@@ -95,14 +95,14 @@
       if(mode==='ink'){growth=phase(t,i*.13,1.1);opening=phase(t,.6+i*.12,.7);pigment=phase(t,1.05+i*.12,1);}
       if(mode==='arrival'){opening=phase(t,i===0?.2:.85+i*.12,1);growth=i===0?1:phase(t,.5+i*.12,.9);}
       const wind=Math.sin(t*1.2+i)*3*(mode==='arrival'?phase(t,.7,1):1);
-      flower(ctx,f,growth,opening,wind,mode==='ink',pigment);
+      flower(ctx,{...f,y:f.y*height/360},growth,opening,wind,mode==='ink',pigment,height);
     }
-    drifting(ctx,t,phase(t,1.5,.9));
+    drifting(ctx,t,phase(t,1.5,.9),height);
     if(mode==='breeze'){
       for(let i=0;i<9;i++){
         const path=breezePaths[i],u=limit((t-path.delay)/1.65);
         if(u<=0||u>=1)continue;
-        ctx.save();ctx.translate(-180+u*1040,path.y+Math.sin(u*Math.PI)*path.arc);
+        ctx.save();ctx.translate(-180+u*1040,path.y*height/360+Math.sin(u*Math.PI)*path.arc);
         ctx.rotate(-.7+u*2+i*.8);ctx.scale(.8+Math.sin(u*Math.PI)*.6,1);
         petal(ctx,170+i%3*30,80,['#bb797b','#d2958c','#ac6a76'][i%3]);ctx.restore();
       }
@@ -114,7 +114,7 @@
         if(u<=0||u>=1)continue;
         const source=flowers[0];
         ctx.save();ctx.globalAlpha=1-u*.7;
-        ctx.translate(source.x+u*(240+i*30),source.y+Math.sin(u*3+i)*40+u*42);
+        ctx.translate(source.x+u*(240+i*30),source.y*height/360+Math.sin(u*3+i)*40+u*42);
         ctx.rotate(u*6+i);petal(ctx,13,6,'#e1aaa0');ctx.restore();
       }
     }
