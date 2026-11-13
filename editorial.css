@@ -59,3 +59,7 @@ html:not([data-theme=dark]) .keycap-feedback{color:#327049}
 
 html:not([data-theme=dark]) :is(.theme-switch,.tiny-button,.sparkle-switch,#touch-code-pad button){border:1px solid #967657;background:#f8f2e7;color:#4b2535}
 html:not([data-theme=dark]) :is(.theme-switch,.tiny-button,.sparkle-switch,#touch-code-pad button):is(:hover,:focus-visible){background:#e9ddc7;outline-color:#81465e}
+
+.site-footer{position:relative;z-index:1;background:transparent;width:calc(100% - 80px);max-width:1440px;margin:0 auto;padding:20px 0 32px}
+@media(max-width:1000px){.site-footer{width:calc(100% - 48px)}}
+@media(max-width:650px){.site-footer{width:calc(100% - 32px);flex-wrap:wrap;gap:8px 20px}}

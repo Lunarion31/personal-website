@@ -206,7 +206,21 @@ function garden(t, dt = 0) {
     if((age>=.95&&allGone)||age>=1.45)finishBurst();
   }
 
-
+  // Feather the flowers around readable sidebar content without a hard panel edge.
+  if(!document.documentElement.classList.contains('textmode-active')){
+    ctx.save();ctx.globalAlpha=1;ctx.globalCompositeOperation='destination-out';
+    for(const sidebar of document.querySelectorAll('.layout>aside,.right-sidebar,.site-footer')){
+      const box=sidebar.getBoundingClientRect();
+      if(box.bottom<0||box.top>height)continue;
+      ctx.save();ctx.translate(box.left+box.width*.5,box.top+box.height*.5);
+      ctx.scale(box.width*.85+120,box.height*.5+190);
+      const fade=ctx.createRadialGradient(0,0,0,0,0,1);
+      fade.addColorStop(0,'#000000ba');fade.addColorStop(.3,'#0000009c');
+      fade.addColorStop(.6,'#00000052');fade.addColorStop(.84,'#0000001c');fade.addColorStop(1,'#00000000');
+      ctx.fillStyle=fade;ctx.fillRect(-1,-1,2,2);ctx.restore();
+    }
+    ctx.restore();
+  }
 }
 function tick(now){
   const dt = last ? Math.min(now-last,48)/1000 : 0;
@@ -233,5 +247,6 @@ addEventListener('pointerup', event => { if (event.pointerType !== 'mouse') curs
 addEventListener('pointercancel', () => { cursor.active = false; });
 document.documentElement.addEventListener('pointerleave', () => { cursor.active = false; });
 addEventListener('blur', () => { cursor.active = false; });
+addEventListener('scroll',()=>{if(quiet.matches)garden(time)},{passive:true,capture:true});
 addEventListener('resize',sync);document.addEventListener('visibilitychange',sync);quiet.addEventListener('change',sync);sync();
 })();

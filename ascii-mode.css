@@ -24,9 +24,9 @@ html.textmode-active,html.textmode-active[data-theme=dark]{color-scheme:dark;--p
 #ascii-loading{position:fixed;right:24px;bottom:20px;z-index:10001;background:#291927;color:#f4dfb5;padding:8px 12px;border:1px solid #c5a268;font:12px 'Geist Mono',monospace}
 .ascii-scene-description{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-.textmode-active.ascii-intro-running .site,.textmode-active.ascii-intro-running .right-sidebar{opacity:0;pointer-events:none}
-.textmode-active .site,.textmode-active .right-sidebar{transition:opacity .75s ease}
-@media(prefers-reduced-motion:reduce){.textmode-active .site,.textmode-active .right-sidebar{transition:none}}
+.textmode-active.ascii-intro-running .site,.textmode-active.ascii-intro-running .right-sidebar,.textmode-active.ascii-intro-running .site-footer{opacity:0;pointer-events:none}
+.textmode-active .site,.textmode-active .right-sidebar,.textmode-active .site-footer{transition:opacity .75s ease}
+@media(prefers-reduced-motion:reduce){.textmode-active .site,.textmode-active .right-sidebar,.textmode-active .site-footer{transition:none}}
 
 /* Quiet the art immediately behind navigation without moving the sidebar. */
 .textmode-active .layout>aside{background:transparent}

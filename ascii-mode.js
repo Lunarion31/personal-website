@@ -39,8 +39,7 @@
     const garden=document.getElementById('night-garden');
     if(garden?.width)context.drawImage(garden,0,0,source.width,source.height);
     // Feather the scenery around the sidebar rather than drawing a rectangular panel.
-    const sidebar=document.querySelector('.layout>aside');
-    if(sidebar){
+    for(const sidebar of document.querySelectorAll('.layout>aside,.site-footer')){
       const box=sidebar.getBoundingClientRect();
       if(box.bottom>0&&box.top<innerHeight){
         context.save();context.translate(box.left+box.width*.5,box.top+box.height*.5);

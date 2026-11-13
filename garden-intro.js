@@ -101,7 +101,7 @@ function tracePage() {
   svg.classList.add('intro-drawing');
   svg.setAttribute('width', document.documentElement.clientWidth);
   svg.setAttribute('height', document.documentElement.scrollHeight);
-  const targets = document.querySelectorAll('.site, .buttons-section, .right-sidebar');
+  const targets = document.querySelectorAll('.site, .buttons-section, .right-sidebar, .site-footer');
   const range = document.createRange();
 
   function add(tag, attrs, y) {

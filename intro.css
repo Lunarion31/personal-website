@@ -1,6 +1,7 @@
 html[data-intro] .site,
 html[data-intro] .buttons-section,
 html[data-intro] .right-sidebar,
+html[data-intro] .site-footer,
 html[data-intro] #night-garden { opacity: 0; }
 #garden-intro { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; pointer-events: none; }
 .intro-scene { position: fixed; inset: 0; background: var(--paper); transition: opacity .55s ease; }
@@ -18,12 +19,12 @@ html[data-intro=fill] .intro-drawing :is(text, path, rect) {
   animation: intro-trace 1.65s linear both; animation-delay: var(--trace-delay, 0s);
 }
 html[data-intro=fill] .intro-drawing { opacity: 0; }
-html[data-intro=fill] :is(.site,.buttons-section,.right-sidebar,#night-garden) {
+html[data-intro=fill] :is(.site,.buttons-section,.right-sidebar,.site-footer,#night-garden) {
   opacity: 1; transition: opacity .8s ease;
 }
 @keyframes intro-trace { to { stroke-dashoffset: 0; } }
 @media(prefers-reduced-motion:reduce) {
-  html[data-intro] :is(.site,.buttons-section,.right-sidebar,#night-garden) { opacity: 1; }
+  html[data-intro] :is(.site,.buttons-section,.right-sidebar,.site-footer,#night-garden) { opacity: 1; }
   #garden-intro { display: none; }
 }
 @media print { #garden-intro { display: none; } }
