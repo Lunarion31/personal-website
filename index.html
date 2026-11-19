@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="/intro.css?v=12" />
     <link rel="preload" href="/assets/fonts/geist-mono-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/simple.css" />
-    <link rel="stylesheet" href="/editorial.css?v=garden-25" />
+    <link rel="stylesheet" href="/editorial.css?v=garden-26" />
     <link rel="stylesheet" href="/site-charms.css" />
     <link rel="stylesheet" href="/ascii-mode.css?v=15" />
   </head>
@@ -143,6 +143,14 @@
           </section>
           <section class="about-section" id="projects" aria-labelledby="projects-title">
             <h2 id="projects-title">projects</h2>
+            <div class="project-browser">
+              <div class="project-controls">
+                <span>scroll to explore</span>
+                <span class="project-position" aria-label="Project 1 of 9">01 / 09</span>
+                <button type="button" class="tiny-button" data-project-step="-1" aria-label="Previous projects" aria-controls="project-track">←</button>
+                <button type="button" class="tiny-button" data-project-step="1" aria-label="Next projects" aria-controls="project-track">→</button>
+              </div>
+              <div class="project-track" id="project-track" tabindex="0" role="region" aria-label="Projects, scroll horizontally">
             <article class="project-item">
               <h3><a href="https://sparkforschools.com/">Spark ↗</a></h3>
               <p>
@@ -182,6 +190,8 @@
               <h3><a href="https://github.com/Lunarion31/personal-website/tree/main/cider-plugin">Cider website sharing ↗</a></h3>
               <p>A Cider plugin that shares my listening activity with this site through a Cloudflare Worker.</p>
             </article>
+              </div>
+            </div>
             <p><a href="https://github.com/Lunarion31">Want to see more projects?</a></p>
           </section>
           <section class="about-section" id="games" aria-labelledby="games-title">
@@ -438,11 +448,12 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <script src="/mobile-notice.js?v=2" defer></script>
     <script src="/site-charms.js" defer></script>
     <script src="/ascii-mode.js?v=18" defer></script>
-    <script src="/night-garden.js?v=23" defer></script>
+    <script src="/night-garden.js?v=24" defer></script>
     <script type="module" src="/garden-intro.js?v=21"></script>
+    <script src="/project-browser.js" defer></script>
     <script src="/copy-lumi.js" defer></script>
     <script src="/button-marquee.js?v=2" defer></script>
-    <script src="/modern-touches.js?v=2" defer></script>
+    <script src="/modern-touches.js?v=4" defer></script>
     <script src="/sidebar-greebles.js" defer></script>
     <script src="/intro-petal-sound.js?v=13" defer></script>
     <script src="/theme-toggle.js?v=2" defer></script>

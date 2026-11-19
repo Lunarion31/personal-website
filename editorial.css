@@ -108,5 +108,120 @@ html.mobile-notice-open{overflow:hidden}
 .music-timeline[hidden]{display:none}.music-timeline progress{width:100%;height:3px;border:0;background:var(--burgundy-soft);accent-color:var(--burgundy)}.music-timeline progress::-webkit-progress-bar{background:var(--burgundy-soft)}.music-timeline progress::-webkit-progress-value{background:var(--burgundy)}.music-timeline progress::-moz-progress-bar{background:var(--burgundy)}
 @media(max-width:650px){.music-widget .music-timeline{grid-column:1/-1}}
 
-/* Give each project its own breathing room in the editorial column. */
-.project-item + .project-item { margin-top: 20px; }
+/* A compact project shelf with native touch, trackpad, and keyboard scrolling. */
+.project-browser { min-width:0; }
+.project-controls { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-bottom:18px; }
+.project-controls span { margin-right:auto; font:11px/1.5 'Geist Mono',monospace; color:var(--muted); }
+.project-controls button { padding:3px 12px; }
+.project-controls button:disabled { opacity:.3; cursor:default; }
+.project-track { display:flex; gap:32px; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:var(--muted) transparent; padding-bottom:18px; }
+.project-track .project-item { flex:0 0 min(340px,85%); min-width:0; scroll-snap-align:start; margin:0; }
+.project-track .project-item h3 { font-size:30px; overflow-wrap:anywhere; }
+.project-track .project-item p { font-size:16px; margin:0; }
+.project-track:focus-visible { outline:1px solid var(--link); outline-offset:6px; }
+
+.project-track.is-enhanced { scroll-snap-type:none; scrollbar-width:none; cursor:grab; padding-block:4px 18px; }
+.project-track.is-enhanced::-webkit-scrollbar { display:none; }
+.project-track.is-dragging, .project-track.is-dragging a { cursor:grabbing; user-select:none; }
+.project-track.is-moving .project-item { will-change:transform,opacity; }
+.project-track .project-item { transition:opacity .18s ease; }
+@media(prefers-reduced-motion:reduce) { .project-track .project-item { transition:none; } }
+
+/* Feather the project shelf into the page rather than clipping its contents. */
+.project-track.is-enhanced {
+  mask-image:linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 36px), transparent);
+  -webkit-mask-image:linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 36px), transparent);
+  padding-inline:28px 36px;
+  scroll-padding-inline:28px;
+}
+
+/* Keep project navigation clear of the flowers along the right edge. */
+.project-controls { justify-content:flex-start; }
+.project-controls span { margin-right:12px; }
+
+/* Editorial polish: let the garden carry the ornament and the page carry the reading. */
+html:not(.textmode-active) { --line:#29101f24; }
+html[data-theme=dark]:not(.textmode-active) { --line:#f4eddf24; }
+html:not(.textmode-active) .layout { gap:48px; padding-block:48px 64px; }
+html:not(.textmode-active) .about-section { grid-template-columns:132px minmax(0,1fr); column-gap:32px; padding-block:32px 40px; border-color:var(--line); }
+html:not(.textmode-active) .about-section > h2 { font-size:15px; line-height:1.5; }
+html:not(.textmode-active) .about-section > h2::before { margin-bottom:16px; }
+html:not(.textmode-active) .section-nav a { border-bottom:0; padding-block:8px; }
+html:not(.textmode-active) .section-nav a[aria-current=location] { text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1px; }
+html:not(.textmode-active) .language-list { gap:0 32px; }
+html:not(.textmode-active) .language-list li { border:0; padding-block:8px; }
+html:not(.textmode-active) .layout > aside { font-size:13px; }
+html:not(.textmode-active) :is(.section-nav h2,.sidebar-widget h2,.greeble h2) { font-size:12px; text-transform:none; letter-spacing:.02em; }
+html:not(.textmode-active) .sidebar-widget { margin-top:24px; padding-top:16px; }
+html:not(.textmode-active) .setup-specs { font-size:15px; grid-template-columns:88px minmax(0,1fr); gap:8px 16px; line-height:1.6; }
+html:not(.textmode-active) .setup-specs dt { font-size:11px; line-height:2.2; }
+html:not(.textmode-active) .setup-machine h3 { font-size:22px; margin-bottom:16px; line-height:1.35; }
+html:not(.textmode-active) .setup-machine + .setup-machine { margin-top:32px; }
+html:not(.textmode-active) .contact-list { font-size:15px; line-height:1.7; }
+html:not(.textmode-active) .contact-list li + li { margin-top:12px; }
+html:not(.textmode-active) .pgp-key { font-size:11px; padding:20px; background:color-mix(in srgb,var(--paper),var(--ink) 4%); border-color:var(--line); }
+html:not(.textmode-active) .game-list { font-size:15px; line-height:1.7; }
+html:not(.textmode-active) .right-sidebar { gap:24px; font-size:13px; border-color:var(--line); padding-block:32px; margin-bottom:32px; }
+html:not(.textmode-active) .greeble h2 { margin-bottom:12px; }
+html:not(.textmode-active) .site-footer { font-size:12px; border-top:1px solid var(--line); padding-block:24px 32px; }
+html:not(.textmode-active) .link-back { border-color:var(--line); }
+:is(button,a,textarea):focus-visible { outline:2px solid var(--link); outline-offset:4px; }
+.project-position { font:12px/1.5 'Geist Mono',monospace; color:var(--muted); font-variant-numeric:tabular-nums; min-width:6ch; }
+.project-controls .project-position { margin-right:4px; }
+@media(max-width:1000px) {
+  html:not(.textmode-active) .layout { gap:32px; }
+  html:not(.textmode-active) .about-section { grid-template-columns:minmax(0,1fr); }
+}
+@media(max-width:650px) {
+  html:not(.textmode-active) .layout { padding-block:24px 40px; }
+  html:not(.textmode-active) .about-section { padding-block:24px 32px; }
+  html:not(.textmode-active) .setup-specs { grid-template-columns:72px minmax(0,1fr); font-size:14px; gap:8px 12px; }
+  html:not(.textmode-active) .right-sidebar { gap:24px 20px; }
+  html:not(.textmode-active) .contact-list { font-size:14px; }
+  .project-controls { flex-wrap:wrap; gap:8px; }
+  .project-controls span:first-child { font-size:10px; margin-right:4px; }
+  .project-controls button { min-width:44px; min-height:44px; }
+}
+
+html:not(.textmode-active) .setup-specs dt { font-size:11px; line-height:1.8; letter-spacing:.02em; }
+html:not(.textmode-active) :is(.music-totals dt,.music-widget .music-stats h3,.music-favorite > span) { font-size:11px; line-height:1.5; letter-spacing:0; }
+html:not(.textmode-active) :is(.music-favorite small,.music-scrobbled,.music-stats-message) { font-size:12px; line-height:1.5; }
+html:not(.textmode-active) .music-album { font-size:12px; }
+html:not(.textmode-active) .right-sidebar { gap:24px; padding-block:32px; border-color:var(--line); font-size:13px; }
+html:not(.textmode-active) .right-sidebar .widget-detail { font-size:12px; line-height:1.6; }
+html:not(.textmode-active) .right-sidebar h2 { font-size:14px; text-transform:none; letter-spacing:0; margin-bottom:12px; }
+html:not(.textmode-active) .section-nav h2, html:not(.textmode-active) .sidebar-widget h2 { text-transform:none; letter-spacing:0; font-size:13px; }
+@media(max-width:650px) {
+  html:not(.textmode-active) .right-sidebar { gap:24px 20px; }
+  .project-track .project-item h3 { font-size:28px; }
+}
+
+/* Native scrollbars, tinted to the garden in both themes. */
+html, .layout > aside, .pgp-key, #pocket-note {
+  scrollbar-width:thin;
+  scrollbar-color:color-mix(in srgb, var(--link) 45%, var(--paper)) transparent;
+}
+:is(html, .layout > aside, .pgp-key, #pocket-note)::-webkit-scrollbar { width:7px; height:7px; }
+:is(html, .layout > aside, .pgp-key, #pocket-note)::-webkit-scrollbar-track { background:transparent; }
+:is(html, .layout > aside, .pgp-key, #pocket-note)::-webkit-scrollbar-thumb {
+  background:color-mix(in srgb, var(--link) 45%, var(--paper));
+  border:2px solid var(--paper);
+  border-radius:8px;
+}
+:is(html, .layout > aside, .pgp-key, #pocket-note)::-webkit-scrollbar-thumb:hover { background:var(--link); }
+:is(html, .layout > aside, .pgp-key, #pocket-note)::-webkit-scrollbar-corner { background:transparent; }
+@media(forced-colors:active) {
+  html, .layout > aside, .pgp-key, #pocket-note { scrollbar-color:auto; }
+}
+
+/* A stable selection marker: no bold-width jump or underline under the number. */
+.section-nav a { position:relative; font-weight:500; transition:color .16s ease,background-color .16s ease; }
+html:not(.textmode-active) .section-nav a[aria-current=location],
+.section-nav a[aria-current=location] { font-weight:500; text-decoration:none; }
+.section-nav a::after { content:""; position:absolute; left:-10px; top:50%; width:3px; height:16px; background:currentColor; opacity:0; transform:translateY(-50%); transition:opacity .16s ease; }
+.section-nav a[aria-current=location]::after { opacity:1; }
+.section-nav a[aria-current=location]::before { color:var(--link); }
+.section-nav a:hover { text-decoration:none; background:color-mix(in srgb,var(--link) 6%,transparent); }
+@media(prefers-reduced-motion:reduce) { .section-nav a,.section-nav a::after { transition:none; } }
+.section-nav a { padding-inline:12px 4px; }
+.section-nav a::after { left:0; }

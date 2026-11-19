@@ -2,6 +2,7 @@
 // Curved stems, ink veins and loose petals share one wind cycle.
 const canvas = document.getElementById('night-garden');
 const ctx = canvas.getContext('2d');
+const readingAreas = [...document.querySelectorAll('.layout>aside,.right-sidebar,.site-footer,main>section:first-child,.contact-list,.setup-specs,.project-browser')];
 const quiet = matchMedia('(prefers-reduced-motion: reduce)');
 let width, height, frame, time = 0, last = 0;
 const overlay = canvas.classList.contains('garden-overlay');
@@ -209,13 +210,13 @@ function garden(t, dt = 0) {
   // Feather the flowers around readable sidebar content without a hard panel edge.
   if(!document.documentElement.classList.contains('textmode-active')){
     ctx.save();ctx.globalAlpha=1;ctx.globalCompositeOperation='destination-out';
-    for(const sidebar of document.querySelectorAll('.layout>aside,.right-sidebar,.site-footer')){
+    for(const sidebar of readingAreas){
       const box=sidebar.getBoundingClientRect();
       if(box.bottom<0||box.top>height)continue;
       ctx.save();ctx.translate(box.left+box.width*.5,box.top+box.height*.5);
       ctx.scale(box.width*.85+120,box.height*.5+190);
       const fade=ctx.createRadialGradient(0,0,0,0,0,1);
-      fade.addColorStop(0,'#000000ba');fade.addColorStop(.3,'#0000009c');
+      fade.addColorStop(0,'#000000df');fade.addColorStop(.3,'#000000c4');
       fade.addColorStop(.6,'#00000052');fade.addColorStop(.84,'#0000001c');fade.addColorStop(1,'#00000000');
       ctx.fillStyle=fade;ctx.fillRect(-1,-1,2,2);ctx.restore();
     }
