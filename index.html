@@ -278,12 +278,16 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
             aria-label="Web buttons"
           >
             <div class="link-back">
-              <button id="copy-lumi" type="button" aria-label="Copy Lumi button embed code">
+              <button id="copy-lumi" data-copy-embed="lumi-embed" type="button" aria-label="Copy Lumi button embed code">
                 <img src="/static/img/buttons/lumi.gif" width="88" height="31" alt="Lumi">
+              </button>
+              <button id="copy-lumi-garden" data-copy-embed="lumi-garden-embed" type="button" aria-label="Copy Lumi garden button embed code">
+                <img src="/static/img/buttons/lumi-garden.gif?v=13" width="88" height="31" alt="Lumi garden">
               </button>
               <p>click to copy my button, hotlinking preferred!</p>
               <span id="copy-lumi-status" role="status"></span>
               <textarea id="lumi-embed" aria-label="Lumi button embed code" readonly hidden>&lt;a href="https://lunarion31.dev/"&gt;&lt;img src="https://lunarion31.dev/static/img/buttons/lumi.gif" width="88" height="31" alt="Lumi"&gt;&lt;/a&gt;</textarea>
+              <textarea id="lumi-garden-embed" aria-label="Lumi garden button embed code" readonly hidden>&lt;a href="https://lunarion31.dev/"&gt;&lt;img src="https://lunarion31.dev/static/img/buttons/lumi-garden.gif" width="88" height="31" alt="Lumi"&gt;&lt;/a&gt;</textarea>
             </div>
             <div class="button-window">
             <div class="buttons" aria-label="88 by 31 web buttons">
@@ -451,7 +455,7 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <script src="/night-garden.js?v=24" defer></script>
     <script type="module" src="/garden-intro.js?v=21"></script>
     <script src="/project-browser.js" defer></script>
-    <script src="/copy-lumi.js" defer></script>
+    <script src="/copy-lumi.js?v=2" defer></script>
     <script src="/button-marquee.js?v=2" defer></script>
     <script src="/modern-touches.js?v=4" defer></script>
     <script src="/sidebar-greebles.js" defer></script>

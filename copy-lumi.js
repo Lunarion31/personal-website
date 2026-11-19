@@ -1,16 +1,18 @@
-const copyLumi = document.getElementById('copy-lumi');
-const embed = document.getElementById('lumi-embed');
-const feedback = document.getElementById('copy-lumi-status');
-
-copyLumi.addEventListener('click', async () => {
-  try {
-    await navigator.clipboard.writeText(embed.value);
-    embed.hidden = true;
-    feedback.textContent = 'HTML copied!';
-  } catch {
-    embed.hidden = false;
-    embed.focus();
-    embed.select();
-    feedback.textContent = 'Copy the selected HTML below.';
-  }
-});
+(() => {
+  const feedback = document.getElementById('copy-lumi-status');
+  const buttons = [...document.querySelectorAll('[data-copy-embed]')];
+  buttons.forEach(button => button.addEventListener('click', async () => {
+    const embed = document.getElementById(button.dataset.copyEmbed);
+    const name = button.id === 'copy-lumi-garden' ? 'Garden' : 'Observatory';
+    buttons.forEach(other => { document.getElementById(other.dataset.copyEmbed).hidden = true; });
+    try {
+      await navigator.clipboard.writeText(embed.value);
+      feedback.textContent = `${name} button HTML copied!`;
+    } catch {
+      embed.hidden = false;
+      embed.focus();
+      embed.select();
+      feedback.textContent = 'Copy the selected HTML below.';
+    }
+  }));
+})();

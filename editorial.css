@@ -225,3 +225,8 @@ html:not(.textmode-active) .section-nav a[aria-current=location],
 @media(prefers-reduced-motion:reduce) { .section-nav a,.section-nav a::after { transition:none; } }
 .section-nav a { padding-inline:12px 4px; }
 .section-nav a::after { left:0; }
+
+#copy-lumi-garden { display:block; padding:0; border:0; background:transparent; cursor:copy; }
+#copy-lumi-garden img { display:block; image-rendering:auto; }
+#copy-lumi-garden:focus-visible { outline:2px solid var(--link); outline-offset:4px; }
+#lumi-garden-embed { width:100%; color:var(--ink); background:var(--paper); }
