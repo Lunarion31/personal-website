@@ -107,3 +107,6 @@ html.mobile-notice-open{overflow:hidden}
 .music-timeline{display:flex;justify-content:space-between;flex-wrap:wrap;font:9px/1.5 'Geist Mono',monospace;color:var(--muted);margin-top:12px;gap:4px}
 .music-timeline[hidden]{display:none}.music-timeline progress{width:100%;height:3px;border:0;background:var(--burgundy-soft);accent-color:var(--burgundy)}.music-timeline progress::-webkit-progress-bar{background:var(--burgundy-soft)}.music-timeline progress::-webkit-progress-value{background:var(--burgundy)}.music-timeline progress::-moz-progress-bar{background:var(--burgundy)}
 @media(max-width:650px){.music-widget .music-timeline{grid-column:1/-1}}
+
+/* Give each project its own breathing room in the editorial column. */
+.project-item + .project-item { margin-top: 20px; }
