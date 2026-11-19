@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="/intro.css?v=12" />
     <link rel="preload" href="/assets/fonts/geist-mono-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/simple.css" />
-    <link rel="stylesheet" href="/editorial.css?v=garden-22" />
+    <link rel="stylesheet" href="/editorial.css?v=garden-25" />
     <link rel="stylesheet" href="/site-charms.css" />
     <link rel="stylesheet" href="/ascii-mode.css?v=15" />
   </head>
@@ -61,25 +61,24 @@
             <a href="#contact">contact me</a>
             <a href="#buttons">buttons</a>
           </nav>
-          <section class="sidebar-widget personal-status" aria-labelledby="status-title">
-            <h2 id="status-title">current status</h2>
-            <p id="personal-status-text">No status yet.</p>
-            <p class="widget-detail" id="personal-status-date" hidden></p>
-          </section>
-          <section class="sidebar-widget" aria-labelledby="listening-title">
-            <h2 id="listening-title">last listening to</h2>
-            <div class="album-row">
-              <img id="listening-art" width="64" height="64" alt="" hidden>
-              <span id="playing-indicator" class="playing-indicator" aria-label="Currently playing" hidden><i></i><i></i><i></i></span>
+          <section class="sidebar-widget music-widget" aria-labelledby="listening-title">
+            <div class="music-heading"><h2 id="listening-title">last listening to</h2><span id="playing-indicator" class="playing-indicator" aria-label="Currently playing" hidden><i></i><i></i><i></i><i></i><i></i></span></div>
+            <a class="music-sleeve" id="listening-cover-link" href="https://www.last.fm/user/LunaClient" aria-label="View LunaClient on Last.fm">
+              <span class="music-record" aria-hidden="true"><span>lumi</span></span>
+              <span class="music-cover"><span class="music-cover-fallback" aria-hidden="true">♫</span><img id="listening-art" width="112" height="112" alt="" hidden></span>
+            </a>
+            <p class="listening-track" id="listening-track"><a href="https://www.last.fm/user/LunaClient">LunaClient on Last.fm</a></p>
+            <p class="widget-detail music-artist" id="listening-detail">Fetching the latest track…</p>
+            <p class="music-album" id="listening-album" hidden></p>
+            <p class="music-scrobbled" id="listening-scrobbled" hidden></p>
+            <div class="music-timeline" id="music-timeline" hidden><progress id="music-progress" max="1" value="0" aria-label="Playback position"></progress><span id="music-position">0:00</span><span id="music-duration">0:00</span></div>
+            <div class="music-stats" id="music-stats" hidden>
+              <dl class="music-totals"><div><dd id="music-total">—</dd><dt id="music-total-label">scrobbles</dt></div><div><dd id="music-since">—</dd><dt id="music-since-label">listening since</dt></div></dl>
+              <h3>on repeat · last 7 days</h3>
+              <div class="music-favorite"><span>top artist</span><a id="music-top-artist" href="https://www.last.fm/user/LunaClient/library/artists">—</a><small id="music-artist-plays"></small></div>
+              <div class="music-favorite"><span>top track</span><a id="music-top-track" href="https://www.last.fm/user/LunaClient/library/tracks">—</a><small id="music-track-plays"></small></div>
             </div>
-            <p class="listening-track" id="listening-track">
-              <a href="https://www.last.fm/user/LunaClient"
-                >LunaClient on Last.fm</a
-              >
-            </p>
-            <p class="widget-detail" id="listening-detail">
-              A little music corner ♫
-            </p>
+            <p class="music-stats-message" id="music-stats-message" role="status">Loading listening stats…</p>
           </section>
 
           <section
@@ -103,8 +102,7 @@
             <p class="widget-detail" id="sidebar-date"></p>
           </section>
           <section class="sidebar-widget" aria-labelledby="switches-title">
-            <h2 id="switches-title">little switches</h2>
-            <button type="button" class="sparkle-switch" id="sparkle-switch" aria-pressed="true" hidden>✧ sparkles on</button>
+            <h2 id="switches-title">a little secret</h2>
             <p class="cheat-code-hint"><button type="button" class="cheat-code-toggle" aria-expanded="false" aria-controls="touch-code-pad">cheat codes enabled</button></p>
             <div id="touch-code-pad" hidden role="group" aria-label="Enter a cheat code">
               <button type="button" data-code-key="ArrowUp" aria-label="Up">↑</button>
@@ -359,6 +357,7 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
             </div>
           </section>
     <div class="page-controls">
+      <button type="button" class="theme-switch sparkle-switch" id="sparkle-switch" aria-pressed="true" hidden>✧ sparkles on</button>
       <button type="button" class="theme-switch" id="intro-sound-switch" aria-pressed="true" hidden>♫ sound on</button>
       <button type="button" class="theme-switch" id="replay-intro" hidden>↻ replay intro</button>
       <button type="button" class="theme-switch" id="theme-switch" aria-pressed="false">☾ dark mode</button>
@@ -409,7 +408,6 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <script src="/ascii-mode.js?v=18" defer></script>
     <script src="/night-garden.js?v=23" defer></script>
     <script type="module" src="/garden-intro.js?v=21"></script>
-    <script src="/status.js" defer></script>
     <script src="/copy-lumi.js" defer></script>
     <script src="/button-marquee.js?v=2" defer></script>
     <script src="/modern-touches.js?v=2" defer></script>
@@ -419,7 +417,7 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <script src="/sidebar-weather.js" defer></script>
     <script src="/sparkle-trail.js" defer></script>
     <script src="/widget-config.js"></script>
-    <script src="/sidebar-widgets.js?v=2" defer></script>
+    <script src="/sidebar-widgets.js?v=4" defer></script>
     <script src="/sidebar-clock.js" defer></script>
   </body>
 </html>

@@ -211,7 +211,6 @@ a, button { transition: color .18s ease, background-color .18s ease; }
 
 .pgp-key code { display: block; width: max-content; min-width: 100%; }
 
-.personal-status #personal-status-text { padding-left: 10px; border-left: 2px solid var(--burgundy); white-space: pre-line; }
 
 /* A wide button shelf below the page, between the sidebars. */
 .buttons-section { margin: 26px 24px 60px; padding: 14px 0; }

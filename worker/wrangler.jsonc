@@ -1,10 +1,32 @@
 {
   "name": "lunarion-widgets",
   "main": "index.mjs",
-  "compatibility_date": "2026-10-20",
+  "compatibility_date": "2026-10-21",
   "vars": {
-    "ALLOWED_ORIGINS": "https://www.lunarion31.dev,https://lunarion31.dev,https://lunarion31.github.io,http://127.0.0.1:4174"
+    "ALLOWED_ORIGINS": "https://lunarion31.dev,https://www.lunarion31.dev,https://personal-website-nu-seven-56.vercel.app,https://lunarion31.github.io,http://127.0.0.1:4174"
+  },
+  "d1_databases": [
+    {
+      "binding": "VISITORS",
+      "database_name": "lunarion-visitors",
+      "database_id": "3736bdc4-6124-435e-9614-4f58f5a14084"
+    }
+  ],
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "redact_query_string": false,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
   }
-  // For CLI deployment, add a d1_databases entry with binding VISITORS,
-  // database_name and database_id from your Cloudflare account.
 }

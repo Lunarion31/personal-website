@@ -14,7 +14,7 @@ Vercel serves the website. The Cloudflare Worker serves the two sidebar APIs.
 6. Deploy the Worker changes. Paste its `https://lunarion-widgets.…workers.dev` origin into `widget-config.js`.
 7. Preview locally, then publish the website through the Vercel project connected to this repository.
 
-For CLI deployments, add your D1 binding and set the deployed origin list in `worker/wrangler.jsonc`.
+The existing D1 binding and deployed origin list are recorded in `worker/wrangler.jsonc`. For CLI updates, run `npx wrangler deploy --config worker/wrangler.jsonc --keep-vars`; this keeps dashboard variables and secrets in place.
 
 ## Behavior
 
@@ -29,3 +29,11 @@ Music refreshes once a minute while visible. Missing config or API failures show
 Cloudflare documentation:
 - https://developers.cloudflare.com/workers/wrangler/configuration/
 - https://developers.cloudflare.com/d1/get-started/
+
+## Detailed Last.fm panel
+
+The sidebar uses `/api/listening` for the latest track and `/api/music-stats` for total scrobbles, registration year, and the top artist and track over the last seven days. Update the deployed Worker with `worker/index.mjs` to enable the stats endpoint; the existing `LASTFM_API_KEY`, `VISITORS` binding, and origin settings stay in place. No new secret or database migration is needed. Stats are cached for five minutes; now-playing refreshes every minute. If stats fail, the latest-track panel continues working independently.
+
+## Cider publisher (optional replacement for Last.fm)
+
+See `cider-plugin/README.md` for the built plugin, publishing key, two-table music migration, and installation steps. The Worker serves Cider metadata and locally collected play counts when `MUSIC_SOURCE=cider`; otherwise it keeps using Last.fm. Cider must be running with sharing enabled for live playback. This does not import Last.fm history. The write-only publishing secret stays in Cider and the Worker, never the public site.
