@@ -27,13 +27,26 @@
     <meta name="twitter:image:alt" content="Lunarion. A hilltop observatory, a shooting star, a UFO, and a ringed planet in a burgundy sky." />
     <link rel="icon" type="image/svg+xml" href="/assets/lunarion-mark.svg?v=2" />
     <script>try { if (localStorage.getItem('lunarion-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}</script>
-    <script src="/intro-boot.js?v=3"></script>
+    <script>
+      try {
+        const arrival=Number(sessionStorage.getItem('flower-curtain-arrival'));
+        sessionStorage.removeItem('flower-curtain-arrival');
+        const returning=performance.getEntriesByType('navigation')[0]?.type==='back_forward' && history.state?.flowerReturn;
+        if ((returning || Date.now()-arrival<15000) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.classList.add('curtain-arrival');
+          setTimeout(()=>document.documentElement.classList.remove('curtain-arrival'),2500);
+        }
+      } catch {}
+    </script>
+    <style>.curtain-arrival:not(.curtain-ready) body::after{content:'';position:fixed;inset:0;background:var(--paper);z-index:2147483646;pointer-events:none}</style>
+    <script src="/intro-boot.js?v=4"></script>
     <link rel="stylesheet" href="/intro.css?v=12" />
     <link rel="preload" href="/assets/fonts/geist-mono-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/simple.css" />
-    <link rel="stylesheet" href="/editorial.css?v=garden-26" />
+    <link rel="stylesheet" href="/editorial.css?v=garden-29" />
     <link rel="stylesheet" href="/site-charms.css" />
     <link rel="stylesheet" href="/ascii-mode.css?v=15" />
+    <script type="module" src="/flower-curtain.js?v=11"></script>
   </head>
   <body>
     <a class="skip-link" href="#about">Skip to content</a>
@@ -55,8 +68,6 @@
             <a href="#about" aria-current="location">about me</a>
             <a href="#hobbies">hobbies</a>
             <a href="#languages">languages</a>
-            <a href="#projects">projects</a>
-            <a href="#games">vidya games</a>
             <a href="#setup">my setup</a>
             <a href="#contact">contact me</a>
             <a href="#buttons">buttons</a>
@@ -117,19 +128,15 @@
         <main id="about">
           <section aria-labelledby="hello">
             <h1 id="hello">Hi, I’m Jamie!</h1>
-            <p>
-              I’m a software engineering major with a crippling addiction to
-              computers. I make whatever I find interesting at the time. 
-              Feel free to take a look around and don't hesitate to contact me!
-            </p>
+            <p>I’m a software engineering major with a crippling addiction to computers.</p>
           </section>
-          <section class="about-section" id="hobbies" aria-labelledby="hobbies-title">
-<div class="site-charm charm-pinwheel"><div class="pinwheel-stage" id="pinwheel-stage"><span class="pinwheel-stick" aria-hidden="true"></span><button id="pinwheel" class="pinwheel" type="button" aria-label="Spin the pinwheel"><span class="vane"></span><span class="vane"></span><span class="vane"></span><span class="vane"></span><span class="pin" aria-hidden="true"></span></button></div><p>Wave your cursor past it, or give it a tap.</p></div>
-            <h2 id="hobbies-title">hobbies</h2>
-            <p>Fullstack development, information technology, systems administration, and cybersecurity. Check out the <a href="#games">games I play!</a></p>
-          </section>
-
+          <nav id="hobbies" class="destination-shelf" aria-label="Explore Jamie’s site">
+            <a href="/hobbies/" data-flower-curtain><canvas width="400" height="150" data-object="telescope" aria-hidden="true"></canvas><span>Hobbies <i aria-hidden="true">→</i></span></a>
+            <a href="/projects/" data-flower-curtain><canvas width="400" height="150" data-object="computer" aria-hidden="true"></canvas><span>Projects <i aria-hidden="true">→</i></span></a>
+            <a href="/media/" data-flower-curtain><canvas width="400" height="150" data-object="cartridge" aria-hidden="true"></canvas><span>Media shelf <i aria-hidden="true">→</i></span></a>
+          </nav>
           <section class="about-section" id="languages" aria-labelledby="languages-title">
+            <div class="site-charm charm-pinwheel"><div class="pinwheel-stage" id="pinwheel-stage"><span class="pinwheel-stick" aria-hidden="true"></span><button id="pinwheel" class="pinwheel" type="button" aria-label="Spin the pinwheel"><span class="vane"></span><span class="vane"></span><span class="vane"></span><span class="vane"></span><span class="pin" aria-hidden="true"></span></button></div><p>Wave your cursor past it, or give it a tap.</p></div>
             <h2 id="languages-title">languages I know</h2>
             <ul class="language-list">
               <li>Python</li>
@@ -139,75 +146,6 @@
               <li>CSS</li>
               <li>TypeScript</li>
               <li>Bash</li>
-            </ul>
-          </section>
-          <section class="about-section" id="projects" aria-labelledby="projects-title">
-            <h2 id="projects-title">projects</h2>
-            <div class="project-browser">
-              <div class="project-controls">
-                <span>scroll to explore</span>
-                <span class="project-position" aria-label="Project 1 of 9">01 / 09</span>
-                <button type="button" class="tiny-button" data-project-step="-1" aria-label="Previous projects" aria-controls="project-track">←</button>
-                <button type="button" class="tiny-button" data-project-step="1" aria-label="Next projects" aria-controls="project-track">→</button>
-              </div>
-              <div class="project-track" id="project-track" tabindex="0" role="region" aria-label="Projects, scroll horizontally">
-            <article class="project-item">
-              <h3><a href="https://sparkforschools.com/">Spark ↗</a></h3>
-              <p>
-                A project I started with friends to build a more thoughtful
-                approach to safer internet use in schools.
-              </p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/life360-location-spoofer">Location simulator ↗</a></h3>
-              <p>An iPhone location simulator with map routes, weekly routines, and a Mac companion.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/whale">Whale ↗</a></h3>
-              <p>A Windows 98-inspired archive of my high school work.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/i-hate-logins">I hate logins ↗</a></h3>
-              <p>A browser extension that clears login nags and restores scrolling.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/pricing-peek">Pricing Peek ↗</a></h3>
-              <p>A browser extension that finds pricing links and sections without digging through a site.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/Terms-Meter">Terms Meter ↗</a></h3>
-              <p>A browser extension that brings ToS;DR ratings and review details onto the page.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/deletemystuff">deletemystuff ↗</a></h3>
-              <p>A command-line tool for sending privacy and data-deletion requests.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/photon-metal-loader">Photon Metal loader ↗</a></h3>
-              <p>An experimental native Metal shader loader for Photon. Still a prototype.</p>
-            </article>
-            <article class="project-item">
-              <h3><a href="https://github.com/Lunarion31/personal-website/tree/main/cider-plugin">Cider website sharing ↗</a></h3>
-              <p>A Cider plugin that shares my listening activity with this site through a Cloudflare Worker.</p>
-            </article>
-              </div>
-            </div>
-            <p><a href="https://github.com/Lunarion31">Want to see more projects?</a></p>
-          </section>
-          <section class="about-section" id="games" aria-labelledby="games-title">
-            <h2 id="games-title">vidya games</h2>
-            <p class="section-label">recently played</p>
-            <ul class="game-list">
-              <li>Helldivers 2</li>
-              <li>Marathon</li>
-              <li>Deep Rock Galactic</li>
-              <li>Cyberpunk 2077</li>
-              <li>Ready or Not</li>
-              <li>Bodycam</li>
-              <li>IRON NEST: Heavy Turret Simulator</li>
-              <li>Over The Top: WWI</li>
-              <li>No More Room in Hell 2</li>
-              <li>Mini Motorways</li>
             </ul>
           </section>
           <section class="about-section" id="setup" aria-labelledby="setup-title">
@@ -452,9 +390,8 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <script src="/mobile-notice.js?v=2" defer></script>
     <script src="/site-charms.js" defer></script>
     <script src="/ascii-mode.js?v=18" defer></script>
-    <script src="/night-garden.js?v=24" defer></script>
+    <script src="/night-garden.js?v=25" defer></script>
     <script type="module" src="/garden-intro.js?v=21"></script>
-    <script src="/project-browser.js" defer></script>
     <script src="/copy-lumi.js?v=2" defer></script>
     <script src="/button-marquee.js?v=2" defer></script>
     <script src="/modern-touches.js?v=4" defer></script>
@@ -464,7 +401,7 @@ WQEA+kGrXXONd+IzEyAv+5jbZx5oVSaoaDPl7pjTXnSrYpgBAJUhLC7Tp5nTfSKn
     <script src="/sidebar-weather.js" defer></script>
     <script src="/sparkle-trail.js" defer></script>
     <script src="/widget-config.js"></script>
-    <script src="/sidebar-widgets.js?v=4" defer></script>
+    <script src="/sidebar-widgets.js?v=6" defer></script>
     <script src="/sidebar-clock.js" defer></script>
   </body>
 </html>

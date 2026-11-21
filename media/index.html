@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Media shelf · Lunarion</title>
+  <link rel="icon" href="/assets/lunarion-mark.svg">
+  <script>
+    try {
+      if (localStorage.getItem('lunarion-theme') === 'dark') document.documentElement.dataset.theme='dark';
+      const arrival=Number(sessionStorage.getItem('flower-curtain-arrival'));
+      sessionStorage.removeItem('flower-curtain-arrival');
+      if ((location.hash === '#petals' || Date.now()-arrival < 15000) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (location.hash === '#petals') history.replaceState(null,'',location.pathname+location.search);
+        document.documentElement.classList.add('curtain-arrival');
+        setTimeout(()=>document.documentElement.classList.remove('curtain-arrival'),2500);
+      }
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="/simple.css">
+  <link rel="stylesheet" href="/editorial.css?v=garden-29">
+  <link rel="stylesheet" href="/ascii-mode.css?v=15">
+  <link rel="stylesheet" href="/media/media.css?v=2">
+  <style>
+    .curtain-arrival body::after {content:'';position:fixed;inset:0;background:#613946;z-index:9998}
+    .curtain-arrival.curtain-ready body::after {display:none}
+  </style>
+  <script type="module" src="/flower-curtain.js?v=11"></script>
+</head>
+<body>
+  <main class="site media-page">
+    <nav class="media-nav" aria-label="Media navigation">
+      <form action="/#hobbies" data-flower-return><button type="submit" class="garden-back">← Back</button></form>
+      <a href="#music">Music</a><a href="#games">Games</a>
+    </nav>
+    <h1>Media shelf</h1>
+    <div class="music-spread" id="music">
+      <section class="listening-card music-widget" aria-labelledby="listening-title">
+        <div class="music-heading"><h2 id="listening-title">Now playing</h2><span id="playing-indicator" class="playing-indicator" hidden aria-label="Playing"><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="album-stage"><a id="listening-cover-link" class="album-square" href="https://music.apple.com/" aria-label="Open Apple Music"><span aria-hidden="true">♫</span><img id="listening-art" hidden alt=""></a></div>
+        <div class="track-copy"><h3 id="listening-track">Loading track…</h3>
+        <p id="listening-detail"></p><p id="listening-album" hidden></p><p id="listening-scrobbled" hidden></p>
+        </div>
+        <div class="player-foot"><div class="music-timeline" id="music-timeline" hidden><progress id="music-progress" max="1" value="0" aria-label="Playback position"></progress><span id="music-position"></span><span id="music-duration"></span></div>
+        <a id="apple-track" class="apple-link" hidden><span class="sr-action">Listen on Apple Music</span><img src="/media/apple-music.svg?v=2" alt="" width="112" height="21"></a></div>
+      </section>
+      <section class="playlist-pane" id="playlist"><h2>My playlist</h2>
+        <iframe title="i am music — Jamie’s Apple Music playlist" height="450" allow="autoplay *; encrypted-media *; fullscreen *" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/playlist/i-am-music/pl.u-06oxD4aFYDk827p"></iframe>
+        <a href="https://music.apple.com/us/playlist/i-am-music/pl.u-06oxD4aFYDk827p">Open i am music in Apple Music ↗</a>
+      </section>
+      <section class="social-pane"><h2>Socials</h2><div class="social-list">
+        <a href="https://bsky.app/profile/lunarion31.bsky.social"><strong>Bluesky</strong><span>lunarion31.bsky.social</span><i aria-hidden="true">↗</i></a>
+        <a href="https://x.com/Lunarion21"><strong>Twitter</strong><span>lunarion21</span><i aria-hidden="true">↗</i></a>
+        <a href="https://matrix.to/#/@lnrin:matrix.org"><strong>Matrix</strong><span>@lnrin:matrix.org</span><i aria-hidden="true">↗</i></a>
+        <a href="https://signal.me/#eu/27DSIxguyICM7_q32VJmRf4IYaS4UyNBkmRyg01xqWkO1--xjyZEY7Vt3T2XX25G"><strong>Signal</strong><span>lunarion.69</span><i aria-hidden="true">↗</i></a>
+      </div></section>
+    </div>
+    <section id="games" class="games-shelf"><h2>Games I’ve played</h2>
+            <ul class="game-list">
+              <li>Helldivers 2</li>
+              <li>Marathon</li>
+              <li>Deep Rock Galactic</li>
+              <li>Cyberpunk 2077</li>
+              <li>Ready or Not</li>
+              <li>Bodycam</li>
+              <li>IRON NEST: Heavy Turret Simulator</li>
+              <li>Over The Top: WWI</li>
+              <li>No More Room in Hell 2</li>
+              <li>Mini Motorways</li>
+            </ul>
+    </section>
+  </main>
+  <script src="/widget-config.js"></script>
+  <script src="/sidebar-widgets.js?v=6" defer></script>
+  <canvas id="night-garden" class="garden-overlay" aria-hidden="true"></canvas>
+  <script src="/night-garden.js?v=25" defer></script>
+  <script src="/ascii-mode.js?v=18" defer></script>
+</body>
+</html>

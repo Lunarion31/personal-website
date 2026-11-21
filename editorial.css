@@ -230,3 +230,34 @@ html:not(.textmode-active) .section-nav a[aria-current=location],
 #copy-lumi-garden img { display:block; image-rendering:auto; }
 #copy-lumi-garden:focus-visible { outline:2px solid var(--link); outline-offset:4px; }
 #lumi-garden-embed { width:100%; color:var(--ink); background:var(--paper); }
+
+.destination-shelf {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,20px);margin:0 0 32px;scroll-margin-top:24px}
+.destination-shelf a {display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;overflow:hidden;padding:10px clamp(10px,1.3vw,20px) 14px;background:#482a38;color:#f7ebd6;border:1px solid #94747c;border-radius:4px;text-decoration:none}
+.destination-shelf a:nth-child(2){background:#343b36;border-color:#708477}
+.destination-shelf a:nth-child(3){background:#373246;border-color:#857991}
+.destination-shelf canvas {display:block;width:100%;height:clamp(84px,9vw,135px);object-fit:contain}
+.destination-shelf span {display:flex;align-items:baseline;justify-content:space-between;gap:4px;font:400 clamp(16px,2vw,28px)/1.2 'Geist Serif',Georgia,serif}
+.destination-shelf i {font:normal .72em 'Geist',sans-serif;color:#f1cd92}
+.destination-shelf a:is(:hover,:focus-visible){outline:2px solid var(--burgundy);outline-offset:2px}
+@media(prefers-reduced-motion:no-preference){.destination-shelf canvas{transition:transform .2s}.destination-shelf a:is(:hover,:focus-visible) canvas{transform:translateY(-3px) rotate(-3deg)}}
+@media(max-width:480px){.destination-shelf{gap:6px}.destination-shelf a{padding:4px 6px 10px}.destination-shelf canvas{height:65px}}
+
+button.garden-back {
+  cursor:pointer;
+  border-radius:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:0 16px;
+  border:1px solid currentColor;
+  background:var(--burgundy-soft);
+  color:var(--link);
+  font:500 .875rem/1 'Geist',sans-serif;
+  text-decoration:none;
+}
+button.garden-back:is(:hover,:active) { background:var(--link); color:var(--paper); }
+button.garden-back:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+
+/* Route headings receive focus to announce the new page without a control ring. */
+[data-route-heading]:focus { outline:none; }

@@ -10,7 +10,7 @@
       return;
     }
   } catch {}
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || location.hash) return;
+  if (document.documentElement.classList.contains('curtain-arrival') || matchMedia('(prefers-reduced-motion: reduce)').matches || location.hash) return;
   document.documentElement.dataset.intro = 'waiting';
   // A failed script or font request always gives the page back.
   window.lunarionIntroTimeout = setTimeout(() => {

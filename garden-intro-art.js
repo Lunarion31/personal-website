@@ -15,7 +15,7 @@
     ctx.bezierCurveTo(breadth*.36,-length*1.14,breadth,-length*.65,0,0);
   }
 
-  function petal(ctx, length, breadth, color, ink = false) {
+  export function petal(ctx, length, breadth, color, ink = false) {
     petalPath(ctx, length, breadth);
     if (color) {ctx.fillStyle=color;ctx.fill();}
     ctx.strokeStyle=ink?'#c5a268':'#623744';ctx.lineWidth=.7;ctx.stroke();
@@ -26,7 +26,7 @@
     }
   }
 
-  function flower(ctx, f, growth, opening, wind, ink = false, pigment = 1, height = 360) {
+  export function flower(ctx, f, growth, opening, wind, ink = false, pigment = 1, height = 360) {
     const p0=[f.root,height+30],p1=[f.root-30,300],p2=[f.x+35,f.y+64],p3=[f.x+wind,f.y];
     const a=mix(p0,p1,growth),b=mix(p1,p2,growth),c=mix(p2,p3,growth);
     const d=mix(a,b,growth),e=mix(b,c,growth),tip=mix(d,e,growth);

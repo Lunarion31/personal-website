@@ -2,7 +2,10 @@
 // Curved stems, ink veins and loose petals share one wind cycle.
 const canvas = document.getElementById('night-garden');
 const ctx = canvas.getContext('2d');
-const readingAreas = [...document.querySelectorAll('.layout>aside,.right-sidebar,.site-footer,main>section:first-child,.contact-list,.setup-specs,.project-browser')];
+let readingAreas = [...document.querySelectorAll('.layout>aside,.right-sidebar,.site-footer,main>section:first-child,.contact-list,.setup-specs,.project-browser')];
+addEventListener('garden-route-mounted',()=>{
+  readingAreas=[...document.querySelectorAll('.layout>aside,.right-sidebar,.site-footer,main>section:first-child,.contact-list,.setup-specs,.project-browser,.track-copy')];
+});
 const quiet = matchMedia('(prefers-reduced-motion: reduce)');
 let width, height, frame, time = 0, last = 0;
 const overlay = canvas.classList.contains('garden-overlay');

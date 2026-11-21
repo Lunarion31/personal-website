@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hobbies · Lunarion</title>
+  <link rel="icon" href="/assets/lunarion-mark.svg">
+  <script>
+    try {
+      if (localStorage.getItem('lunarion-theme') === 'dark') document.documentElement.dataset.theme='dark';
+      const arrival=Number(sessionStorage.getItem('flower-curtain-arrival'));
+      sessionStorage.removeItem('flower-curtain-arrival');
+      if (Date.now()-arrival < 15000 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('curtain-arrival');
+        setTimeout(()=>document.documentElement.classList.remove('curtain-arrival'),2500);
+      }
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="/simple.css">
+  <link rel="stylesheet" href="/editorial.css?v=garden-29">
+  <link rel="stylesheet" href="/ascii-mode.css?v=15">
+  <style>
+    .hobby-page {width:min(44rem, calc(100% - 3rem));margin:clamp(3rem,12vh,8rem) auto}
+    .hobby-page h1 {font:400 clamp(4rem,12vw,8rem)/1 'Geist Serif',Georgia,serif;margin:2rem 0}
+    .hobby-page h2 {margin:2rem 0 .4rem;color:var(--burgundy)}
+    .curtain-arrival body::after {content:'';position:fixed;inset:0;background:#613946;z-index:9998}
+    .curtain-arrival.curtain-ready body::after {display:none}
+  </style>
+  <script type="module" src="/flower-curtain.js?v=11"></script>
+</head>
+<body>
+  <main class="site hobby-page">
+    <form action="/#hobbies" data-flower-return><button type="submit" class="garden-back">← Back</button></form>
+    <h1>hobbies</h1>
+    <h2>Computers</h2>
+    <p>Fullstack development, information technology, systems administration, and cybersecurity.</p>
+    <p><a href="/projects/">Things I’ve made ↗</a></p>
+    <h2>Vidya games</h2>
+    <p>Helldivers 2, Marathon, and Deep Rock Galactic.</p>
+    <p><a href="/media/">Media shelf ↗</a></p>
+  </main>
+  <canvas id="night-garden" class="garden-overlay" aria-hidden="true"></canvas>
+  <script src="/night-garden.js?v=25" defer></script>
+  <script src="/ascii-mode.js?v=18" defer></script>
+  <script src="/widget-config.js"></script>
+  <script src="/sidebar-widgets.js?v=6" defer></script>
+</body>
+</html>
